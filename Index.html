@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>肉類品項評分表</title>
+<style>
+:root{
+  --green:#2f5d4a; --green-dark:#1f4434; --green-mid:#3f7360; --gray-mid:#8d8d7a;
+  --cream:#f5f2e9; --paper:#fbf9f3; --line:#d9d4c3; --ink:#2b2b2b; --muted:#6f6f60;
+  --gold:#8f6f25; --danger:#a33;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);
+  font-family:"Noto Serif TC","Songti TC","PMingLiU",serif;line-height:1.6}
+header{background:var(--green-dark);color:#fff;padding:calc(28px + env(safe-area-inset-top,0px)) 16px 22px;text-align:center}
+header h1{margin:0;font-size:26px;letter-spacing:.3em;font-weight:600}
+header p{margin:6px 0 0;font-size:13px;color:#cfe0d6;letter-spacing:.1em}
+main{max-width:760px;margin:0 auto;padding:16px max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px))}
+.section{margin:22px 0 8px}
+.section-head{display:flex;align-items:center;gap:10px;background:var(--green);color:#fff;
+  padding:10px 14px;border-radius:6px 6px 0 0}
+.section-head h2{margin:0;font-size:18px;letter-spacing:.2em}
+.card-list{background:var(--paper);border:1px solid var(--line);border-top:none;border-radius:0 0 6px 6px}
+.item{padding:12px 14px;border-bottom:1px dashed var(--line);min-width:0}
+.item-top{display:flex;align-items:center;gap:8px}
+.item-name{font-size:17px;font-weight:600;flex:1;min-width:0;overflow-wrap:anywhere;margin:0}
+.del{background:none;border:none;color:var(--muted);font-family:inherit;font-size:18px;cursor:pointer;padding:0 4px}
+.del[data-armed]{font-size:13px;color:var(--danger)}
+.del:hover{color:var(--danger)}
+.opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.col{min-width:0}
+.rbtn{width:100%;min-height:42px;padding:6px 4px;border-radius:999px;background:#fff;color:var(--ink);
+  font-family:inherit;font-size:14px;font-weight:600;border:2px solid var(--green-mid);cursor:pointer;transition:background .15s,color .15s}
+.rbtn[data-r="great"]{border-color:var(--green-dark)}
+.rbtn[data-r="ok"]{border-color:var(--gray-mid)}
+.rbtn[data-r="great"]:hover{background:var(--green-dark);color:#fff}
+.rbtn[data-r="good"]:hover{background:var(--green-mid);color:#fff}
+.rbtn[data-r="ok"]:hover{background:var(--gray-mid);color:#fff}
+.cnt{margin-top:6px;text-align:center;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.cnt[data-r="great"]{color:var(--green-dark)}
+.cnt[data-r="good"]{color:var(--green-mid)}
+.cnt[data-r="ok"]{color:var(--muted)}
+.names{min-height:1.4em;margin-top:2px;text-align:center;font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.notes{list-style:none;margin:10px 0 0;padding:10px 0 0;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:8px}
+.notes:empty{display:none}
+.notes li{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline}
+.who{font-size:13px;font-weight:700}
+.tag{font-size:11px;line-height:1.7;padding:0 8px;border-radius:999px;color:#fff}
+.tag[data-r="great"]{background:var(--green-dark)}
+.tag[data-r="good"]{background:var(--green-mid)}
+.tag[data-r="ok"]{background:var(--gray-mid)}
+.said{flex:1 1 100%;margin:0;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+.xnote{background:none;border:none;font-family:inherit;color:var(--muted);font-size:12px;padding:0 4px;cursor:pointer}
+.xnote:hover,.xnote[data-armed]{color:var(--danger)}
+.addnote{margin-top:8px;font-family:inherit;font-size:13px;color:var(--green);background:none;border:none;padding:4px 0;text-decoration:underline;cursor:pointer}
+.empty{margin:0;padding:18px 14px;color:var(--muted);font-size:14px;border-bottom:1px dashed var(--line)}
+.add{display:flex;gap:8px;padding:12px 14px;background:#efece0;border-top:1px solid var(--line);
+  border-radius:0 0 6px 6px}
+.item:last-child{border-bottom:none}
+.add input{flex:1;min-width:0;font-family:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--ink)}
+.add button{font-family:inherit;background:var(--green);color:#fff;border:none;border-radius:4px;
+  padding:7px 14px;cursor:pointer}
+.add button:hover{background:var(--green-dark)}
+input:focus-visible,textarea:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--green-mid);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.ghost{font-family:inherit;font-size:14px;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:8px 14px;cursor:pointer}
+.hint{font-size:12px;color:var(--muted);text-align:center;margin:26px 0 calc(40px + env(safe-area-inset-bottom,0px))}
+.summary{display:flex;justify-content:center;gap:18px;margin-top:14px;font-size:13px;color:#e6efe9}
+
+.overlay{position:fixed;inset:0;background:rgba(20,28,24,.55);display:flex;align-items:stretch;justify-content:center;z-index:30}
+.overlay[hidden]{display:none}
+.panel{width:100%;max-width:520px;height:100%;overflow:auto;background:var(--paper);
+  padding:calc(14px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+@media (min-width:600px){ .overlay{align-items:center} .panel{height:auto;max-height:92vh;border-radius:12px} }
+.back{background:none;border:none;font-family:inherit;color:var(--green);font-size:15px;padding:6px 0;margin-bottom:6px;cursor:pointer}
+.panel h2{margin:0 0 4px;font-size:22px;letter-spacing:.14em}
+.sub{margin:0;color:var(--muted);font-size:14px;overflow-wrap:anywhere}
+.label{margin:14px 0 6px;font-size:12px;letter-spacing:.12em;color:var(--muted)}
+.members{display:flex;flex-wrap:wrap;gap:8px}
+.mbtn{min-height:42px;padding:6px 16px;border-radius:999px;border:1px solid var(--green-mid);background:#fff;color:var(--ink);font-family:inherit;font-size:15px;text-align:left;cursor:pointer}
+.mbtn:hover{background:#eaf2ee}
+.mbtn small{display:block;font-size:11px;color:var(--muted);line-height:1.2}
+.nomem{color:var(--muted);font-size:13px}
+.newmem{display:flex;gap:8px}
+.newmem input{flex:1;min-width:0;font-family:inherit;font-size:15px;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--ink)}
+.panel textarea{display:block;width:100%;min-height:64px;resize:vertical;font-family:inherit;font-size:15px;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--ink)}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:calc(100% - 32px);background:#2b2b2b;color:#f5f2e9;padding:10px 16px;border-radius:6px;font-size:14px;z-index:40}
+#toast[hidden]{display:none}
+@media (prefers-reduced-motion: reduce){ .rbtn{transition:none} }
+.conn{margin:10px 0 0;font-size:12px;letter-spacing:.06em;color:#cfe0d6}
+.conn[data-s="error"]{color:#f1c9a8}
+</style>
+</head>
+<body>
+<header>
+  <h1>肉 類 品 項 評 分</h1>
+  <p>用餐紀錄・超好吃／好吃／普通</p>
+  <div class="summary">
+    <span>超好吃 <b id="c1">0</b></span>
+    <span>好吃 <b id="c2">0</b></span>
+    <span>普通 <b id="c3">0</b></span>
+  </div>
+  <p class="conn" id="conn"></p>
+</header>
+
+<main>
+  <section class="section">
+    <div class="section-head"><h2>單點肉類</h2></div>
+    <div class="card-list">
+      <div id="list"></div>
+      <p class="empty" id="empty" hidden>還沒有品項。在下方輸入名字新增，再點「超好吃」「好吃」「普通」，選擇是誰要評。</p>
+      <form class="add" id="addForm" autocomplete="off">
+        <input id="newName" maxlength="40" placeholder="新增品項名稱" aria-label="新增品項名稱">
+        <button type="submit">新增</button>
+      </form>
+    </div>
+  </section>
+
+  <p class="hint" id="hint">評分與備註會自動存在這個瀏覽器中。品項可自行新增或刪除。</p>
+</main>
+
+<div class="overlay" id="sheet" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <button class="back" type="button" id="sheetBack">‹ 返回</button>
+    <h2 id="sheetTitle">留言身分</h2>
+    <p class="sub" id="sheetSub"></p>
+    <p class="label">選擇留言身分（新增過的身分會保留，其他品項也能直接選）</p>
+    <div class="members" id="memberList"></div>
+    <p class="label">新增身分</p>
+    <div class="newmem">
+      <input id="newMember" maxlength="12" placeholder="例：爸爸、媽媽、小明" aria-label="新身分名字" autocomplete="off">
+      <button class="ghost" type="button" id="addMember">新增並選取</button>
+    </div>
+    <p class="label"><label for="sheetNote">備註（選填，留空就不更動原本的備註）</label></p>
+    <textarea id="sheetNote" maxlength="300" placeholder="口感、部位、推薦吃法…"></textarea>
+    <div class="row"><button class="ghost" type="button" id="sheetClose">取消</button></div>
+  </div>
+</div>
+<div id="toast" role="status" hidden></div>
+
+<script>
+(function(){
+  // ★ 設定：把 Apps Script 部署後得到的網址（結尾是 /exec）貼在引號裡。
+  //   留空的話，資料只會存在這支手機的瀏覽器，不會和家人同步。
+  var API_URL = "https://script.google.com/macros/s/AKfycbzFvA2VTw_35WXoQVMAmzImIGqduM93SeCfqy3CQKOUCB7ExuUNQ3rRqjsqTlqjGBjj/exec";
+  var POLL_MS = 20000;
+
+  var KEY = "meat-rating-v2";
+  var OLD_KEY = "meat-rating-v1";
+  var SYNCED_KEY = "meat-rating-uploaded";
+  var REMOTE = /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(API_URL);
+  var R = [ {k:"great", t:"超好吃"}, {k:"good", t:"好吃"}, {k:"ok", t:"普通"} ];
+  var KEYOF = {"超好吃":"great", "好吃":"good", "普通":"ok"};
+  var BAD = {"__proto__":1, "constructor":1, "prototype":1};
+  var $ = function(s){ return document.querySelector(s); };
+
+  function newId(){ return "i" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+
+  function load(){
+    try{
+      var raw = localStorage.getItem(KEY);
+      if(raw){
+        var d = JSON.parse(raw);
+        if(d && Array.isArray(d.items)) return { members: Array.isArray(d.members) ? d.members : [], items: d.items };
+      }
+    }catch(e){}
+    // 從舊版帶入已新增的品項名稱（舊版沒有身分，原本的單人評分不帶入）
+    try{
+      var old = JSON.parse(localStorage.getItem(OLD_KEY));
+      var items = [];
+      (Array.isArray(old) ? old : []).forEach(function(s){
+        (s && s.items || []).forEach(function(i){
+          if(i && typeof i.name === "string" && i.name.trim()) items.push({ id:newId(), name:i.name.trim().slice(0, 40), votes:{} });
+        });
+      });
+      if(items.length) return { members:[], items:items };
+    }catch(e){}
+    return { members:[], items:[] };
+  }
+  var S = load();
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function findItem(id){ return S.items.filter(function(i){ return i.id === id; })[0]; }
+  var toastTimer;
+  function toast(msg){
+    var t = $("#toast"); t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.hidden = true; }, 3200);
+  }
+  function arm(btn, label, fn){
+    if(btn.dataset.armed){ clearTimeout(btn._t); delete btn.dataset.armed; fn(); return; }
+    var old = btn.textContent;
+    btn.dataset.armed = "1"; btn.textContent = label;
+    btn._t = setTimeout(function(){ delete btn.dataset.armed; btn.textContent = old; }, 3000);
+  }
+
+  /* ---------- 雲端同步（Google 試算表 + Apps Script） ---------- */
+  var pending = 0, queue = Promise.resolve(), lastOk = 0;
+  function hhmm(d){ return ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2); }
+  function setConn(s){
+    if(s === "ok") lastOk = Date.now();
+    var txt = s === "local" ? "只存在這支手機・不會和家人同步"
+      : s === "loading" ? "連線中…"
+      : s === "ok" ? "已和全家同步・" + hhmm(new Date(lastOk)) + " 更新"
+      : "暫時連不上雲端，目前顯示上次的資料";
+    var el = $("#conn"); el.textContent = txt; el.dataset.s = s;
+  }
+  function adopt(st){
+    var map = {};
+    var items = (st.items || []).map(function(i){
+      var o = { id:i.id, name:i.name, votes:{} };
+      map[i.id] = o;
+      return o;
+    });
+    (st.votes || []).forEach(function(v){
+      var it = map[v.itemId];
+      if(it && !BAD[v.member]) it.votes[v.member] = { r:v.r, n:v.n, t:v.t };
+    });
+    S = { members:(st.members || []).filter(function(m){ return !BAD[m]; }), items:items };
+    save();
+    try{ localStorage.setItem(SYNCED_KEY, "1"); }catch(e){}
+    render();
+  }
+  function post(op){
+    return fetch(API_URL, { method:"POST", headers:{ "Content-Type":"text/plain;charset=utf-8" }, body:JSON.stringify(op) })
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if(!d || !d.ok) throw new Error((d && d.error) || "fail"); return d.state; });
+  }
+  function send(op){
+    if(!REMOTE) return;
+    pending++;
+    queue = queue.then(function(){ return post(op); }).then(function(st){
+      pending--;
+      if(pending === 0) adopt(st);
+      setConn("ok");
+    }, function(){
+      pending--;
+      setConn("error");
+      toast("沒有存到雲端，請稍後再試一次");
+      if(pending === 0) refresh();
+    });
+  }
+  function refresh(){
+    if(!REMOTE || pending > 0 || !$("#sheet").hidden) return Promise.resolve();
+    return fetch(API_URL + "?t=" + Date.now())
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(!d || !d.ok) throw new Error("bad");
+        if(pending === 0 && $("#sheet").hidden) adopt(d.state);
+        setConn("ok");
+      })
+      .catch(function(){ setConn("error"); });
+  }
+  function startSync(){
+    if(!REMOTE){ setConn("local"); $("#hint").textContent = "評分與備註只存在這個瀏覽器中，換裝置不會同步。"; return; }
+    $("#hint").textContent = "評分與備註會同步到雲端，全家人看到的是同一份，約每 20 秒自動更新。";
+    setConn("loading");
+    var uploaded = false;
+    try{ uploaded = localStorage.getItem(SYNCED_KEY) === "1"; }catch(e){}
+    if(!uploaded && S.items.length){
+      // 第一次連線：把這支手機原本的品項與評分合併上去
+      send({ op:"import", items:S.items.map(function(i){ return { name:i.name, votes:i.votes || {} }; }) });
+    } else {
+      refresh();
+    }
+    setInterval(refresh, POLL_MS);
+    document.addEventListener("visibilitychange", function(){ if(!document.hidden) refresh(); });
+  }
+
+  /* ---------- 畫面 ---------- */
+  function itemHTML(it){
+    var votes = it.votes || {};
+    var names = Object.keys(votes);
+    var cols = R.map(function(o){
+      var who = names.filter(function(m){ return votes[m].r === o.t; });
+      return '<div class="col">' +
+        '<button type="button" class="rbtn" data-r="' + o.k + '" data-act="rate" data-id="' + esc(it.id) + '" data-v="' + o.t + '">' + o.t + '</button>' +
+        '<div class="cnt" data-r="' + o.k + '">' + who.length + ' 人</div>' +
+        '<div class="names">' + esc(who.join("、")) + '</div></div>';
+    }).join("");
+    var notes = names.filter(function(m){ return votes[m].n; }).map(function(m){
+      var v = votes[m];
+      return '<li><span class="who">' + esc(m) + '</span>' +
+        (v.r ? '<span class="tag" data-r="' + KEYOF[v.r] + '">' + esc(v.r) + '</span>' : '') +
+        '<button type="button" class="xnote" data-act="delnote" data-id="' + esc(it.id) + '" data-m="' + esc(m) + '">刪除備註</button>' +
+        '<p class="said">' + esc(v.n) + '</p></li>';
+    }).join("");
+    return '<div class="item">' +
+      '<div class="item-top"><h3 class="item-name">' + esc(it.name) + '</h3>' +
+      '<button type="button" class="del" title="刪除" data-act="delitem" data-id="' + esc(it.id) + '">×</button></div>' +
+      '<div class="opts">' + cols + '</div>' +
+      '<ul class="notes">' + notes + '</ul>' +
+      '<button type="button" class="addnote" data-act="note" data-id="' + esc(it.id) + '">＋ 留下備註</button>' +
+    '</div>';
+  }
+
+  function render(){
+    $("#list").innerHTML = S.items.map(itemHTML).join("");
+    $("#empty").hidden = S.items.length > 0;
+    var c = {"超好吃":0, "好吃":0, "普通":0};
+    S.items.forEach(function(it){
+      var v = it.votes || {};
+      Object.keys(v).forEach(function(m){ if(c[v[m].r] != null) c[v[m].r]++; });
+    });
+    $("#c1").textContent = c["超好吃"];
+    $("#c2").textContent = c["好吃"];
+    $("#c3").textContent = c["普通"];
+  }
+
+  var sheet = { id:null, v:null };
+  function openSheet(id, v){
+    sheet.id = id; sheet.v = v;
+    var it = findItem(id);
+    $("#sheetSub").textContent = "「" + (it ? it.name : "") + "」・" + (v ? "你選了「" + v + "」" : "留下備註");
+    $("#sheetNote").value = "";
+    $("#newMember").value = "";
+    renderMembers();
+    $("#sheet").hidden = false;
+    var first = $("#memberList .mbtn") || $("#newMember");
+    if(first) first.focus();
+  }
+  function closeSheet(){ $("#sheet").hidden = true; sheet.id = null; }
+  function renderMembers(){
+    var it = findItem(sheet.id) || {};
+    var votes = it.votes || {};
+    $("#memberList").innerHTML = S.members.length ? S.members.map(function(m){
+      var cur = votes[m] && votes[m].r;
+      return '<button type="button" class="mbtn" data-m="' + esc(m) + '">' + esc(m) + (cur ? '<small>目前：' + esc(cur) + '</small>' : '') + '</button>';
+    }).join("") : '<span class="nomem">還沒有身分，請在下方輸入名字。</span>';
+  }
+  function apply(member){
+    var it = findItem(sheet.id);
+    if(!it) return;
+    it.votes = it.votes || {};
+    var cur = it.votes[member] || { r:"", n:"" };
+    var note = $("#sheetNote").value.trim();
+    var msg;
+    if(sheet.v){
+      cur.r = (cur.r === sheet.v) ? "" : sheet.v;
+      if(note) cur.n = note;
+      msg = cur.r ? member + " 選了「" + cur.r + "」" : member + " 取消了評價";
+    } else {
+      if(!note){ toast("請先輸入備註內容"); return; }
+      cur.n = note;
+      msg = member + " 留下了備註";
+    }
+    cur.t = Date.now();
+    if(cur.r || cur.n) it.votes[member] = cur; else delete it.votes[member];
+    if(S.members.indexOf(member) < 0) S.members.push(member);
+    send({ op:"setVote", itemId:it.id, member:member, r:cur.r, n:cur.n || "", t:cur.t });
+    save(); closeSheet(); render(); toast(msg);
+  }
+  function addMember(){
+    var name = $("#newMember").value.trim();
+    if(!name) return;
+    if(BAD[name]){ toast("這個名字不能用，請換一個"); return; }
+    apply(name);
+  }
+
+  document.addEventListener("click", function(e){
+    var b = e.target.closest("button");
+    if(!b) return;
+    var act = b.dataset.act;
+    if(act === "rate") openSheet(b.dataset.id, b.dataset.v);
+    else if(act === "note") openSheet(b.dataset.id, null);
+    else if(act === "delitem"){
+      arm(b, "確定刪除", function(){
+        S.items = S.items.filter(function(i){ return i.id !== b.dataset.id; });
+        send({ op:"delItem", id:b.dataset.id });
+        save(); render();
+      });
+    } else if(act === "delnote"){
+      arm(b, "確定？", function(){
+        var it = findItem(b.dataset.id), m = b.dataset.m;
+        if(it && it.votes && it.votes[m]){
+          var v = it.votes[m];
+          v.n = ""; v.t = Date.now();
+          if(!v.r) delete it.votes[m];
+          send({ op:"setVote", itemId:it.id, member:m, r:v.r || "", n:"", t:v.t });
+          save(); render();
+        }
+      });
+    } else if(b.classList.contains("mbtn")){
+      apply(b.dataset.m);
+    }
+  });
+  $("#addMember").addEventListener("click", addMember);
+  $("#newMember").addEventListener("keydown", function(e){ if(e.key === "Enter"){ e.preventDefault(); addMember(); } });
+  $("#sheetClose").addEventListener("click", closeSheet);
+  $("#sheetBack").addEventListener("click", closeSheet);
+  $("#sheet").addEventListener("click", function(e){ if(e.target === $("#sheet")) closeSheet(); });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape" && !$("#sheet").hidden) closeSheet(); });
+
+  $("#addForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var name = $("#newName").value.trim();
+    if(!name) return;
+    var dup = S.items.some(function(i){ return i.name.trim().toLowerCase() === name.toLowerCase(); });
+    if(dup){ toast("已經有「" + name + "」了"); return; }
+    var it = { id:newId(), name:name, votes:{} };
+    S.items.push(it);
+    send({ op:"addItem", id:it.id, name:name });
+    save();
+    $("#newName").value = "";
+    render();
+    $("#newName").focus();
+  });
+
+  render();
+  startSync();
+})();
+</script>
+</body>
+</html>
