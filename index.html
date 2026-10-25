@@ -214,7 +214,7 @@ main{min-width:0;padding:0 0 16px}
 (function(){
   // ★ 設定：把 Apps Script 部署後得到的網址（結尾是 /exec）貼在引號裡。
   //   留空的話，資料只會存在這支手機的瀏覽器，不會和家人同步。
-  var API_URL = "";
+  var API_URL = "https://script.google.com/macros/s/AKfycbzFvA2VTw_35WXoQVMAmzImIGqduM93SeCfqy3CQKOUCB7ExuUNQ3rRqjsqTlqjGBjj/exec";
   var POLL_MS = 20000;
 
   var KEY = "meat-rating-v2";
@@ -230,10 +230,49 @@ main{min-width:0;padding:0 0 16px}
   var $ = function(s){ return document.querySelector(s); };
 
   // ★ 各餐廳的專屬風格。沒有設定的餐廳都用預設（菜單圖片的深綠＋米白）。
-  //   key 填「餐廳名稱」（或餐廳代碼）。vars 覆寫頁面開頭的設計變數，css 可加額外樣式，
+  //   key 填「餐廳名稱」（或餐廳代碼）；餐廳名稱只要「包含」key 就會套用，所以「享鴨烤鴨」也吃得到「享鴨」的風格。vars 覆寫頁面開頭的設計變數，css 可加額外樣式，
   //   fontUrl 可填 Google Fonts 的網址。餐廳改名後要同步改這裡的 key。
   //   例：  "屋馬燒肉": { vars:{ "--accent":"#8b1e1e", "--band":"#2b0f0f" }, css:"", fontUrl:"" }
-  var THEMES = {};
+  var THEMES = {
+    // 享鴨：朱紅底、白色紙面、蜜桃色與橘紅色塊、黑色粗明體（取自該店菜單的配色與版面）
+    "享鴨": {
+      fontUrl: "https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&display=swap",
+      vars: {
+        "--bg":"#bf281d", "--paper":"#ffffff", "--field":"#ffffff", "--add-bg":"#fdeee8",
+        "--line":"#e6d3cb", "--ink":"#161616", "--muted":"#655d59", "--danger":"#b3261e",
+        "--accent":"#c4281c", "--accent-deep":"#161616", "--accent-mid":"#c4281c", "--neutral":"#6b6b6b", "--hover":"#fde3d8",
+        "--on-accent":"#ffffff",
+        "--band":"#ffffff", "--on-band":"#161616", "--band-sub":"#5b514d", "--band-warn":"#b3261e",
+        "--sec-head":"#e9482b", "--on-sec":"#161616",
+        "--side-bg":"#ffffff", "--side-active":"#f8b9a0", "--on-side-active":"#161616",
+        "--scrim":"rgba(40,8,6,.62)", "--toast-bg":"#161616", "--toast-fg":"#ffffff"
+      },
+      css: [
+        "header h1{display:block;width:fit-content;margin:8px auto 0;padding:.04em .36em;background:#f8b9a0;color:#161616;font-size:38px;font-weight:900;letter-spacing:.14em;line-height:1.25}",
+        ".tagline{display:block;width:fit-content;margin:0 auto;padding:3px 16px;background:#e9482b;color:#161616;font-weight:900;font-size:15px;letter-spacing:.16em}",
+        ".eyebrow{color:#161616;font-weight:700}",
+        ".summary b{font-weight:900}",
+        ".conn{color:#5b514d}",
+        ".menu-btn{border-color:#161616;color:#161616}",
+        ".side{border-color:transparent}",
+        ".side-label{display:inline-block;margin:0 0 10px;padding:1px 14px;border:1.5px solid #161616;border-radius:999px;color:#161616;font-weight:700;letter-spacing:.12em}",
+        ".rtab[aria-selected=\"true\"]{font-weight:900}",
+        ".rtab.radd{border-color:#161616;color:#161616}",
+        ".section-head h2,.item-name{font-weight:900}",
+        ".section-head h2{letter-spacing:.14em}",
+        ".card-list{border-color:transparent}",
+        ".item{border-bottom-style:dotted;border-bottom-color:#9a8f89}",
+        ".notes,.restform{border-top-style:dotted;border-top-color:#9a8f89}",
+        ".rbtn{border-color:#161616}",
+        ".rbtn[data-r=\"good\"]{border-color:#c4281c}",
+        ".rbtn[data-r=\"ok\"]{border-color:#8a8380}",
+        ".cnt{font-weight:900}",
+        ".cnt[data-r=\"good\"]{color:#c4281c}",
+        ".hint{color:#ffffff}",
+        "@media (max-width:820px){header h1{font-size:32px}}"
+      ].join("\n")
+    }
+  };
   var themeKeys = [];
   function ensureFont(url){
     if(!/^https:\/\/fonts\.googleapis\.com\//.test(url)) return;
@@ -247,7 +286,11 @@ main{min-width:0;padding:0 0 16px}
     var root = document.documentElement;
     themeKeys.forEach(function(k){ root.style.removeProperty(k); });
     themeKeys = [];
-    var t = rest ? (THEMES[rest.name] || THEMES[rest.id]) : null;
+    var t = null;
+    if(rest){
+      t = THEMES[rest.name] || THEMES[rest.id] || null;
+      if(!t) Object.keys(THEMES).some(function(k){ if(rest.name.indexOf(k) >= 0){ t = THEMES[k]; return true; } return false; });
+    }
     $("#themeCss").textContent = t && t.css ? t.css : "";
     if(t && t.fontUrl) ensureFont(t.fontUrl);
     if(t && t.vars) Object.keys(t.vars).forEach(function(k){ root.style.setProperty(k, t.vars[k]); themeKeys.push(k); });
