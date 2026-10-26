@@ -234,6 +234,38 @@ main{min-width:0;padding:0 0 16px}
   //   fontUrl 可填 Google Fonts 的網址。餐廳改名後要同步改這裡的 key。
   //   例：  "屋馬燒肉": { vars:{ "--accent":"#8b1e1e", "--band":"#2b0f0f" }, css:"", fontUrl:"" }
   var THEMES = {
+    // 大師兄銷魂麵鋪：奶白紙面、酒紅玫瑰色、細明體、細線框標題、點線分隔（取自該店菜單）
+    "大師兄": {
+      fontUrl: "https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600&display=swap",
+      vars: {
+        "--bg":"#f1e9e5", "--paper":"#fffdfb", "--field":"#ffffff", "--add-bg":"#f8eeec",
+        "--line":"#dccbc7", "--ink":"#2b2324", "--muted":"#7b6c6c", "--danger":"#a8323a",
+        "--accent":"#a24d5c", "--accent-deep":"#7e3342", "--accent-mid":"#b86a78", "--neutral":"#8c8482", "--hover":"#f7eceb",
+        "--on-accent":"#ffffff",
+        "--band":"#a24d5c", "--on-band":"#ffffff", "--band-sub":"#f3dadd", "--band-warn":"#ffe3dd",
+        "--sec-head":"#fffdfb", "--on-sec":"#7e3342",
+        "--side-bg":"#fffdfb", "--side-active":"#a24d5c", "--on-side-active":"#ffffff",
+        "--scrim":"rgba(43,20,24,.55)", "--toast-bg":"#7e3342", "--toast-fg":"#ffffff",
+        "--radius":"2px"
+      },
+      css: [
+        "header h1{font-weight:400;letter-spacing:.28em}",
+        ".tagline{letter-spacing:.2em;font-weight:300}",
+        ".section-head{border-bottom:1px solid #a24d5c}",
+        ".section-head h2{display:inline-block;padding:4px 26px;border:1px solid #a24d5c;color:#7e3342;font-weight:600;letter-spacing:.3em}",
+        ".side-label{display:inline-block;padding:2px 18px;border:1px solid #a24d5c;color:#7e3342;letter-spacing:.3em}",
+        ".rtab.radd{border-color:#a24d5c;color:#a24d5c}",
+        ".item{border-bottom:1px dotted #b9a29e}",
+        ".item-name{font-weight:600;letter-spacing:.06em}",
+        ".notes,.restform{border-top:1px dotted #b9a29e}",
+        ".rbtn{border-radius:2px;border-color:#a24d5c;color:#7e3342}",
+        ".rbtn[data-r=\"ok\"]{border-color:#8c8482;color:#5e5655}",
+        ".cnt{color:#a24d5c;font-weight:600}",
+        ".cnt[data-r=\"ok\"]{color:#8c8482}",
+        ".menu-btn{border-color:#ffffff;color:#ffffff}",
+        "button.primary,.add-btn{border-radius:2px}"
+      ].join("\n")
+    },
     // 享鴨：朱紅底、白色紙面、蜜桃色與橘紅色塊、黑色粗明體（取自該店菜單的配色與版面）
     "享鴨": {
       fontUrl: "https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&display=swap",
