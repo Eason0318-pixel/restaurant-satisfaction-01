@@ -71,15 +71,24 @@ main{min-width:0;padding:0 0 16px}
 .del{background:none;border:none;color:var(--muted);font-family:inherit;font-size:18px;cursor:pointer;padding:0 4px}
 .del[data-armed]{font-size:13px;color:var(--danger)}
 .del:hover{color:var(--danger)}
-.opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.opts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
 .col{min-width:0}
-.rbtn{width:100%;min-height:42px;padding:6px 4px;border-radius:999px;background:var(--field);color:var(--ink);
+.rbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;min-height:54px;padding:6px 4px;line-height:1.3;border-radius:999px;background:var(--field);color:var(--ink);
   font-family:inherit;font-size:14px;font-weight:600;border:2px solid var(--accent-mid);cursor:pointer;transition:background .15s,color .15s}
 .rbtn[data-r="great"]{border-color:var(--accent-deep)}
 .rbtn[data-r="ok"]{border-color:var(--neutral)}
 .rbtn[data-r="great"]:hover{background:var(--accent-deep);color:var(--on-accent)}
 .rbtn[data-r="good"]:hover{background:var(--accent-mid);color:var(--on-accent)}
 .rbtn[data-r="ok"]:hover{background:var(--neutral);color:var(--on-accent)}
+.rbtn[data-r="bad"]{border-color:var(--danger);border-style:dashed;color:var(--danger)}
+.rbtn[data-r="bad"]:hover{background:var(--danger);color:var(--on-accent)}
+.rs{display:block;font-size:11px;font-weight:600;line-height:1.3}
+.cnt[data-r="bad"]{color:var(--danger)}
+.tag[data-r="bad"]{background:var(--danger)}
+@media (max-width:520px){
+  .opts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .summary{flex-wrap:wrap;gap:4px 14px}
+}
 .cnt{margin-top:6px;text-align:center;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
 .cnt[data-r="great"]{color:var(--accent-deep)}
 .cnt[data-r="good"]{color:var(--accent-mid)}
@@ -150,11 +159,12 @@ main{min-width:0;padding:0 0 16px}
   <button type="button" class="menu-btn" id="menuBtn" aria-controls="side" aria-expanded="false">☰ 餐廳</button>
   <p class="eyebrow">餐廳評分簿・全家一起評</p>
   <h1 id="restTitle"></h1>
-  <p class="tagline">超好吃／好吃／普通</p>
+  <p class="tagline">超好吃／好吃／普通／有點雷</p>
   <div class="summary">
     <span>超好吃 <b id="c1">0</b></span>
     <span>好吃 <b id="c2">0</b></span>
     <span>普通 <b id="c3">0</b></span>
+    <span>有點雷 <b id="c4">0</b></span>
   </div>
   <p class="conn" id="conn"></p>
 </header>
@@ -180,7 +190,7 @@ main{min-width:0;padding:0 0 16px}
       </div>
       <div class="card-list">
         <div id="list"></div>
-        <p class="empty" id="empty" hidden>這間餐廳還沒有品項。在下方輸入名字新增，再點「超好吃」「好吃」「普通」，選擇是誰要評。</p>
+        <p class="empty" id="empty" hidden>這間餐廳還沒有品項。在下方輸入名字新增，再點「超好吃」「好吃」「普通」「有點雷」，選擇是誰要評。</p>
         <form class="add" id="addForm" autocomplete="off">
           <input id="newName" maxlength="40" placeholder="新增品項名稱" aria-label="新增品項名稱">
           <button type="submit">新增</button>
@@ -225,8 +235,9 @@ main{min-width:0;padding:0 0 16px}
   var DEFAULT_RID = "r_chaliu";
   var DEFAULT_RNAME = "茶六";
   var REMOTE = /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(API_URL);
-  var R = [ {k:"great", t:"超好吃"}, {k:"good", t:"好吃"}, {k:"ok", t:"普通"} ];
-  var KEYOF = {"超好吃":"great", "好吃":"good", "普通":"ok"};
+  /* t 是存進試算表的值（不可改）；s 只是按鈕上顯示的小字 */
+  var R = [ {k:"great", t:"超好吃", s:"(必點)"}, {k:"good", t:"好吃", s:""}, {k:"ok", t:"普通", s:""}, {k:"bad", t:"有點雷", s:"(下次不會點)"} ];
+  var KEYOF = {"超好吃":"great", "好吃":"good", "普通":"ok", "有點雷":"bad"};
   var BAD = {"__proto__":1, "constructor":1, "prototype":1};
   var $ = function(s){ return document.querySelector(s); };
 
@@ -487,7 +498,7 @@ main{min-width:0;padding:0 0 16px}
     var cols = R.map(function(o){
       var who = names.filter(function(m){ return votes[m].r === o.t; });
       return '<div class="col">' +
-        '<button type="button" class="rbtn" data-r="' + o.k + '" data-act="rate" data-id="' + esc(it.id) + '" data-v="' + o.t + '">' + o.t + '</button>' +
+        '<button type="button" class="rbtn" data-r="' + o.k + '" data-act="rate" data-id="' + esc(it.id) + '" data-v="' + o.t + '">' + o.t + (o.s ? '<span class="rs">' + o.s + '</span>' : '') + '</button>' +
         '<div class="cnt" data-r="' + o.k + '">' + who.length + ' 人</div>' +
         '<div class="names">' + esc(who.join("、")) + '</div></div>';
     }).join("");
@@ -520,7 +531,7 @@ main{min-width:0;padding:0 0 16px}
     var items = S.items.filter(function(i){ return i.rid === cur; });
     $("#list").innerHTML = items.map(itemHTML).join("");
     $("#empty").hidden = items.length > 0;
-    var c = {"超好吃":0, "好吃":0, "普通":0};
+    var c = {"超好吃":0, "好吃":0, "普通":0, "有點雷":0};
     items.forEach(function(it){
       var v = it.votes || {};
       Object.keys(v).forEach(function(m){ if(c[v[m].r] != null) c[v[m].r]++; });
@@ -528,6 +539,7 @@ main{min-width:0;padding:0 0 16px}
     $("#c1").textContent = c["超好吃"];
     $("#c2").textContent = c["好吃"];
     $("#c3").textContent = c["普通"];
+    $("#c4").textContent = c["有點雷"];
   }
 
   /* ---------- 餐廳：新增 / 改名 / 刪除 ---------- */

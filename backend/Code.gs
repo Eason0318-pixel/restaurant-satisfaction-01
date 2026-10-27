@@ -16,7 +16,7 @@ var HEADERS = {
 };
 // 這些欄位一律當純文字，避免有人輸入「=...」被當成公式執行
 var TEXT_COLS = { restaurants: [1, 2], items: [1, 2, 4], votes: [1, 2, 3, 4], members: [1] };
-var RATINGS = ["超好吃", "好吃", "普通"];
+var RATINGS = ["超好吃", "好吃", "普通", "有點雷"];
 var LIMIT = { restaurants: 30, items: 500, members: 30, votes: 8000 };
 var BAD_NAMES = ["__proto__", "constructor", "prototype"];
 
