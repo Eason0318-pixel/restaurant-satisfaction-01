@@ -45,7 +45,12 @@ header h1{margin:6px 0 4px;font-family:var(--font-display);font-size:28px;letter
 .conn{margin:10px 0 0;font-size:12px;letter-spacing:.06em;color:var(--band-sub)}
 .conn[data-s="error"]{color:var(--band-warn)}
 .menu-btn{display:none;position:absolute;left:max(12px,env(safe-area-inset-left,0px));top:calc(12px + env(safe-area-inset-top,0px));
-  background:transparent;border:1px solid var(--band-sub);color:var(--on-band);border-radius:var(--radius);font-family:inherit;font-size:14px;padding:6px 12px;cursor:pointer}
+  background:transparent;border:1px solid var(--band-sub);color:var(--on-band);border-radius:999px;font-family:inherit;font-size:15px;min-height:44px;padding:0 16px;cursor:pointer}
+/* 加到主畫面（全螢幕）時，頂端狀態列會蓋住一段漸層：頁首整體往下挪，按鈕才不會被擋到 */
+@media (display-mode: standalone){
+  header{padding-top:calc(54px + env(safe-area-inset-top,0px))}
+  .menu-btn{top:calc(34px + env(safe-area-inset-top,0px))}
+}
 
 /* 左側邊選單 + 內容 */
 .layout{max-width:1040px;margin:0 auto;display:grid;grid-template-columns:230px minmax(0,1fr);align-items:start;
@@ -687,6 +692,28 @@ main{min-width:0;padding:0 0 16px}
   document.addEventListener("keydown", function(e){ if(e.key === "Escape" && !$("#sheet").hidden) closeSheet(); });
   $("#menuBtn").addEventListener("click", function(){ setDrawer(!$("#side").classList.contains("open")); });
   $("#backdrop").addEventListener("click", closeDrawer);
+  // 手機：從螢幕左側往右滑開啟側邊欄；側邊欄開著時往左滑關閉
+  (function(){
+    var sx = 0, sy = 0, tracking = false, opening = true;
+    var mobile = window.matchMedia("(max-width:820px)");
+    document.addEventListener("touchstart", function(e){
+      tracking = false;
+      if(e.touches.length !== 1 || !mobile.matches || !$("#sheet").hidden) return;
+      var t = e.touches[0];
+      var isOpen = $("#side").classList.contains("open");
+      if(!isOpen && t.clientX > Math.max(60, window.innerWidth * 0.3)) return;
+      sx = t.clientX; sy = t.clientY; opening = !isOpen; tracking = true;
+    }, {passive:true});
+    document.addEventListener("touchend", function(e){
+      if(!tracking) return;
+      tracking = false;
+      var t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+      if(Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+      if(opening && dx > 0) setDrawer(true);
+      else if(!opening && dx < 0) setDrawer(false);
+    }, {passive:true});
+    document.addEventListener("touchcancel", function(){ tracking = false; }, {passive:true});
+  })();
   document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeDrawer(); });
   window.addEventListener("hashchange", function(){
     var h = (location.hash || "").replace(/^#/, "");
