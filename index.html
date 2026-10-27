@@ -170,9 +170,8 @@ main{min-width:0;padding:0 0 16px}
 <body>
 <header>
   <button type="button" class="menu-btn" id="menuBtn" aria-controls="side" aria-expanded="false">☰ 餐廳</button>
-  <p class="eyebrow">餐廳評分簿・全家一起評</p>
+  <p class="eyebrow">餐廳評分簿</p>
   <h1 id="restTitle"></h1>
-  <p class="tagline">超好吃／好吃／普通／有點雷</p>
   <div class="summary">
     <span>超好吃 <b id="c1">0</b></span>
     <span>好吃 <b id="c2">0</b></span>
@@ -220,16 +219,18 @@ main{min-width:0;padding:0 0 16px}
     <button class="back" type="button" id="sheetBack">‹ 返回</button>
     <h2 id="sheetTitle">留言身分</h2>
     <p class="sub" id="sheetSub"></p>
-    <p class="label">選擇留言身分（新增過的身分會保留，其他品項也能直接選）</p>
-    <div class="members" id="memberList"></div>
-    <p class="label">新增身分</p>
-    <div class="newmem">
-      <input id="newMember" maxlength="12" placeholder="例：爸爸、媽媽、小明" aria-label="新身分名字" autocomplete="off">
-      <button class="ghost" type="button" id="addMember">新增並選取</button>
+    <div id="pickBox">
+      <p class="label">選擇留言身分（新增過的身分會保留，其他品項也能直接選）</p>
+      <div class="members" id="memberList"></div>
+      <p class="label">新增身分</p>
+      <div class="newmem">
+        <input id="newMember" maxlength="12" placeholder="例：爸爸、媽媽、小明" aria-label="新身分名字" autocomplete="off">
+        <button class="ghost" type="button" id="addMember">新增並選取</button>
+      </div>
     </div>
-    <p class="label"><label for="sheetNote">備註（選填，留空就不更動原本的備註）</label></p>
+    <p class="label"><label for="sheetNote" id="sheetNoteLabel">備註（選填，留空就不更動原本的備註）</label></p>
     <textarea id="sheetNote" maxlength="300" placeholder="口感、部位、推薦吃法…"></textarea>
-    <div class="row"><button class="ghost" type="button" id="sheetClose">取消</button></div>
+    <div class="row"><button class="primary" type="button" id="noteSave" hidden>儲存修改</button><button class="ghost" type="button" id="sheetClose">取消</button></div>
   </div>
 </div>
 <div id="toast" role="status" hidden></div>
@@ -326,7 +327,7 @@ main{min-width:0;padding:0 0 16px}
         ".cnt{font-weight:900}",
         ".cnt[data-r=\"good\"]{color:#c4281c}",
         ".hint{color:#ffffff}",
-        "@media (max-width:820px){header h1{font-size:32px}}"
+        "@media (max-width:820px){header h1{font-size:32px;line-height:1.12}}"
       ].join("\n")
     }
   };
@@ -519,6 +520,7 @@ main{min-width:0;padding:0 0 16px}
       var v = votes[m];
       return '<li><span class="who">' + esc(m) + '</span>' +
         (v.r ? '<span class="tag" data-r="' + KEYOF[v.r] + '">' + esc(v.r) + '</span>' : '') +
+        '<button type="button" class="xnote" data-act="editnote" data-id="' + esc(it.id) + '" data-m="' + esc(m) + '">編輯備註</button>' +
         '<button type="button" class="xnote" data-act="delnote" data-id="' + esc(it.id) + '" data-m="' + esc(m) + '">刪除備註</button>' +
         '<p class="said">' + esc(v.n) + '</p></li>';
     }).join("");
@@ -605,9 +607,37 @@ main{min-width:0;padding:0 0 16px}
   });
 
   /* ---------- 留言身分 ---------- */
-  var sheet = { id:null, v:null };
+  var sheet = { id:null, v:null, edit:null };
+  function setEditMode(m){
+    sheet.edit = m;
+    $("#pickBox").hidden = !!m;
+    $("#noteSave").hidden = !m;
+    $("#sheetTitle").textContent = m ? "編輯備註" : "留言身分";
+    $("#sheetNoteLabel").textContent = m ? "備註內容" : "備註（選填，留空就不更動原本的備註）";
+  }
+  function openEdit(id, m){
+    var it = findItem(id);
+    if(!it || !it.votes || !it.votes[m]) return;
+    sheet.id = id; sheet.v = null;
+    setEditMode(m);
+    $("#sheetSub").textContent = (findRest(cur) ? findRest(cur).name + "・" : "") + "「" + it.name + "」・" + m + " 的備註";
+    $("#sheetNote").value = it.votes[m].n || "";
+    $("#sheet").hidden = false;
+    $("#sheetNote").focus();
+  }
+  function saveEdit(){
+    var it = findItem(sheet.id), m = sheet.edit;
+    if(!it || !m || !it.votes || !it.votes[m]){ closeSheet(); return; }
+    var note = $("#sheetNote").value.trim();
+    if(!note){ toast("備註不能留空，要清除請按「刪除備註」"); return; }
+    var c = it.votes[m];
+    c.n = note; c.t = Date.now();
+    send({ op:"setVote", itemId:it.id, member:m, r:c.r || "", n:c.n, t:c.t });
+    save(); closeSheet(); render(); toast("已更新備註");
+  }
   function openSheet(id, v){
     sheet.id = id; sheet.v = v;
+    setEditMode(null);
     var it = findItem(id);
     $("#sheetSub").textContent = (findRest(cur) ? findRest(cur).name + "・" : "") + "「" + (it ? it.name : "") + "」・" + (v ? "你選了「" + v + "」" : "留下備註");
     $("#sheetNote").value = "";
@@ -663,6 +693,7 @@ main{min-width:0;padding:0 0 16px}
     else if(act === "addrest") openRestForm("add");
     else if(act === "rate") openSheet(b.dataset.id, b.dataset.v);
     else if(act === "note") openSheet(b.dataset.id, null);
+    else if(act === "editnote") openEdit(b.dataset.id, b.dataset.m);
     else if(act === "delitem"){
       arm(b, "確定刪除", function(){
         S.items = S.items.filter(function(i){ return i.id !== b.dataset.id; });
@@ -687,6 +718,7 @@ main{min-width:0;padding:0 0 16px}
   $("#addMember").addEventListener("click", addMember);
   $("#newMember").addEventListener("keydown", function(e){ if(e.key === "Enter"){ e.preventDefault(); addMember(); } });
   $("#sheetClose").addEventListener("click", closeSheet);
+  $("#noteSave").addEventListener("click", saveEdit);
   $("#sheetBack").addEventListener("click", closeSheet);
   $("#sheet").addEventListener("click", function(e){ if(e.target === $("#sheet")) closeSheet(); });
   document.addEventListener("keydown", function(e){ if(e.key === "Escape" && !$("#sheet").hidden) closeSheet(); });
