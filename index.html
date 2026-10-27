@@ -7,25 +7,25 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-192.png">
-<meta name="theme-color" content="#34325c">
+<meta name="theme-color" content="#1f4434">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="評分簿">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <style>
-/* 預設風格：暖橘 × 靛藍 × 奶油白，圓潤造型。
+/* 預設風格（取自菜單圖片的深綠＋米白）。
    每間餐廳的專屬風格是在下方 script 的 THEMES 裡覆寫這些變數，沒有設定的餐廳就用這組。 */
 :root{
-  --font-body:"PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
-  --font-display:"PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
-  --bg:#fff4e6; --paper:#fffdf9; --field:#ffffff; --add-bg:#ffefdc;
-  --line:#f0d9bf; --ink:#2a2740; --muted:#7a7388; --gold:#b97a14; --danger:#d1344f;
-  --accent:#cf5a1c; --accent-deep:#9f3f0f; --accent-mid:#d9692a; --neutral:#7d7790; --hover:#ffe9d3;
+  --font-body:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --font-display:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --bg:#f5f2e9; --paper:#fbf9f3; --field:#ffffff; --add-bg:#efece0;
+  --line:#d9d4c3; --ink:#2b2b2b; --muted:#6f6f60; --gold:#8f6f25; --danger:#a33;
+  --accent:#2f5d4a; --accent-deep:#1f4434; --accent-mid:#3f7360; --neutral:#8d8d7a; --hover:#eaf2ee;
   --on-accent:#ffffff;
-  --band:#34325c; --on-band:#ffffff; --band-sub:#d8d5f2; --band-warn:#ffcf9e;
-  --sec-head:#cf5a1c; --on-sec:#ffffff;
-  --side-bg:#fffdf9; --side-active:#34325c; --on-side-active:#ffffff;
-  --scrim:rgba(30,28,56,.55); --toast-bg:#34325c; --toast-fg:#fff4e6;
+  --band:#1f4434; --on-band:#ffffff; --band-sub:#cfe0d6; --band-warn:#f1c9a8;
+  --sec-head:#2f5d4a; --on-sec:#ffffff;
+  --side-bg:#fbf9f3; --side-active:#1f4434; --on-side-active:#ffffff;
+  --scrim:rgba(20,28,24,.55); --toast-bg:#2b2b2b; --toast-fg:#f5f2e9;
   --radius:22px;
 }
 *{box-sizing:border-box}
@@ -36,7 +36,7 @@ button{color:inherit}
 input:focus-visible,textarea:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent-mid);outline-offset:2px}
 
 /* 頁首 */
-header{position:relative;background:var(--band);color:var(--on-band);text-align:center;border-radius:0 0 36px 36px;
+header{position:relative;background:var(--band);color:var(--on-band);text-align:center;
   padding:calc(30px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 22px max(16px,env(safe-area-inset-left,0px))}
 .eyebrow{margin:0;font-size:12px;letter-spacing:.24em;color:var(--band-sub)}
 header h1{margin:6px 0 4px;font-family:var(--font-display);font-size:28px;letter-spacing:.24em;font-weight:600;text-wrap:balance;overflow-wrap:anywhere}
@@ -300,8 +300,8 @@ main{min-width:0;padding:0 0 16px}
         "--font-body":"\"Noto Serif TC\",\"Songti TC\",\"PMingLiU\",serif", "--font-display":"\"Noto Serif TC\",\"Songti TC\",\"PMingLiU\",serif"
       },
       css: [
-        "header h1{display:block;box-sizing:border-box;width:min(100%,260px);margin:6px auto 0;padding:.04em .2em;border-radius:20px 20px 0 0;text-align:center;background:#f8b9a0;color:#161616;font-size:38px;font-weight:900;letter-spacing:.14em;text-indent:.14em;line-height:1.1}",
-        ".tagline{display:block;box-sizing:border-box;width:min(100%,260px);margin:0 auto;padding:1px 0 0;border-radius:0 0 20px 20px;text-align:center;text-indent:.16em;background:#e9482b;color:#161616;font-weight:900;font-size:15px;letter-spacing:.16em}",
+        "header h1{display:block;box-sizing:border-box;width:min(100%,260px);margin:6px auto 0;padding:.04em .2em;text-align:center;background:#f8b9a0;color:#161616;font-size:38px;font-weight:900;letter-spacing:.14em;text-indent:.14em;line-height:1.1}",
+        ".tagline{display:block;box-sizing:border-box;width:min(100%,260px);margin:0 auto;padding:1px 0 0;text-align:center;text-indent:.16em;background:#e9482b;color:#161616;font-weight:900;font-size:15px;letter-spacing:.16em}",
         ".eyebrow{color:#161616;font-weight:700}",
         ".summary b{font-weight:900}",
         ".conn{color:#5b514d}",
