@@ -1,7 +1,7 @@
 {
-  "name": "餐廳評分簿",
-  "short_name": "評分簿",
-  "description": "家人共用的餐廳單點品項評分",
+  "name": "美食地圖",
+  "short_name": "美食地圖",
+  "description": "家人共用的美食地圖：找餐廳、寫評價",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

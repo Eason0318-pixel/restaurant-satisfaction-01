@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>餐廳評分簿</title>
+<title>美食地圖</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700&display=swap">
@@ -13,7 +13,7 @@
 <meta name="theme-color" content="#1f4434">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="評分簿">
+<meta name="apple-mobile-web-app-title" content="美食地圖">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <style>
 /* 預設風格（取自菜單圖片的深綠＋米白）。
@@ -651,13 +651,13 @@ body[data-view="find"] main{width:100%;max-width:720px;margin:0 auto}
     if(isFind){
       applyTheme(null);
       setTitle("找餐廳");
-      document.title = "找餐廳・餐廳評分簿";
+      document.title = "美食地圖";
       return;
     }
     setTitle(rest ? rest.name : "");
     applyTheme(rest);
     $("#restDelete").hidden = S.restaurants.length < 2;
-    document.title = (rest ? rest.name + "・" : "") + "餐廳評分簿";
+    document.title = "美食地圖";
     var items = S.items.filter(function(i){ return i.rid === cur; });
     $("#list").innerHTML = items.map(itemHTML).join("");
     $("#empty").hidden = items.length > 0;
