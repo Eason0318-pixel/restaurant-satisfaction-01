@@ -46,6 +46,11 @@ header h1{flex:0 1 auto;min-width:0;margin:0;line-height:44px;font-family:var(--
 .tagline{margin:0;font-size:13px;color:var(--band-sub);letter-spacing:.1em}
 .summary{display:flex;justify-content:center;gap:18px;margin-top:4px;font-size:13px;color:var(--on-band)}
 .hd-actions{position:absolute;right:max(12px,env(safe-area-inset-right,0px),calc(50% - 504px));top:calc(10px + env(safe-area-inset-top,0px));height:44px;display:flex;align-items:center;gap:6px}
+.kebab{width:44px;padding:0;font-size:22px;line-height:1}
+.more{position:absolute;right:0;top:calc(100% + 6px);z-index:55;min-width:150px;padding:6px;background:var(--paper);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 28px rgba(0,0,0,.28);display:flex;flex-direction:column}
+.more button{background:none;border:none;border-radius:10px;font-family:inherit;font-size:15px;text-align:left;color:var(--ink);padding:10px 14px;min-height:44px;cursor:pointer}
+.more button:hover{background:var(--hover)}
+.more #restDelete{color:var(--danger)}
 .menu-btn{display:none;position:absolute;left:max(12px,env(safe-area-inset-left,0px));top:calc(10px + env(safe-area-inset-top,0px));
   background:transparent;border:1px solid var(--band-sub);color:var(--on-band);border-radius:999px;font-family:inherit;font-size:15px;min-height:44px;padding:0 16px;cursor:pointer}
 /* 加到主畫面（全螢幕）時，頂端狀態列會蓋住一段漸層：頁首整體往下挪，按鈕才不會被擋到 */
@@ -179,10 +184,13 @@ body[data-view="find"] main{width:100%;max-width:720px;margin:0 auto}
   main{padding:0 max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px))}
   .layout{padding-left:0;padding-right:0}
   header{padding-bottom:8px}
-  .menu-btn,.hd-actions{position:static}
-  .menu-btn{min-height:40px;padding:0 12px;font-size:14px;white-space:nowrap}
-  .shbtn{min-height:36px;padding:0 10px}
-  header h1{font-size:20px;letter-spacing:.12em;line-height:1.25;margin:0 auto}
+  .hd-row{display:grid;grid-template-columns:1fr auto 1fr;gap:8px}
+  .menu-btn,.hd-actions{position:relative;top:auto;left:auto;right:auto}
+  .menu-btn{grid-column:1;justify-self:start;min-height:40px;padding:0 12px;font-size:14px;white-space:nowrap}
+  .hd-actions{grid-column:3;justify-self:end}
+  .shbtn{min-height:40px;padding:0 10px}
+  .kebab{width:40px;padding:0}
+  header h1{grid-column:2;max-width:100%;font-size:20px;letter-spacing:.1em;line-height:1.25;margin:0 auto}
   .summary{margin-top:2px}
   #reviewView .card-list{overflow:visible;border:none;border-radius:0}
   body{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
@@ -220,7 +228,10 @@ body[data-view="find"] main{width:100%;max-width:720px;margin:0 auto}
   <div class="hd-row">
     <button type="button" class="menu-btn" id="menuBtn" aria-controls="side" aria-expanded="false">餐廳 ▾</button>
     <h1 id="restTitle"></h1>
-    <span class="hd-actions"><button type="button" class="shbtn" id="restRename">改名</button><button type="button" class="shbtn" id="restDelete">刪除餐廳</button></span>
+    <div class="hd-actions">
+      <button type="button" class="shbtn kebab" id="moreBtn" aria-haspopup="menu" aria-expanded="false" aria-label="餐廳選項">⋮</button>
+      <div class="more" id="moreMenu" role="menu" hidden><button type="button" role="menuitem" id="restRename">改名</button><button type="button" role="menuitem" id="restDelete">刪除餐廳</button></div>
+    </div>
   </div>
   <div class="summary" id="sumReview">
     <span>超好吃 <b id="c1">0</b></span>
@@ -588,6 +599,30 @@ body[data-view="find"] main{width:100%;max-width:720px;margin:0 auto}
     '</div>';
   }
 
+  /* ---------- 頁首店名：盡量維持一行（必要時自動縮小字級），真的放不下才換行 ----------
+     TITLE_BREAKS：店名太長必須換行時，用「|」標出換行位置（沒列的就由瀏覽器平均分行）。 */
+  var TITLE_BREAKS = { "大師兄銷魂麵鋪":"大師兄|銷魂麵鋪" };
+  var titleText = "";
+  function setTitle(name){ titleText = name; fitTitle(); }
+  function fitTitle(){
+    var h = $("#restTitle");
+    h.style.fontSize = ""; h.textContent = titleText;
+    if(!window.matchMedia("(max-width:820px)").matches) return;
+    var size = parseFloat(getComputedStyle(h).fontSize), min = 15;
+    var oneLine = function(){ return h.scrollHeight <= parseFloat(getComputedStyle(h).lineHeight) * 1.5; };
+    while(!oneLine() && size > min){ size -= 1; h.style.fontSize = size + "px"; }
+    if(!oneLine() && TITLE_BREAKS[titleText]){
+      h.style.fontSize = "";
+      h.textContent = "";
+      TITLE_BREAKS[titleText].split("|").forEach(function(p, i){
+        if(i) h.appendChild(document.createElement("br"));
+        h.appendChild(document.createTextNode(p));
+      });
+    }
+  }
+  window.addEventListener("resize", fitTitle);
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitle);
+
   function render(){
     if(!findRest(cur)) pickCurrent();
     $("#rests").innerHTML = S.restaurants.map(function(r){
@@ -605,11 +640,11 @@ body[data-view="find"] main{width:100%;max-width:720px;margin:0 auto}
     $("#sumReview").hidden = isFind;
     if(isFind){
       applyTheme(null);
-      $("#restTitle").textContent = "找餐廳";
+      setTitle("找餐廳");
       document.title = "找餐廳・餐廳評分簿";
       return;
     }
-    $("#restTitle").textContent = rest ? rest.name : "";
+    setTitle(rest ? rest.name : "");
     applyTheme(rest);
     $("#restDelete").hidden = S.restaurants.length < 2;
     document.title = (rest ? rest.name + "・" : "") + "餐廳評分簿";
@@ -700,7 +735,14 @@ body[data-view="find"] main{width:100%;max-width:720px;margin:0 auto}
     toast(restMode === "rename" ? "已改名" : "已新增「" + name + "」，現在可以新增品項了");
   });
   $("#restCancel").addEventListener("click", closeRestForm);
-  $("#restRename").addEventListener("click", function(){ openRestForm("rename"); });
+  function setMore(open){
+    $("#moreMenu").hidden = !open;
+    $("#moreBtn").setAttribute("aria-expanded", open ? "true" : "false");
+  }
+  $("#moreBtn").addEventListener("click", function(e){ e.stopPropagation(); setMore($("#moreMenu").hidden); });
+  document.addEventListener("click", function(e){ if(!e.target.closest("#moreMenu")) setMore(false); });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") setMore(false); });
+  $("#restRename").addEventListener("click", function(){ setMore(false); openRestForm("rename"); });
   $("#restDelete").addEventListener("click", function(e){
     var b = e.currentTarget;
     if(!b.dataset.armed) toast("再按一次，會刪除這間餐廳的所有品項與評分");
@@ -710,7 +752,7 @@ body[data-view="find"] main{width:100%;max-width:720px;margin:0 auto}
       S.items = S.items.filter(function(i){ return i.rid !== id; });
       send({ op:"delRestaurant", id:id });
       setCurrent(S.restaurants[0].id);
-      save(); closeRestForm(); closeDrawer(); render(); toast("已刪除餐廳");
+      save(); setMore(false); closeRestForm(); closeDrawer(); render(); toast("已刪除餐廳");
     });
   });
 
