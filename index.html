@@ -137,40 +137,16 @@ main{min-width:0;padding:0 0 16px}
 .hint{font-size:12px;letter-spacing:.06em;color:var(--muted);text-align:center;margin:26px 0 calc(40px + env(safe-area-inset-bottom,0px))}
 .hint[data-s="error"]{color:var(--danger)}
 
-/* 留言身分頁面 */
-.overlay{position:fixed;inset:0;background:var(--scrim);display:flex;align-items:stretch;justify-content:center;z-index:60}
-.panel{width:100%;max-width:520px;height:100%;overflow:auto;background:var(--paper);
-  padding:calc(14px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
-@media (min-width:600px){ .overlay{align-items:center} .panel{height:auto;max-height:92vh;border-radius:28px} }
-.back{background:none;border:none;font-family:inherit;color:var(--accent);font-size:15px;padding:6px 0;margin-bottom:6px;cursor:pointer}
-.panel h2{margin:0 0 4px;font-size:22px;letter-spacing:.14em;font-family:var(--font-display)}
-.sub{margin:0;color:var(--muted);font-size:14px;overflow-wrap:anywhere}
-.label{margin:14px 0 6px;font-size:12px;letter-spacing:.12em;color:var(--muted)}
-.members{display:flex;flex-wrap:wrap;gap:8px}
-.mbtn{min-height:42px;padding:6px 16px;border-radius:999px;border:1px solid var(--accent-mid);background:var(--field);color:var(--ink);font-family:inherit;font-size:15px;text-align:left;cursor:pointer}
-.mbtn:hover{background:var(--hover)}
-.mbtn small{display:block;font-size:11px;color:var(--muted);line-height:1.2}
-.nomem{color:var(--muted);font-size:13px}
-.newmem{display:flex;gap:8px}
-.newmem input{flex:1;min-width:0;font-family:inherit;font-size:15px;padding:8px 16px;border:1px solid var(--line);border-radius:999px;background:var(--field);color:var(--ink)}
-.panel textarea{display:block;width:100%;min-height:64px;resize:vertical;font-family:inherit;font-size:15px;padding:10px 14px;border:1px solid var(--line);border-radius:18px;background:var(--field);color:var(--ink)}
-#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:calc(100% - 32px);background:var(--toast-bg);color:var(--toast-fg);padding:10px 18px;border-radius:999px;font-size:14px;z-index:70}
+/* 第一階層導覽：找餐廳 / 寫評價（桌機在頁首下方，手機固定在畫面底部） */
+.topnav{display:flex;justify-content:center;background:var(--paper);border-bottom:1px solid var(--line)}
+.topnav button{flex:0 1 220px;min-height:48px;padding:0 12px;background:none;border:none;border-bottom:3px solid transparent;font-family:inherit;font-size:16px;letter-spacing:.2em;color:var(--muted);cursor:pointer}
+.topnav button:hover{color:var(--ink)}
+.topnav button[aria-current="page"]{color:var(--accent-deep);border-bottom-color:var(--accent);font-weight:700}
+.ni{display:none}
+body[data-view="find"] .menu-btn,body[data-view="find"] .hd-actions,body[data-view="find"] .side,body[data-view="find"] .backdrop{display:none!important}
+body[data-view="find"] .layout{grid-template-columns:minmax(0,1fr)}
+body[data-view="find"] main{width:100%;max-width:720px;margin:0 auto}
 
-/* 手機：側邊選單改成從左滑出 */
-@media (max-width:820px){
-  .menu-btn{display:block}
-  .layout{display:block}
-  .side{position:fixed;top:0;bottom:0;left:0;z-index:50;width:min(84vw,300px);margin:0;border-radius:0;border-width:0 1px 0 0;overflow:auto;
-    padding:calc(18px + env(safe-area-inset-top,0px)) 12px calc(18px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));
-    transform:translateX(-104%);visibility:hidden;transition:transform .2s ease,visibility 0s linear .2s;box-shadow:2px 0 14px rgba(0,0,0,.25)}
-  .side.open{transform:none;visibility:visible;transition:transform .2s ease}
-  .backdrop{position:fixed;inset:0;z-index:45;background:var(--scrim)}
-  .backdrop.open{display:block}
-  main{padding:0 max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px))}
-  .layout{padding-left:0;padding-right:0}
-  header h1{font-size:24px}
-}
-@media (prefers-reduced-motion: reduce){ .rbtn,.side,.side.open{transition:none} }
 </style>
 <style id="themeCss"></style>
 </head>
@@ -180,18 +156,22 @@ main{min-width:0;padding:0 0 16px}
   <span class="hd-actions"><button type="button" class="shbtn" id="restRename">改名</button><button type="button" class="shbtn" id="restDelete">刪除餐廳</button></span>
   <p class="eyebrow">餐廳評分簿</p>
   <h1 id="restTitle"></h1>
-  <div class="summary">
+  <div class="summary" id="sumReview">
     <span>超好吃 <b id="c1">0</b></span>
     <span>好吃 <b id="c2">0</b></span>
     <span>普通 <b id="c3">0</b></span>
     <span>有點雷 <b id="c4">0</b></span>
   </div>
 </header>
+<nav class="topnav" id="topnav" aria-label="主要功能">
+  <button type="button" data-act="view" data-v="find"><span class="ni" aria-hidden="true">🔎</span>找餐廳</button>
+  <button type="button" data-act="view" data-v="review"><span class="ni" aria-hidden="true">📝</span>寫評價</button>
+</nav>
 
 <div class="backdrop" id="backdrop"></div>
 <div class="layout">
   <aside class="side" id="side" aria-label="餐廳選單">
-    <p class="side-label">餐廳</p>
+    <p class="side-label">寫評價・餐廳</p>
     <nav class="rests" id="rests" role="tablist" aria-orientation="vertical" aria-label="餐廳"></nav>
     <form class="restform" id="restForm" autocomplete="off" hidden>
       <input id="restName" maxlength="20" aria-label="餐廳名稱" placeholder="餐廳名稱">
@@ -203,7 +183,12 @@ main{min-width:0;padding:0 0 16px}
   </aside>
 
   <main>
-    <section class="section">
+    <section class="section" id="findView" hidden>
+      <div class="section-head"><h2>找餐廳</h2></div>
+      <div class="card-list"><p class="empty">規劃中，敬請期待。</p></div>
+    </section>
+
+    <section class="section" id="reviewView">
       <div class="section-head"><h2>單點品項</h2></div>
       <div class="card-list">
         <form class="add" id="addForm" autocomplete="off">
@@ -252,6 +237,7 @@ main{min-width:0;padding:0 0 16px}
   var OLD_KEY = "meat-rating-v1";
   var SYNCED_KEY = "meat-rating-uploaded";
   var CUR_KEY = "meat-rating-current";
+  var VIEW_KEY = "meat-rating-view";
   var DEFAULT_RID = "r_chaliu";
   var DEFAULT_RNAME = "茶六";
   var REMOTE = /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(API_URL);
@@ -416,6 +402,23 @@ main{min-width:0;padding:0 0 16px}
     try{ history.replaceState(null, "", "#" + id); }catch(e){}
   }
 
+  /* ---------- 第一階層：找餐廳 / 寫評價 ---------- */
+  var view = "review";
+  function pickView(){
+    var h = (location.hash || "").replace(/^#/, "");
+    if(h === "find") view = "find";
+    else if(h && findRest(h)) view = "review";
+    else { try{ view = localStorage.getItem(VIEW_KEY) === "find" ? "find" : "review"; }catch(e){ view = "review"; } }
+  }
+  function setView(v){
+    view = v;
+    try{ localStorage.setItem(VIEW_KEY, v); }catch(e){}
+    try{ history.replaceState(null, "", "#" + (v === "find" ? "find" : cur)); }catch(e){}
+    closeDrawer(); closeRestForm();
+    render();
+    window.scrollTo(0, 0);
+  }
+
   /* ---------- 雲端同步（Google 試算表 + Apps Script） ---------- */
   var pending = 0, queue = Promise.resolve(), lastOk = 0;
   function hhmm(d){ return ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2); }
@@ -526,6 +529,20 @@ main{min-width:0;padding:0 0 16px}
       return '<button type="button" class="rtab" role="tab" aria-selected="' + (r.id === cur ? "true" : "false") + '" data-act="pickrest" data-id="' + esc(r.id) + '">' + esc(r.name) + '</button>';
     }).join("") + '<button type="button" class="rtab radd" data-act="addrest">＋ 新增餐廳</button>';
     var rest = findRest(cur);
+    var isFind = view === "find";
+    document.body.setAttribute("data-view", view);
+    Array.prototype.forEach.call(document.querySelectorAll("#topnav button"), function(b){
+      b.setAttribute("aria-current", b.dataset.v === view ? "page" : "false");
+    });
+    $("#findView").hidden = !isFind;
+    $("#reviewView").hidden = isFind;
+    $("#sumReview").hidden = isFind;
+    if(isFind){
+      applyTheme(null);
+      $("#restTitle").textContent = "找餐廳";
+      document.title = "找餐廳・餐廳評分簿";
+      return;
+    }
     $("#restTitle").textContent = rest ? rest.name : "";
     applyTheme(rest);
     $("#restDelete").hidden = S.restaurants.length < 2;
@@ -714,7 +731,8 @@ main{min-width:0;padding:0 0 16px}
     var b = e.target.closest("button");
     if(!b) return;
     var act = b.dataset.act;
-    if(act === "pickrest"){ setCurrent(b.dataset.id); closeRestForm(); closeDrawer(); render(); }
+    if(act === "view") setView(b.dataset.v);
+    else if(act === "pickrest"){ setCurrent(b.dataset.id); closeRestForm(); closeDrawer(); render(); }
     else if(act === "addrest") openRestForm("add");
     else if(act === "gotoitem") gotoItem(b.dataset.id);
     else if(act === "rate") openSheet(b.dataset.id, b.dataset.v);
@@ -756,7 +774,7 @@ main{min-width:0;padding:0 0 16px}
     var mobile = window.matchMedia("(max-width:820px)");
     document.addEventListener("touchstart", function(e){
       tracking = false;
-      if(e.touches.length !== 1 || !mobile.matches || !$("#sheet").hidden) return;
+      if(e.touches.length !== 1 || !mobile.matches || view !== "review" || !$("#sheet").hidden) return;
       var t = e.touches[0];
       var isOpen = $("#side").classList.contains("open");
       if(!isOpen && t.clientX > Math.max(60, window.innerWidth * 0.3)) return;
@@ -775,7 +793,8 @@ main{min-width:0;padding:0 0 16px}
   document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeDrawer(); });
   window.addEventListener("hashchange", function(){
     var h = (location.hash || "").replace(/^#/, "");
-    if(h && h !== cur && findRest(h)){ cur = h; render(); }
+    if(h === "find"){ if(view !== "find"){ view = "find"; render(); } }
+    else if(h && findRest(h) && (h !== cur || view !== "review")){ cur = h; view = "review"; render(); }
   });
 
   $("#addForm").addEventListener("submit", function(e){
@@ -794,6 +813,7 @@ main{min-width:0;padding:0 0 16px}
   });
 
   pickCurrent();
+  pickView();
   render();
   startSync();
 })();
