@@ -2,3 +2,4 @@ menus/
 node_modules/
 .claude/
 legacy-bot/
+places.demo.json

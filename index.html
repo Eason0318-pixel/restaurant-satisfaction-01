@@ -147,6 +147,48 @@ main{min-width:0;padding:0 0 16px}
 .pgo:hover svg{filter:brightness(1.12)}
 .pgo:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 @media (max-width:520px){ .pgrid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+/* 找餐廳：詳情頁 */
+#plist[hidden],#dview[hidden]{display:none}
+.dback{margin:0 0 10px}
+.dback button{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--accent-mid);background:var(--field);color:var(--accent);font-family:inherit;font-size:15px;cursor:pointer}
+.dhead{display:flex;align-items:flex-start;gap:12px;padding:18px 16px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius)}
+.dhead .pgo{flex:none;margin:-4px -4px 0 0}
+@media (min-width:821px){ .dhead .pgo{width:44px;height:44px} .dhead .pgo svg{width:26px;height:26px;padding:5px} }
+.dmain{flex:1;min-width:0}
+.dname{margin:0;font-size:24px;font-weight:700;line-height:1.35;overflow-wrap:anywhere}
+.dloc,.dcat{margin:6px 0 0;font-size:15px;color:var(--accent)}
+.dcat{margin-top:4px;font-size:14px;color:var(--muted)}
+.dcat b{color:var(--ink);font-weight:600}
+.dloc span+span,.dcat span+span{margin-left:.8em}
+.drate{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:12px;font-size:15px}
+.drate svg{width:18px;height:18px;flex:none;fill:var(--go)}
+.drate b{font-weight:700}
+.dsrc{display:inline-flex;gap:10px;margin-left:8px}
+.dsrc a{position:relative;display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;border:1.5px solid var(--accent);color:var(--accent);text-decoration:none}
+.dsrc a:hover{background:var(--hover)}
+.dsrc a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.dsrc svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.dsrc i{position:absolute;top:-6px;right:-6px;width:17px;height:17px;border-radius:50%;background:var(--go);color:#fff;font-size:11px;font-style:normal;font-weight:700;line-height:17px;text-align:center}
+.dgrid{display:grid;gap:12px;margin-top:12px}
+.dleft{display:flex;flex-direction:column;gap:12px;min-width:0}
+@media (min-width:821px){ .dgrid{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);align-items:start} }
+.dsec{padding:14px 16px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius)}
+.dsec h3{display:flex;align-items:center;gap:6px;margin:0 0 8px;font-size:14px;font-weight:700;color:var(--go)}
+.dsec svg,.drow>svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.dtext{margin:0;font-size:15px;line-height:1.7;white-space:pre-line;overflow-wrap:anywhere}
+.dnone{margin:0;font-size:14px;color:var(--muted)}
+.dchips{display:flex;flex-wrap:wrap;gap:8px}
+.dchips span{padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--field);font-size:14px}
+.dinfo{padding-top:4px;padding-bottom:4px}
+.drow{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-top:1px dashed var(--line)}
+.drow:first-child{border-top:none}
+.drow>svg{margin-top:2px;color:var(--go)}
+.drow>div{flex:1;min-width:0}
+.dlabel{display:block;font-size:12px;color:var(--muted)}
+.drow .dtext{margin-top:2px}
+.dcopy{flex:none;display:flex;align-items:center;justify-content:center;width:44px;height:44px;margin:-8px -10px -8px 0;border:none;background:none;color:var(--muted);cursor:pointer}
+.dcopy:hover{color:var(--ink)}
+.dcopy svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 @media (min-width:821px){ .pgo{width:34px;height:34px;margin:0 0 0 0} .pgo svg{width:18px;height:18px;padding:5px} }
 #findView .card-list{border-top:1px solid var(--line);border-radius:var(--radius)}
 /* 找餐廳：篩選列（總覽／縣市／市區／種類，後三個可下拉複選） */
@@ -333,11 +375,12 @@ body[data-view="find"] main{width:100%;max-width:none}
       </div>
       <div class="fpanel" id="fpanel" hidden></div>
       </div>
-      <div class="card-list">
+      <div class="card-list" id="plist">
         <p class="pcount" id="pcount" hidden></p>
         <p class="empty" id="pempty" hidden></p>
         <div class="pgrid" id="pgrid"></div>
       </div>
+      <div class="dview" id="dview" hidden></div>
     </section>
 
     <section class="section" id="reviewView">
@@ -571,7 +614,7 @@ body[data-view="find"] main{width:100%;max-width:none}
   var view = "review";
   function pickView(){
     var h = (location.hash || "").replace(/^#/, "");
-    if(h === "find") view = "find";
+    if(/^find(\/\d+)?$/.test(h)) view = "find";
     else if(h && findRest(h)) view = "review";
     else { try{ view = localStorage.getItem(VIEW_KEY) === "find" ? "find" : "review"; }catch(e){ view = "review"; } }
   }
@@ -719,8 +762,16 @@ body[data-view="find"] main{width:100%;max-width:none}
     if(PLACES !== null) return;
     PLACES = [];
     fetch("places.json", {cache:"no-store"}).then(function(r){ if(!r.ok) throw 0; return r.json(); })
-      .then(function(d){ PLACES = d; if(view === "find") renderFind(); })
-      .catch(function(){ PLACES = []; if(view === "find") renderFind(); });
+      .then(function(d){ PLACES = d; return loadDemo(); })
+      .catch(function(){ PLACES = PLACES || []; })
+      .then(function(){ if(view === "find") renderFind(); });
+  }
+  // 只在本機預覽時，把 places.demo.json（示意用的假資料，不上傳）依店名合併進來，方便檢查詳情頁版面
+  function loadDemo(){
+    if(!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return null;
+    return fetch("places.demo.json", {cache:"no-store"}).then(function(r){ return r.ok ? r.json() : []; }).catch(function(){ return []; }).then(function(demo){
+      demo.forEach(function(x){ (PLACES || []).forEach(function(p){ if(p.name === x.name) for(var k in x) p[k] = x[k]; }); });
+    });
   }
   function catHTML(tags){
     var big = [], used = {}, small = [];
@@ -774,7 +825,7 @@ body[data-view="find"] main{width:100%;max-width:none}
   function placeCard(p){
     var loc = [p.county, p.district].filter(Boolean).map(function(t){ return "<span>" + esc(t) + "</span>"; }).join("");
     var cat = catHTML(p.tags || []);
-    return '<article class="pcard" role="button" tabindex="0" aria-label="' + esc(cleanName(p.name)) + '，查看詳細資料">' +
+    return '<article class="pcard" role="button" tabindex="0" data-i="' + PLACES.indexOf(p) + '" aria-label="' + esc(cleanName(p.name)) + '，查看詳細資料">' +
       '<h3 class="pname">' + nameHTML(p.name) + '</h3>' +
       (loc ? '<p class="ploc">' + loc + '</p>' : '') +
       (cat ? '<p class="pcat">' + cat + '</p>' : '') +
@@ -833,9 +884,60 @@ body[data-view="find"] main{width:100%;max-width:none}
     nl.scrollTop = st;
     if(fk !== null) Array.prototype.some.call(panel.querySelectorAll("input"), function(i){ if(i.dataset.k === fk){ i.focus({ preventScroll:true }); return true; } });
   }
+  // 詳情頁：網址 #find/編號（編號＝在 places.json 裡的順序），瀏覽器返回鍵可回到清單
+  var DETAIL_ON = false, PDscroll = 0, PDpushed = false;
+  var DI = {
+    star:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8l-5.2 2.8 1-5.8L3.5 9.7l5.9-.9z"/></svg>',
+    ig:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r=".6"/></svg>',
+    spark:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>',
+    heart:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
+    clock:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
+    cal:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2.5"/><path d="M4 10h16M8 3v4M16 3v4"/></svg>',
+    pin:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>',
+    copy:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8.5" y="8.5" width="11" height="11" rx="2.5"/><path d="M15.5 8.5V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7.5a2 2 0 0 0 2 2h2.5"/></svg>'
+  };
+  function detailIndex(list){
+    var m = /^#find\/(\d+)$/.exec(location.hash || "");
+    return m && list[+m[1]] ? +m[1] : -1;
+  }
+  function dText(v){ return v ? '<p class="dtext">' + esc(v) + '</p>' : '<p class="dnone">尚未填寫</p>'; }
+  function dRow(icon, label, body, extra){
+    return '<div class="drow">' + DI[icon] + '<div><span class="dlabel">' + label + '</span>' + body + '</div>' + (extra || "") + '</div>';
+  }
+  function detailHTML(p){
+    var loc = [p.county, p.district].filter(Boolean).map(function(t){ return "<span>" + esc(t) + "</span>"; }).join("");
+    var cat = catHTML(p.tags || []);
+    var posts = (p.posts || []).filter(function(u){ return /^https:\/\//.test(u); }).slice(0, 2);
+    var src = posts.map(function(u, i){
+      return '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer" aria-label="查看原貼文' + (posts.length > 1 ? " " + (i + 1) : "") + '" title="查看原貼文">' + DI.ig + (posts.length > 1 ? "<i>" + (i + 1) + "</i>" : "") + '</a>';
+    }).join("");
+    var rate = p.rating ? DI.star + "<b>" + (+p.rating).toFixed(1) + "</b><span>Google 星數</span>" : '<span class="dnone">尚無 Google 星數</span>';
+    var picks = (p.picks || []).length ? '<div class="dchips">' + p.picks.map(function(t){ return "<span>" + esc(t) + "</span>"; }).join("") + "</div>" : '<p class="dnone">尚未填寫</p>';
+    var copy = p.address ? '<button type="button" class="dcopy" data-act="dcopy" data-v="' + esc(p.address) + '" aria-label="複製地址" title="複製地址">' + DI.copy + '</button>' : "";
+    return '<div class="dback"><button type="button" data-act="dback">‹ 返回</button></div>' +
+      '<article class="dhead"><div class="dmain"><h2 class="dname">' + esc(p.name) + '</h2>' +
+      (loc ? '<p class="dloc">' + loc + '</p>' : '') + (cat ? '<p class="dcat">' + cat + '</p>' : '') +
+      '<div class="drate">' + rate + (src ? '<span class="dsrc">' + src + '</span>' : '') + '</div></div>' +
+      '<a class="pgo" href="' + esc(mapURL(p)) + '" target="_blank" rel="noopener noreferrer" aria-label="導航到 ' + esc(cleanName(p.name)) + '（Google 地圖）" title="導航"><svg viewBox="0 0 24 24" aria-hidden="true"><path transform="translate(0 .8) rotate(45 12 11.2) scale(.92) translate(.96 .9)" d="M12 2 4.5 20.3 12 16.5l7.5 3.8z"/></svg></a></article>' +
+      '<div class="dgrid"><div class="dleft">' +
+      '<section class="dsec"><h3>' + DI.spark + '特色</h3>' + dText(p.feature) + '</section>' +
+      '<section class="dsec"><h3>' + DI.heart + '推薦餐點</h3>' + picks + '</section></div>' +
+      '<section class="dsec dinfo">' +
+      dRow("clock", "營業時間", dText(p.hours)) +
+      dRow("cal", "公休日", '<p class="dtext">' + esc(p.closed || "無") + '</p>') +
+      dRow("pin", "地址", dText(p.address), copy) + '</section></div>';
+  }
   function renderFind(){
     loadPlaces();
-    var list = PLACES || [], opts = filterOptions(list);
+    var list = PLACES || [], di = detailIndex(list);
+    $("#fwrap").hidden = $("#plist").hidden = di >= 0;
+    $("#dview").hidden = di < 0;
+    if(di >= 0){
+      DETAIL_ON = true;
+      $("#dview").innerHTML = detailHTML(list[di]);
+      return;
+    }
+    var opts = filterOptions(list);
     FA.county = FA.county.filter(function(k){ return opts.county.some(function(o){ return o.k === k; }); });
     opts = filterOptions(list);
     FA.district = FA.district.filter(function(k){ return opts.district.some(function(o){ return o.k === k; }); });
@@ -858,6 +960,7 @@ body[data-view="find"] main{width:100%;max-width:none}
     $("#pcount").textContent = "共 " + items.length + " 間" + (sel ? "　" + sel : "");
     $("#pempty").hidden = list.length > 0;
     $("#pempty").textContent = PLACES === null || list.length ? "" : "還沒有餐廳資料。";
+    if(DETAIL_ON){ DETAIL_ON = false; window.scrollTo(0, PDscroll); }
   }
 
   function render(){
@@ -1073,13 +1176,16 @@ body[data-view="find"] main{width:100%;max-width:none}
     apply(name);
   }
 
-  // 找餐廳：按「帶我去」是開 Google 地圖（連結本身處理）；按卡片其他地方是進詳細頁（還在製作中）
+  // 找餐廳：按導航圖示是開 Google 地圖（連結本身處理）；按卡片其他地方是進詳情頁
   function openPlace(e){
     if(e.target.closest(".pgo")) return;
-    if(!e.target.closest(".pcard")) return;
+    var card = e.target.closest(".pcard");
+    if(!card) return;
     if(e.type === "keydown" && e.key !== "Enter" && e.key !== " ") return;
     e.preventDefault();
-    toast("詳細頁面還在製作中");
+    FOpen = ""; PDscroll = window.scrollY; PDpushed = true;
+    location.hash = "#find/" + card.dataset.i;
+    window.scrollTo(0, 0);
   }
   document.addEventListener("click", openPlace);
   document.addEventListener("keydown", openPlace);
@@ -1106,6 +1212,15 @@ body[data-view="find"] main{width:100%;max-width:none}
       if(b.dataset.m === "all"){ FA = { county:[], district:[], type:[] }; FOpen = ""; }
       else FOpen = FOpen === b.dataset.m ? "" : b.dataset.m;
       renderFind();
+    }
+    else if(act === "dback"){
+      if(PDpushed){ PDpushed = false; history.back(); }
+      else { try{ history.replaceState(null, "", "#find"); }catch(err){} renderFind(); }
+    }
+    else if(act === "dcopy"){
+      var v = b.dataset.v;
+      if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(v).then(function(){ toast("已複製地址"); }, function(){ toast("複製失敗，請手動選取"); });
+      else toast("這個瀏覽器不能複製，請手動選取");
     }
     else if(act === "fpclear"){ FA[FOpen] = []; renderFind(); }
     else if(act === "fclose"){ FOpen = ""; renderFind(); }
@@ -1148,7 +1263,7 @@ body[data-view="find"] main{width:100%;max-width:none}
   document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeDrawer(); });
   window.addEventListener("hashchange", function(){
     var h = (location.hash || "").replace(/^#/, "");
-    if(h === "find"){ if(view !== "find"){ view = "find"; render(); } }
+    if(/^find(\/\d+)?$/.test(h)){ if(view !== "find"){ view = "find"; render(); } else renderFind(); }
     else if(h && findRest(h) && (h !== cur || view !== "review")){ cur = h; view = "review"; render(); }
   });
 
