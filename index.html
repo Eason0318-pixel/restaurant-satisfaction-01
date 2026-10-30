@@ -10,7 +10,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-192.png">
-<meta name="theme-color" content="#1f4434">
+<meta name="theme-color" content="#34325c">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="美食地圖">
@@ -21,14 +21,14 @@
 :root{
   --font-body:"Noto Serif TC","Songti TC","PMingLiU",serif;
   --font-display:"Noto Serif TC","Songti TC","PMingLiU",serif;
-  --bg:#f5f2e9; --paper:#fbf9f3; --field:#ffffff; --add-bg:#efece0;
-  --line:#d9d4c3; --ink:#2b2b2b; --muted:#6f6f60; --gold:#8f6f25; --danger:#a33;
-  --accent:#2f5d4a; --accent-deep:#1f4434; --accent-mid:#3f7360; --neutral:#8d8d7a; --hover:#eaf2ee;
-  --on-accent:#ffffff;
-  --band:#1f4434; --on-band:#ffffff; --band-sub:#cfe0d6; --band-warn:#f1c9a8;
-  --sec-head:#2f5d4a; --on-sec:#ffffff;
-  --side-bg:#fbf9f3; --side-active:#1f4434; --on-side-active:#ffffff;
-  --scrim:rgba(20,28,24,.55); --toast-bg:#2b2b2b; --toast-fg:#f5f2e9;
+  --bg:#f7efe5; --paper:#fffaf3; --field:#ffffff; --add-bg:#f4e6d6;
+  --line:#e3d3c0; --ink:#2a2940; --muted:#6b6980; --gold:#b85a14; --danger:#b3392f;
+  --accent:#34325c; --accent-deep:#26244a; --accent-mid:#4f4d82; --neutral:#8d8aa3; --hover:#ece9f5;
+  --on-accent:#fff3e6; --go:#b85a14;
+  --band:#34325c; --on-band:#fff3e6; --band-sub:#d9d5ee; --band-warn:#f5c9a0;
+  --sec-head:#34325c; --on-sec:#fff3e6;
+  --side-bg:#fffaf3; --side-active:#34325c; --on-side-active:#fff3e6;
+  --scrim:rgba(30,28,56,.55); --toast-bg:#34325c; --toast-fg:#fff3e6;
   --radius:22px;
 }
 *{box-sizing:border-box}
@@ -126,6 +126,24 @@ main{min-width:0;padding:0 0 16px}
 .xnote:hover,.xnote[data-armed]{color:var(--danger)}
 .addnote{margin-top:8px;font-family:inherit;font-size:13px;color:var(--accent);background:none;border:none;padding:4px 0;text-decoration:underline;cursor:pointer}
 .empty{margin:0;padding:18px 14px;color:var(--muted);font-size:14px;border-bottom:1px dashed var(--line)}
+/* 找餐廳：圖卡 */
+.pcount{margin:0;padding:10px 14px 0;font-size:13px;color:var(--muted)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;padding:12px 14px 16px}
+/* 每張卡佔 3 列（店名／地點／種類），用 subgrid 讓同一排的卡片上下對齊：店名 1 行的會跟著 2 行的往下移 */
+.pcard{grid-row:span 3;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:subgrid;row-gap:4px;column-gap:12px;min-width:0;
+  padding:14px 16px;background:var(--field);border:1px solid var(--line);border-radius:var(--radius);color:var(--ink);cursor:pointer;
+  transition:border-color .15s,box-shadow .15s,transform .15s}
+.pcard:hover{border-color:var(--accent-mid);box-shadow:0 4px 14px rgba(0,0,0,.08);transform:translateY(-1px)}
+.pname{grid-column:1;grid-row:1;margin:0;font-size:17px;font-weight:700;line-height:1.35;text-wrap:balance;overflow-wrap:anywhere}
+.pname .w{white-space:nowrap}
+.ploc{grid-column:1;grid-row:2;margin:0;font-size:14px;color:var(--accent)}
+.pcat{grid-column:1;grid-row:3;margin:0;font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.pcat b{color:var(--ink);font-weight:600}
+.ploc span+span,.pcat span+span{margin-left:.9em}
+.pgo{grid-column:2;grid-row:1 / 4;align-self:center;display:flex;align-items:center;justify-content:center;width:66px;aspect-ratio:1;border-radius:14px;
+  background:var(--go);color:#fff;font-size:14px;font-weight:700;letter-spacing:.04em;text-decoration:none;white-space:nowrap}
+.pgo:hover{filter:brightness(1.1)}
+.pgo:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .add{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px;background:var(--add-bg);border-bottom:1px solid var(--line)}
 .sugg{flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
 .sugg button{font-family:inherit;font-size:13px;min-height:34px;padding:0 14px;border-radius:999px;border:1px solid var(--accent-mid);background:var(--field);color:var(--ink);cursor:pointer}
@@ -272,7 +290,11 @@ body[data-view="find"] main{width:100%;max-width:720px;margin:0 auto}
   <main>
     <section class="section" id="findView" hidden>
       <div class="section-head"><h2>找餐廳</h2></div>
-      <div class="card-list"><p class="empty">規劃中，敬請期待。</p></div>
+      <div class="card-list">
+        <p class="pcount" id="pcount" hidden></p>
+        <p class="empty" id="pempty" hidden></p>
+        <div class="pgrid" id="pgrid"></div>
+      </div>
     </section>
 
     <section class="section" id="reviewView">
@@ -338,6 +360,20 @@ body[data-view="find"] main{width:100%;max-width:720px;margin:0 auto}
   //   fontUrl 可填 Google Fonts 的網址。餐廳改名後要同步改這裡的 key。
   //   例：  "屋馬燒肉": { vars:{ "--accent":"#8b1e1e", "--band":"#2b0f0f" }, css:"", fontUrl:"" }
   var THEMES = {
+    // 茶六：深綠＋奶油色（原本的預設風格；預設改成 Logo 配色後，茶六改由這裡維持原樣）
+    "茶六": {
+      fontUrl: "",
+      vars: {
+        "--bg":"#f5f2e9", "--paper":"#fbf9f3", "--field":"#ffffff", "--add-bg":"#efece0",
+        "--line":"#d9d4c3", "--ink":"#2b2b2b", "--muted":"#6f6f60", "--gold":"#8f6f25", "--danger":"#a33",
+        "--accent":"#2f5d4a", "--accent-deep":"#1f4434", "--accent-mid":"#3f7360", "--neutral":"#8d8d7a", "--hover":"#eaf2ee",
+        "--on-accent":"#ffffff",
+        "--band":"#1f4434", "--on-band":"#ffffff", "--band-sub":"#cfe0d6", "--band-warn":"#f1c9a8",
+        "--sec-head":"#2f5d4a", "--on-sec":"#ffffff",
+        "--side-bg":"#fbf9f3", "--side-active":"#1f4434", "--on-side-active":"#ffffff",
+        "--scrim":"rgba(20,28,24,.55)", "--toast-bg":"#2b2b2b", "--toast-fg":"#f5f2e9"
+      }
+    },
     // 大師兄銷魂麵鋪：奶白紙面、酒紅玫瑰色、細明體、細線框標題、點線分隔（取自該店菜單）
     "大師兄": {
       fontUrl: "",
@@ -633,6 +669,68 @@ body[data-view="find"] main{width:100%;max-width:720px;margin:0 auto}
   window.addEventListener("resize", fitTitle);
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitle);
 
+  /* 找餐廳：資料來自 places.json（目前是從 Notion 匯出的預覽資料，缺的欄位先留空） */
+  var PLACES = null;
+  var BROAD = [["中式","中式料理"],["日式","日式"],["韓式","韓式料理"],["泰式","泰式","泰式料理"],["義式","義式料理"]];
+  function loadPlaces(){
+    if(PLACES !== null) return;
+    PLACES = [];
+    fetch("places.json", {cache:"no-store"}).then(function(r){ if(!r.ok) throw 0; return r.json(); })
+      .then(function(d){ PLACES = d; if(view === "find") renderFind(); })
+      .catch(function(){ PLACES = []; if(view === "find") renderFind(); });
+  }
+  function catHTML(tags){
+    var big = [], used = {}, small = [];
+    BROAD.forEach(function(b){
+      for(var i = 1; i < b.length; i++){
+        used[b[i]] = 1;
+        if(tags.indexOf(b[i]) >= 0 && big.indexOf(b[0]) < 0) big.push(b[0]);
+      }
+    });
+    tags.forEach(function(t){ if(!used[t] && small.indexOf(t) < 0) small.push(t); });
+    var parts = big.map(function(t){ return "<span><b>" + esc(t) + "</b></span>"; }).concat(small.map(function(t){ return "<span>" + esc(t) + "</span>"; }));
+    return parts.join("");
+  }
+  // 卡片上只留店名本體：拿掉「○○店／○○門市／○○支店」這類分店字尾（「專門店、專賣店」是店名的一部分，保留）
+  function cleanName(n){
+    var s = String(n).trim();
+    s = s.replace(/[\s\-－]*[（(][^（()）]{1,8}(?:店|門市)[）)]\s*$/, "");
+    s = s.replace(/[\s\-－]+(?!.*[\s\-－])[^\s\-－（()）]{1,8}(?:店|門市)$/, function(m){ return /(專門店|專賣店)$/.test(m) ? m : ""; });
+    return s.trim() || String(n).trim();
+  }
+  // 智慧斷行：優先在空白處換行，每一段不拆開；太長的中文再用斷詞（Intl.Segmenter）找斷點
+  var SEG = (typeof Intl !== "undefined" && Intl.Segmenter) ? new Intl.Segmenter("zh-Hant", {granularity:"word"}) : null;
+  function nameHTML(n){
+    return cleanName(n).split(/\s+/).map(function(chunk){
+      if(SEG && /[一-鿿]{9,}/.test(chunk)){
+        var out = "";
+        Array.from(SEG.segment(chunk)).forEach(function(s){ out += '<span class="w">' + esc(s.segment) + "</span>"; });
+        return out;
+      }
+      return '<span class="w">' + esc(chunk) + "</span>";
+    }).join(" ");
+  }
+  function mapURL(p){
+    return p.map || "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent([p.county, p.district, cleanName(p.name)].filter(Boolean).join(" "));
+  }
+  function renderFind(){
+    loadPlaces();
+    var list = PLACES || [];
+    $("#pgrid").innerHTML = list.map(function(p){
+      var loc = [p.county, p.district].filter(Boolean).map(function(t){ return "<span>" + esc(t) + "</span>"; }).join("");
+      var cat = catHTML(p.tags || []);
+      return '<article class="pcard" role="button" tabindex="0" aria-label="' + esc(cleanName(p.name)) + '，查看詳細資料">' +
+        '<h3 class="pname">' + nameHTML(p.name) + '</h3>' +
+        (loc ? '<p class="ploc">' + loc + '</p>' : '') +
+        (cat ? '<p class="pcat">' + cat + '</p>' : '') +
+        '<a class="pgo" href="' + esc(mapURL(p)) + '" target="_blank" rel="noopener noreferrer" aria-label="帶我去 ' + esc(cleanName(p.name)) + '（Google 地圖）">帶我去</a></article>';
+    }).join("");
+    $("#pcount").hidden = !list.length;
+    $("#pcount").textContent = "共 " + list.length + " 間";
+    $("#pempty").hidden = list.length > 0;
+    $("#pempty").textContent = PLACES === null || list.length ? "" : "還沒有餐廳資料。";
+  }
+
   function render(){
     if(!findRest(cur)) pickCurrent();
     $("#rests").innerHTML = S.restaurants.map(function(r){
@@ -652,6 +750,7 @@ body[data-view="find"] main{width:100%;max-width:720px;margin:0 auto}
       applyTheme(null);
       setTitle("找餐廳");
       document.title = "美食地圖";
+      renderFind();
       return;
     }
     setTitle(rest ? rest.name : "");
@@ -844,6 +943,17 @@ body[data-view="find"] main{width:100%;max-width:720px;margin:0 auto}
     if(BAD[name]){ toast("這個名字不能用，請換一個"); return; }
     apply(name);
   }
+
+  // 找餐廳：按「帶我去」是開 Google 地圖（連結本身處理）；按卡片其他地方是進詳細頁（還在製作中）
+  function openPlace(e){
+    if(e.target.closest(".pgo")) return;
+    if(!e.target.closest(".pcard")) return;
+    if(e.type === "keydown" && e.key !== "Enter" && e.key !== " ") return;
+    e.preventDefault();
+    toast("詳細頁面還在製作中");
+  }
+  document.addEventListener("click", openPlace);
+  document.addEventListener("keydown", openPlace);
 
   document.addEventListener("click", function(e){
     var b = e.target.closest("button");

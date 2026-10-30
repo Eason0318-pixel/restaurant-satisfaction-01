@@ -7,7 +7,7 @@
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#34325c",
-  "theme_color": "#1f4434",
+  "theme_color": "#34325c",
   "lang": "zh-Hant",
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },

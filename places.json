@@ -1,0 +1,1119 @@
+[
+ {
+  "name": "夜寐拉麵",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "拉麵",
+   "宵夜"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E4%B8%AD%E8%A5%BF%E5%8D%80%20%E8%87%BA%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E8%97%A5%E7%8E%8B%E9%87%8C%E6%B0%91%E6%AC%8A%E8%B7%AF%E4%B8%89%E6%AE%B5126%E8%99%9F"
+ },
+ {
+  "name": "月島文字燒 明誠店",
+  "county": "高雄",
+  "district": "左營區",
+  "tags": [
+   "日式"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%20%E5%B7%A6%E7%87%9F%E5%8D%80%20%E9%AB%98%E9%9B%84%E5%B8%82%E5%B7%A6%E7%87%9F%E5%8D%80%E6%98%8E%E8%AA%A0%E4%BA%8C%E8%B7%AF364%E8%99%9F"
+ },
+ {
+  "name": "御私藏 新竹巨城門市",
+  "county": "新竹市",
+  "district": "東區",
+  "tags": [
+   "手搖"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E6%96%B0%E7%AB%B9%E5%B8%82%20%E6%9D%B1%E5%8D%80%20%E6%96%B0%E7%AB%B9%E5%B7%A8%E5%9F%8E4%E6%A8%93%20%E9%BB%9E%E9%BB%9E%E5%BF%83%E6%97%81"
+ },
+ {
+  "name": "本家長壽村",
+  "county": "台北",
+  "district": "大安區",
+  "tags": [
+   "韓式料理",
+   "火鍋",
+   "炸雞"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8C%97%20%E5%A4%A7%E5%AE%89%E5%8D%80%20%E8%87%BA%E5%8C%97%E5%B8%82%E5%A4%A7%E5%AE%89%E5%8D%80%E6%95%A6%E7%85%8C%E9%87%8C%E4%BB%81%E6%84%9B%E8%B7%AF%E5%9B%9B%E6%AE%B5266%E5%B7%B78%E5%BC%842%E8%99%9F"
+ },
+ {
+  "name": "典華雅聚 士林店",
+  "county": "台北",
+  "district": "士林區",
+  "tags": [
+   "中式料理"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8C%97%20%E5%A3%AB%E6%9E%97%E5%8D%80%20%E5%8F%B0%E5%8C%97%E5%B8%82%E5%A3%AB%E6%9E%97%E5%8D%80%E7%A6%8F%E8%8F%AF%E8%B7%AF114%E8%99%9F"
+ },
+ {
+  "name": "鳥居炭火燒鳥-文龍店",
+  "county": "高雄",
+  "district": "鳳山區",
+  "tags": [
+   "串燒",
+   "丼飯",
+   "居酒屋",
+   "日式"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%20%E9%B3%B3%E5%B1%B1%E5%8D%80%20%E9%AB%98%E9%9B%84%E5%B8%82%E9%B3%B3%E5%B1%B1%E5%8D%80%E6%96%87%E9%BE%8D%E8%B7%AF77%E8%99%9F"
+ },
+ {
+  "name": "萩椛牛かつ專門店(安平店)",
+  "county": "台南",
+  "district": "",
+  "tags": [
+   "牛排",
+   "壽喜燒",
+   "日式"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%20%E8%90%A9%E6%A4%9B%E7%89%9B%E3%81%8B%E3%81%A4%E5%B0%88%E9%96%80%E5%BA%97%28%E5%AE%89%E5%B9%B3%E5%BA%97%29"
+ },
+ {
+  "name": "菊花盛開麻辣老火鍋 高雄義享店",
+  "county": "高雄",
+  "district": "鼓山區",
+  "tags": [
+   "火鍋",
+   "麻辣鍋",
+   "四川麻辣"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%20%E9%BC%93%E5%B1%B1%E5%8D%80%20%E9%AB%98%E9%9B%84%E5%B8%82%E9%BC%93%E5%B1%B1%E5%8D%80%E9%BE%8D%E5%AD%90%E9%87%8C%E5%A4%A7%E9%A0%86%E4%B8%80%E8%B7%AF115%E8%99%9F7%E6%A8%93"
+ },
+ {
+  "name": "麓 餐館 Lù Trattoria",
+  "county": "宜蘭縣",
+  "district": "冬山鄉",
+  "tags": [
+   "義式料理"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%AE%9C%E8%98%AD%E7%B8%A3%20%E5%86%AC%E5%B1%B1%E9%84%89%20%E5%AE%9C%E8%98%AD%E7%B8%A3%E5%86%AC%E5%B1%B1%E9%84%89%E9%A0%86%E5%AE%89%E6%9D%91%E9%A0%86%E5%AE%89%E8%B7%AF26%E8%99%9F"
+ },
+ {
+  "name": "三角麻辣鍋",
+  "county": "台南",
+  "district": "東區",
+  "tags": [
+   "火鍋",
+   "麻辣鍋"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E6%9D%B1%E5%8D%80%20%E5%8F%B0%E5%8D%97%E5%B8%82%E6%9D%B1%E5%8D%80%E8%A3%95%E8%BE%B2%E8%B7%AF703%E8%99%9F"
+ },
+ {
+  "name": "一個圓鍋",
+  "county": "台南",
+  "district": "北區",
+  "tags": [
+   "火鍋",
+   "和牛"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E5%8C%97%E5%8D%80%20%E8%87%BA%E5%8D%97%E5%B8%82%E5%8C%97%E5%8D%80%E6%96%87%E6%88%90%E4%B8%89%E8%B7%AF173%E8%99%9F"
+ },
+ {
+  "name": "玉兔壽喜燒",
+  "county": "台南",
+  "district": "",
+  "tags": [
+   "壽喜燒",
+   "火鍋"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%20%E7%8E%89%E5%85%94%E5%A3%BD%E5%96%9C%E7%87%92"
+ },
+ {
+  "name": "音樂盒法式鄉村餐廳",
+  "county": "高雄",
+  "district": "鼓山區",
+  "tags": [
+   "牛排"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%20%E9%BC%93%E5%B1%B1%E5%8D%80%20%E9%AB%98%E9%9B%84%E5%B8%82%E9%BC%93%E5%B1%B1%E5%8D%80%E6%98%8E%E5%80%AB%E8%B7%AF%20112%20%E8%99%9F"
+ },
+ {
+  "name": "一樂涼麵",
+  "county": "台北",
+  "district": "中正區",
+  "tags": [
+   "生魚片",
+   "宵夜",
+   "中式麵類"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8C%97%20%E4%B8%AD%E6%AD%A3%E5%8D%80%20%E4%B8%80%E6%A8%82%E6%B6%BC%E9%BA%B5"
+ },
+ {
+  "name": "So Taipei 趖",
+  "county": "台北",
+  "district": "信義區",
+  "tags": [
+   "餐酒館",
+   "宵夜"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8C%97%20%E4%BF%A1%E7%BE%A9%E5%8D%80%20%E5%8F%B0%E5%8C%97%E5%B8%82%E4%BF%A1%E7%BE%A9%E5%8D%80%E6%99%AF%E8%81%AF%E9%87%8C%E5%9F%BA%E9%9A%86%E8%B7%AF%E4%BA%8C%E6%AE%B571%E8%99%9F"
+ },
+ {
+  "name": "韓泰太 國平店",
+  "county": "台南",
+  "district": "安平區",
+  "tags": [
+   "泰式料理",
+   "韓式料理"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E5%AE%89%E5%B9%B3%E5%8D%80%20%E5%8F%B0%E5%8D%97%E5%B8%82%E5%AE%89%E5%B9%B3%E5%8D%80%E5%9C%8B%E5%B9%B3%E8%B7%AF186%E8%99%9F"
+ },
+ {
+  "name": "放下麵子(台南勝利店)",
+  "county": "台南",
+  "district": "東區",
+  "tags": [
+   "拌面",
+   "中式料理",
+   "中式麵類"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E6%9D%B1%E5%8D%80%20%E5%8F%B0%E5%8D%97%E5%B8%82%E6%9D%B1%E5%8D%80%E5%8B%9D%E5%88%A9%E8%B7%AF38%E8%99%9F"
+ },
+ {
+  "name": "禾島He Dao",
+  "county": "台南",
+  "district": "東區",
+  "tags": [
+   "義式料理"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E6%9D%B1%E5%8D%80%20%E8%87%BA%E5%8D%97%E5%B8%82%E6%9D%B1%E5%8D%80%E5%B4%87%E5%96%84%E8%B7%AF205%E5%B7%B75%E8%99%9F"
+ },
+ {
+  "name": "丼煲處",
+  "county": "台南",
+  "district": "東區",
+  "tags": [
+   "丼飯",
+   "日式"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E6%9D%B1%E5%8D%80%20%E5%8F%B0%E5%8D%97%E6%9D%B1%E5%8D%80%E6%9D%B1%E9%96%80%E8%B7%AF%E4%BA%8C%E6%AE%B5129%E8%99%9F"
+ },
+ {
+  "name": "食悅 うどん天ぷら",
+  "county": "台北",
+  "district": "中山區",
+  "tags": [
+   "烏龍麵"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8C%97%20%E4%B8%AD%E5%B1%B1%E5%8D%80%20%E8%87%BA%E5%8C%97%E5%B8%82%E4%B8%AD%E5%B1%B1%E5%8D%80%E6%AD%A3%E5%BE%B7%E9%87%8C%E4%B8%AD%E5%B1%B1%E5%8C%97%E8%B7%AF%E4%B8%80%E6%AE%B583%E5%B7%B740%E8%99%9F"
+ },
+ {
+  "name": "NAGOYAナゴヤ 道地日式蛋包飯",
+  "county": "台北",
+  "district": "松山區",
+  "tags": [
+   "歐姆蛋包飯"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8C%97%20%E6%9D%BE%E5%B1%B1%E5%8D%80%20%E5%8F%B0%E5%8C%97%E5%B8%82%E6%9D%BE%E5%B1%B1%E5%8D%80%E5%8D%97%E4%BA%AC%E6%9D%B1%E8%B7%AF%E4%BA%94%E6%AE%B523%E5%B7%B76%E5%BC%848%E8%99%9F"
+ },
+ {
+  "name": "貴方牛鳴",
+  "county": "高雄",
+  "district": "三民區",
+  "tags": [
+   "牛肉麵"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%20%E4%B8%89%E6%B0%91%E5%8D%80%20%E9%AB%98%E9%9B%84%E5%B8%82%E4%B8%89%E6%B0%91%E5%8D%80%E6%BE%84%E6%B8%85%E8%B7%AF449%E8%99%9F"
+ },
+ {
+  "name": "吳媽早午餐",
+  "county": "高雄",
+  "district": "新興區",
+  "tags": [
+   "早午餐"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%20%E6%96%B0%E8%88%88%E5%8D%80%20%E9%AB%98%E9%9B%84%E5%B8%82%E6%96%B0%E8%88%88%E5%8D%80%E5%A4%A7%E6%98%8E%E9%87%8C%E8%87%AA%E7%AB%8B%E6%A9%AB%E8%B7%AF27%E8%99%9F"
+ },
+ {
+  "name": "水勿一日",
+  "county": "台南",
+  "district": "永康區",
+  "tags": [
+   "火鍋"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E6%B0%B8%E5%BA%B7%E5%8D%80%20%E5%8F%B0%E5%8D%97%E5%B8%82%E6%B0%B8%E5%BA%B7%E5%8D%80%E4%B8%AD%E8%8F%AF%E8%B7%AF484%E8%99%9F"
+ },
+ {
+  "name": "MIGU麵龜 手作麵疙瘩",
+  "county": "新北市",
+  "district": "永和區",
+  "tags": [
+   "麵疙瘩"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E6%96%B0%E5%8C%97%E5%B8%82%20%E6%B0%B8%E5%92%8C%E5%8D%80%20MIGU%E9%BA%B5%E9%BE%9C%20%E6%89%8B%E4%BD%9C%E9%BA%B5%E7%96%99%E7%98%A9"
+ },
+ {
+  "name": "真涮吃到飽火鍋",
+  "county": "新竹縣",
+  "district": "竹北市",
+  "tags": [
+   "火鍋"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E6%96%B0%E7%AB%B9%E7%B8%A3%20%E7%AB%B9%E5%8C%97%E5%B8%82%20%E7%9C%9F%E6%B6%AE%E5%90%83%E5%88%B0%E9%A3%BD%E7%81%AB%E9%8D%8B"
+ },
+ {
+  "name": "咖哩厚台灣茶咖哩 中清支店",
+  "county": "台中",
+  "district": "北屯區",
+  "tags": [
+   "咖哩"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E4%B8%AD%20%E5%8C%97%E5%B1%AF%E5%8D%80%20%E5%92%96%E5%93%A9%E5%8E%9A%E5%8F%B0%E7%81%A3%E8%8C%B6%E5%92%96%E5%93%A9%20%E4%B8%AD%E6%B8%85%E6%94%AF%E5%BA%97"
+ },
+ {
+  "name": "KAKU Curry",
+  "county": "高雄",
+  "district": "新興區",
+  "tags": [
+   "咖哩"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E6%96%B0%E8%88%88%E5%8D%80%E6%B4%9B%E9%99%BD%E8%A1%9727%E8%99%9F1F"
+ },
+ {
+  "name": "予鹿香茅",
+  "county": "台南",
+  "district": "北區",
+  "tags": [
+   "泰式料理"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E5%8C%97%E5%8D%80%E8%87%A8%E5%AE%89%E8%B7%AF%E4%BA%8C%E6%AE%B598%E8%99%9F"
+ },
+ {
+  "name": "義點點 a little pasta",
+  "county": "高雄",
+  "district": "苓雅區",
+  "tags": [
+   "義式料理"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E8%8B%93%E9%9B%85%E5%8D%80%E8%87%AA%E5%BC%B7%E4%B8%89%E8%B7%AF125%E8%99%9F"
+ },
+ {
+  "name": "熬匠 咖喱專門",
+  "county": "台中",
+  "district": "東區",
+  "tags": [
+   "咖喱",
+   "烤餅"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E4%B8%AD%E5%B8%82%E6%9D%B1%E5%8D%80%E5%A4%A7%E5%8B%87%E8%A1%9727%E8%99%9F"
+ },
+ {
+  "name": "MOOKU",
+  "county": "台北",
+  "district": "中山區",
+  "tags": [
+   "日式",
+   "咖哩"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E5%8C%97%E5%B8%82%E4%B8%AD%E5%B1%B1%E5%8D%80%E6%9E%97%E6%A3%AE%E5%8C%97%E8%B7%AF85%E5%B7%B711%E8%99%9F1%E6%A8%93"
+ },
+ {
+  "name": "泡泡Spumoni",
+  "county": "台北",
+  "district": "大安區",
+  "tags": [
+   "餐酒館",
+   "義式料理"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8C%97%E5%B8%82%E5%A4%A7%E5%AE%89%E5%8D%80%E5%AE%89%E5%92%8C%E8%B7%AF%E4%BA%8C%E6%AE%B571%E5%B7%B77%E8%99%9F"
+ },
+ {
+  "name": "宵夜牛肉麵大王 大安店",
+  "county": "台北",
+  "district": "大安區",
+  "tags": [
+   "牛肉麵",
+   "宵夜"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E5%8C%97%E5%B8%82%E5%A4%A7%E5%AE%89%E5%8D%80%E5%85%89%E6%AD%A6%E9%87%8C%E5%A4%A7%E5%AE%89%E8%B7%AF%E4%B8%80%E6%AE%B552%E5%B7%B77%E8%99%9F"
+ },
+ {
+  "name": "伍貳燒肉",
+  "county": "台南",
+  "district": "南區",
+  "tags": [
+   "燒肉",
+   "宵夜"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E5%8D%97%E5%8D%80%E5%A4%A7%E6%88%90%E8%B7%AF%E4%B8%80%E6%AE%B5136%E8%99%9F"
+ },
+ {
+  "name": "Pasta Notte夜義",
+  "county": "台北",
+  "district": "中正區",
+  "tags": [
+   "義式料理",
+   "餐酒館",
+   "宵夜"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E5%8C%97%E5%B8%82%E4%B8%AD%E6%AD%A3%E5%8D%80%E9%BB%8E%E6%98%8E%E9%87%8C%E6%87%B7%E5%AF%A7%E8%A1%97100%E8%99%9F"
+ },
+ {
+  "name": "伍拾葉麵所",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "牛肉麵",
+   "拌面"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E8%A5%BF%E9%96%80%E8%B7%AF%E4%BA%8C%E6%AE%B5370%E8%99%9F"
+ },
+ {
+  "name": "橋山.鵲邸壽喜燒",
+  "county": "台南",
+  "district": "南區",
+  "tags": [
+   "壽喜燒",
+   "和牛"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E5%8D%97%E5%8D%80%20%E6%A9%8B%E5%B1%B1.%E9%B5%B2%E9%82%B8%E5%A3%BD%E5%96%9C%E7%87%92"
+ },
+ {
+  "name": "熊吉咖啡所",
+  "county": "台南",
+  "district": "南區",
+  "tags": [
+   "手搖"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E5%8D%97%E5%8D%80%E9%87%91%E8%8F%AF%E8%B7%AF%E4%BA%8C%E6%AE%B533%E5%B7%B71%E8%99%9F"
+ },
+ {
+  "name": "餃津 JiauJin 煎餃專賣店",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "水餃",
+   "煎餃"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E4%BA%94%E5%A6%83%E8%A1%97308%E8%99%9F"
+ },
+ {
+  "name": "小酌 FEWdrink",
+  "county": "高雄",
+  "district": "苓雅區",
+  "tags": [
+   "餐酒館",
+   "宵夜"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E8%8B%93%E9%9B%85%E5%8D%80%E6%96%87%E6%AD%A6%E4%B8%89%E8%A1%9756%E8%99%9F"
+ },
+ {
+  "name": "澪三酒食",
+  "county": "台南",
+  "district": "東區",
+  "tags": [
+   "串燒",
+   "烏龍麵",
+   "炒飯",
+   "壽司",
+   "生魚片",
+   "宵夜",
+   "居酒屋"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E6%9D%B1%E5%8D%80%E5%B4%87%E6%98%8E%E8%B7%AF115%E8%99%9F"
+ },
+ {
+  "name": "OAKLA & BARK 美式 Barbecue",
+  "county": "台南",
+  "district": "歸仁區",
+  "tags": [
+   "燒肉",
+   "牛肉料理"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E6%AD%B8%E4%BB%81%E5%8D%80%E5%8D%97%E8%88%88%E9%87%8C%E6%96%87%E5%8C%96%E8%A1%97%E4%B8%89%E6%AE%B5339%E8%99%9F"
+ },
+ {
+  "name": "初棧燒鍋",
+  "county": "高雄",
+  "district": "楠梓區",
+  "tags": [
+   "火鍋",
+   "壽喜燒"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E6%A5%A0%E6%A2%93%E5%8D%80%E5%BB%BA%E6%98%8C%E9%87%8C%E5%BE%8C%E6%98%8C%E8%B7%AF1035%E8%99%9F"
+ },
+ {
+  "name": "伙鍋HuoKuo",
+  "county": "高雄",
+  "district": "三民區",
+  "tags": [
+   "火鍋"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E4%B8%89%E6%B0%91%E5%8D%80%E9%BC%8E%E5%B1%B1%E8%A1%97676%E8%99%9F"
+ },
+ {
+  "name": "嘉丼本",
+  "county": "高雄",
+  "district": "小港區",
+  "tags": [
+   "丼飯",
+   "炸雞",
+   "生魚片"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%20%E5%B0%8F%E6%B8%AF%E5%8D%80%20%E5%98%89%E4%B8%BC%E6%9C%AC"
+ },
+ {
+  "name": "食扒穗炒泡麵",
+  "county": "高雄",
+  "district": "三民區",
+  "tags": [
+   "炒泡麵",
+   "麻辣燙"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E4%B8%89%E6%B0%91%E5%8D%80%E7%BE%A9%E8%8F%AF%E8%B7%AF432"
+ },
+ {
+  "name": "Newly",
+  "county": "高雄",
+  "district": "新興區",
+  "tags": [
+   "義式料理",
+   "餐酒館"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E6%96%B0%E8%88%88%E5%8D%80%E4%B8%AD%E6%AD%A3%E4%B8%89%E8%B7%AF117%E8%99%9F"
+ },
+ {
+  "name": "獨食壽喜燒",
+  "county": "高雄",
+  "district": "左營區",
+  "tags": [
+   "壽喜燒",
+   "和牛",
+   "宵夜"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E5%B7%A6%E7%87%9F%E5%8D%80%E6%98%8E%E8%AA%A0%E4%BA%8C%E8%B7%AF475%E8%99%9F"
+ },
+ {
+  "name": "溫咖裏 Wunkalee",
+  "county": "高雄",
+  "district": "鹽埕區",
+  "tags": [
+   "咖喱"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E9%B9%BD%E5%9F%95%E5%8D%80%E5%A0%80%E6%B1%9F%E8%A1%9711-2%E8%99%9F"
+ },
+ {
+  "name": "愛吃男子",
+  "county": "台中",
+  "district": "南區",
+  "tags": [
+   "咖哩"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E4%B8%AD%E5%B8%82%E5%8D%97%E5%8D%80%E6%B0%B8%E8%88%88%E9%87%8C%E9%AB%98%E5%B7%A5%E8%B7%AF150%E8%99%9F"
+ },
+ {
+  "name": "蝸居咖啡",
+  "county": "高雄",
+  "district": "鼓山區",
+  "tags": [
+   "歐姆蛋包飯"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E9%BC%93%E5%B1%B1%E5%8D%80%E8%A3%95%E8%AA%A0%E8%B7%AF1035%E8%99%9F%E4%B8%80%E6%A8%93"
+ },
+ {
+  "name": "義客隆Pasta",
+  "county": "高雄",
+  "district": "新興區",
+  "tags": [
+   "義式料理",
+   "牛排"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E6%96%B0%E8%88%88%E5%8D%80%E5%BF%A0%E5%AD%9D%E4%B8%80%E8%B7%AF22%E8%99%9F"
+ },
+ {
+  "name": "賀町壽喜",
+  "county": "高雄",
+  "district": "新興區",
+  "tags": [
+   "壽喜燒",
+   "火鍋"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E6%96%B0%E8%88%88%E5%8D%80%E6%96%87%E6%A9%AB%E4%BA%8C%E8%B7%AF127%E5%B7%B76%E8%99%9F"
+ },
+ {
+  "name": "樂義坊",
+  "county": "高雄",
+  "district": "左營區",
+  "tags": [
+   "義式料理"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E5%B7%A6%E7%87%9F%E5%8D%80%E6%96%B0%E6%A6%AE%E8%A1%9737%E8%99%9F1%E6%A8%93"
+ },
+ {
+  "name": "億豪牛肉麵",
+  "county": "高雄",
+  "district": "鳳山區",
+  "tags": [
+   "牛肉麵",
+   "炒飯",
+   "肉燥飯"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E9%B3%B3%E5%B1%B1%E5%8D%80%E4%B8%AD%E5%B1%B1%E8%A5%BF%E8%B7%AF98%E8%99%9F"
+ },
+ {
+  "name": "Reale",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "義式料理",
+   "牛排"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E8%A5%BF%E9%96%80%E8%B7%AF%E4%B8%80%E6%AE%B5658%E8%99%9F6%E6%A8%93"
+ },
+ {
+  "name": "UNCLE SHAWN 燒肉餐酒館 高雄店",
+  "county": "高雄",
+  "district": "左營區",
+  "tags": [
+   "燒肉",
+   "餐酒館",
+   "和牛",
+   "牛舌",
+   "丼飯"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=813%E9%AB%98%E9%9B%84%E5%B8%82%E5%B7%A6%E7%87%9F%E5%8D%80%E6%98%8E%E8%AA%A0%E4%BA%8C%E8%B7%AF316%E8%99%9F2%E6%A8%93"
+ },
+ {
+  "name": "麵屋田介",
+  "county": "高雄",
+  "district": "三民區",
+  "tags": [
+   "拉麵",
+   "丼飯"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E4%B8%89%E6%B0%91%E5%8D%80%E5%BB%BA%E5%9C%8B%E4%B8%89%E8%B7%AF46%E5%B7%B717%E4%B9%8B4%E8%99%9F"
+ },
+ {
+  "name": "日乃屋咖哩",
+  "county": "高雄",
+  "district": "左營區",
+  "tags": [
+   "咖哩",
+   "日式咖喱"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%20%E5%B7%A6%E7%87%9F%E5%8D%80%20%E6%97%A5%E4%B9%83%E5%B1%8B%E5%92%96%E5%93%A9"
+ },
+ {
+  "name": "日乃屋咖哩",
+  "county": "台中",
+  "district": "北屯區",
+  "tags": [
+   "咖哩",
+   "日式咖喱"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E4%B8%AD%E5%B8%82%E5%8C%97%E5%B1%AF%E5%8D%80%E5%B4%87%E5%BE%B7%E8%B7%AF%E4%B8%89%E6%AE%B5865%E8%99%9FB1"
+ },
+ {
+  "name": "叁庚半正宗重慶老火鍋",
+  "county": "高雄",
+  "district": "三民區",
+  "tags": [
+   "火鍋",
+   "四川麻辣",
+   "麻辣鍋"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E4%B8%89%E6%B0%91%E5%8D%80%E6%9C%AC%E6%8F%9A%E9%87%8C%E6%BE%84%E6%B8%85%E8%B7%AF760%E8%99%9F"
+ },
+ {
+  "name": "Lisa小館",
+  "county": "高雄",
+  "district": "仁武區",
+  "tags": [
+   "義式料理",
+   "焗烤"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E4%BB%81%E6%AD%A6%E5%8D%80%E6%B0%B8%E4%BB%81%E8%A1%97400%E8%99%9F"
+ },
+ {
+  "name": "炎上燒物製所",
+  "county": "高雄",
+  "district": "新興區",
+  "tags": [
+   "串燒",
+   "烏龍麵",
+   "宵夜",
+   "甜點"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E6%96%B0%E8%88%88%E5%8D%80%E4%BA%94%E7%A6%8F%E4%BA%8C%E8%B7%AF59-1%E8%99%9F"
+ },
+ {
+  "name": "Hello Lily",
+  "county": "高雄",
+  "district": "新興區",
+  "tags": [
+   "義式料理"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E6%96%B0%E8%88%88%E5%8D%80%E6%B0%91%E4%BA%AB%E8%A1%97166%E8%99%9F"
+ },
+ {
+  "name": "大港參貳牛排館 （鼎山店）",
+  "county": "高雄",
+  "district": "三民區",
+  "tags": [
+   "牛排",
+   "宵夜"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E4%B8%89%E6%B0%91%E5%8D%80%E9%BC%8E%E5%B1%B1%E8%A1%97494%E8%99%9F"
+ },
+ {
+  "name": "食事処桜亭",
+  "county": "高雄",
+  "district": "鳳山區",
+  "tags": [
+   "拉麵"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E9%B3%B3%E5%B1%B1%E5%8D%80%E9%8E%AE%E6%9D%B1%E8%A1%97109%E8%99%9F"
+ },
+ {
+  "name": "Deli Cheese",
+  "county": "高雄",
+  "district": "三民區",
+  "tags": [
+   "焗烤",
+   "義式料理",
+   "烤餅",
+   "宵夜"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E4%B8%89%E6%B0%91%E5%8D%80%E5%AF%B6%E7%8E%89%E9%87%8C%E5%A4%A7%E6%98%8C%E4%BA%8C%E8%B7%AF374%E8%99%9F"
+ },
+ {
+  "name": "邦拿 咖啡專門店",
+  "county": "台南",
+  "district": "南區",
+  "tags": [
+   "咖哩"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E5%8D%97%E5%8D%80%20%E9%82%A6%E6%8B%BF%20%E5%92%96%E5%95%A1%E5%B0%88%E9%96%80%E5%BA%97"
+ },
+ {
+  "name": "咕嚕咕嚕家",
+  "county": "高雄",
+  "district": "左營區",
+  "tags": [
+   "咖喱"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E9%B3%B3%E5%B1%B1%E5%8D%80%E4%BA%94%E7%94%B2%E4%BA%8C%E8%B7%AF468%E8%99%9F"
+ },
+ {
+  "name": "曼菲斯牛排",
+  "county": "高雄",
+  "district": "楠梓區",
+  "tags": [
+   "牛排"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E6%A5%A0%E6%A2%93%E5%8D%80%E6%9C%9D%E6%98%8E%E8%B7%AF54%E8%99%9F"
+ },
+ {
+  "name": "落日雜貨店",
+  "county": "高雄",
+  "district": "三民區",
+  "tags": [
+   "烏龍麵",
+   "雞肉飯"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E4%B8%89%E6%B0%91%E5%8D%80%E5%BB%BA%E5%B7%A5%E8%B7%AF212%E5%B7%B75%E5%BC%849%E8%99%9F"
+ },
+ {
+  "name": "鬥牛士二鍋",
+  "county": "高雄",
+  "district": "楠梓區",
+  "tags": [
+   "壽喜燒"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E6%A5%A0%E6%A2%93%E5%8D%80%E8%97%8D%E6%98%8C%E8%B7%AF389%E8%99%9F"
+ },
+ {
+  "name": "森川丼丼",
+  "county": "高雄",
+  "district": "楠梓區",
+  "tags": [
+   "丼飯",
+   "生魚片",
+   "壽司"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E6%A5%A0%E6%A2%93%E5%8D%80%E6%A5%A0%E6%A2%93%E6%96%B0%E8%B7%AF122%E8%99%9F"
+ },
+ {
+  "name": "吃義碗麵",
+  "county": "高雄",
+  "district": "楠梓區",
+  "tags": [
+   "義式料理",
+   "焗烤"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E6%A5%A0%E6%A2%93%E5%8D%80%E5%9C%9F%E5%BA%AB%E4%B8%80%E8%B7%AF20%E8%99%9F"
+ },
+ {
+  "name": "落屋拉麵",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "拉麵"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E5%9F%8E%E9%9A%8D%E9%87%8C%E4%B8%AD%E5%B1%B1%E8%B7%AF32%E8%99%9F"
+ },
+ {
+  "name": "森野．手作｜丼飯．咖喱",
+  "county": "高雄",
+  "district": "苓雅區",
+  "tags": [
+   "丼飯",
+   "咖喱"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E8%8B%93%E9%9B%85%E5%8D%80%E8%8B%93%E9%9B%85%E4%B8%80%E8%B7%AF314%E8%99%9F"
+ },
+ {
+  "name": "萬茶川",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "手搖"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E5%BA%9C%E5%89%8D%E8%B7%AF%E4%B8%80%E6%AE%B5357%E8%99%9F"
+ },
+ {
+  "name": "老麵新造所",
+  "county": "高雄",
+  "district": "三民區",
+  "tags": [
+   "牛肉麵"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E4%B8%89%E6%B0%91%E5%8D%80%E6%BE%84%E6%B8%85%E8%B7%AF%20449%20%E8%99%9F"
+ },
+ {
+  "name": "暮嶼",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "義式料理",
+   "餐酒館"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E4%BA%94%E5%A6%83%E8%A1%97227%E8%99%9F"
+ },
+ {
+  "name": "小金麵店",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "拌面"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E6%B0%91%E6%AC%8A%E8%B7%AF%E4%BA%8C%E6%AE%B5106%E8%99%9F"
+ },
+ {
+  "name": "一拉麵",
+  "county": "台南",
+  "district": "北區",
+  "tags": [
+   "拉麵"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E5%8D%97%E5%B8%82%E5%8C%97%E5%8D%80%E9%95%B7%E6%A6%AE%E8%B7%AF%E4%BA%94%E6%AE%B535%E8%99%9F"
+ },
+ {
+  "name": "逸之牛",
+  "county": "高雄",
+  "district": "新興區",
+  "tags": [
+   "燒肉"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E6%96%B0%E8%88%88%E5%8D%80%E4%B8%AD%E6%AD%A3%E5%9B%9B%E8%B7%AF46%E8%99%9F"
+ },
+ {
+  "name": "李三川鍋燒",
+  "county": "高雄",
+  "district": "新興區",
+  "tags": [
+   "鍋燒"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E6%96%B0%E8%88%88%E5%8D%80%E6%96%87%E5%8C%96%E8%B7%AF24%E8%99%9F"
+ },
+ {
+  "name": "八穗食研所",
+  "county": "高雄",
+  "district": "三民區",
+  "tags": [
+   "拌飯"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E4%B8%89%E6%B0%91%E5%8D%80%E6%98%8C%E8%A3%95%E8%A1%97186%E8%99%9F"
+ },
+ {
+  "name": "和林拾麵",
+  "county": "高雄",
+  "district": "左營區",
+  "tags": [
+   "拌面"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E5%B7%A6%E7%87%9F%E5%8D%80%E5%AF%8C%E6%B0%91%E8%B7%AF128%E8%99%9F"
+ },
+ {
+  "name": "金波日式炸物食飯店",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "炒飯"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E4%B8%AD%E5%B1%B1%E8%B7%AF110%E8%99%9F"
+ },
+ {
+  "name": "銅一鍋",
+  "county": "高雄",
+  "district": "三民區",
+  "tags": [
+   "韓式料理",
+   "火鍋"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E4%B8%89%E6%B0%91%E5%8D%80%E5%BB%BA%E5%B7%A5%E8%B7%AF470%E8%99%9F"
+ },
+ {
+  "name": "慢牛 創意牛肉料理",
+  "county": "高雄",
+  "district": "左營區",
+  "tags": [
+   "牛肉料理"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E5%B7%A6%E7%87%9F%E5%8D%80%E8%87%B3%E7%9C%9F%E8%B7%AF252%E8%99%9F"
+ },
+ {
+  "name": "梓村麵屋",
+  "county": "高雄",
+  "district": "三民區",
+  "tags": [
+   "拉麵"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E4%B8%89%E6%B0%91%E5%8D%80%E9%BC%8E%E4%B8%AD%E8%B7%AF406%E8%99%9F"
+ },
+ {
+  "name": "世界炸雞",
+  "county": "台南",
+  "district": "南區",
+  "tags": [
+   "炸雞"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E5%8D%97%E5%8D%80%E5%A4%8F%E6%9E%97%E8%B7%AF1-9%E8%99%9F"
+ },
+ {
+  "name": "參佰碗",
+  "county": "台南",
+  "district": "北區",
+  "tags": [
+   "牛肉麵",
+   "中式料理"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E5%8C%97%E5%8D%80%E8%82%B2%E5%BE%B7%E8%B7%AF465%E8%99%9F"
+ },
+ {
+  "name": "穎川水餃",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "水餃"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E4%B8%AD%E8%A5%BF%E5%8D%80%20%E7%A9%8E%E5%B7%9D%E6%B0%B4%E9%A4%83"
+ },
+ {
+  "name": "春禾日式鍋物",
+  "county": "台南",
+  "district": "東區",
+  "tags": [
+   "壽喜燒"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E6%9D%B1%E5%8D%80%E8%82%B2%E6%A8%82%E8%A1%97196%E8%99%9F"
+ },
+ {
+  "name": "TUGU茶谷",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "手搖"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E4%B8%AD%E8%A5%BF%E5%8D%80%20TUGU%E8%8C%B6%E8%B0%B7"
+ },
+ {
+  "name": "和爺麻辣 北門店",
+  "county": "台南",
+  "district": "東區",
+  "tags": [
+   "麻辣鍋"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E6%9D%B1%E5%8D%80%E5%8C%97%E9%96%80%E8%B7%AF%E4%B8%80%E6%AE%B512%E8%99%9F1%E6%A8%93"
+ },
+ {
+  "name": "過好live-well",
+  "county": "台南",
+  "district": "東區",
+  "tags": [
+   "泰式料理"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E6%9D%B1%E5%8D%80%E5%BE%B7%E5%85%89%E8%A1%9728%E8%99%9F"
+ },
+ {
+  "name": "okawari 㕩の食事處",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "丼飯",
+   "和牛"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E6%A8%B9%E6%9E%97%E8%A1%97%E4%BA%8C%E6%AE%B5175%E5%B7%B71%E8%99%9F"
+ },
+ {
+  "name": "麻佬二",
+  "county": "台南",
+  "district": "北區",
+  "tags": [
+   "火鍋",
+   "四川麻辣"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E5%8C%97%E5%8D%80%20%E9%BA%BB%E4%BD%AC%E4%BA%8C"
+ },
+ {
+  "name": "食大客牛排",
+  "county": "台南",
+  "district": "東區",
+  "tags": [
+   "牛排"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E6%9D%B1%E5%8D%80%20%E9%A3%9F%E5%A4%A7%E5%AE%A2%E7%89%9B%E6%8E%92"
+ },
+ {
+  "name": "食大客牛排",
+  "county": "高雄",
+  "district": "楠梓區",
+  "tags": [
+   "牛排"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E6%A5%A0%E6%A2%93%E5%8D%80%E7%BF%A0%E5%B1%8F%E9%87%8C%E6%B5%B7%E5%B0%88%E8%B7%AF418-1%E8%99%9F"
+ },
+ {
+  "name": "揪丼",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "丼飯",
+   "牛排"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E4%B8%AD%E5%B1%B1%E8%B7%AF166%E8%99%9F7%E6%A8%93"
+ },
+ {
+  "name": "聚門鍋物",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "火鍋"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E6%B5%B7%E5%AE%89%E8%B7%AF%E4%BA%8C%E6%AE%B590%E8%99%9F"
+ },
+ {
+  "name": "植感大叔的日常",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "泰式"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E5%8D%97%E5%AF%A7%E8%A1%9783%E5%B7%B730%E8%99%9F"
+ },
+ {
+  "name": "大丸家",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "歐姆蛋包飯"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E6%B0%B8%E7%A6%8F%E8%B7%AF%E4%B8%80%E6%AE%B572%E8%99%9F"
+ },
+ {
+  "name": "麻花東北鐵鍋燉",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "鐵鍋燉"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E5%A4%A7%E5%BE%B7%E8%A1%9766%E8%99%9F"
+ },
+ {
+  "name": "小北家",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "早午餐",
+   "拼盤"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E9%83%A1%E7%B7%AF%E8%A1%9768%E8%99%9F"
+ },
+ {
+  "name": "新月咖喱",
+  "county": "台南",
+  "district": "東區",
+  "tags": [
+   "印度咖喱",
+   "烤餅"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E5%8D%97%E5%B8%82%E6%9D%B1%E5%8D%80%E6%9D%B1%E8%88%88%E8%B7%AF8%E8%99%9F"
+ },
+ {
+  "name": "脆皮鴨肉飯",
+  "county": "台南",
+  "district": "南區",
+  "tags": [
+   "鴨肉飯"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E5%8D%97%E5%8D%80%E9%87%91%E8%8F%AF%E8%B7%AF%E4%BA%8C%E6%AE%B515%E5%B7%B726%E8%99%9F"
+ },
+ {
+  "name": "慕煙拉麵",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "拉麵"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E5%8F%8B%E6%84%9B%E8%A1%977%E8%99%9F"
+ },
+ {
+  "name": "小牧鍋",
+  "county": "台南",
+  "district": "永康區",
+  "tags": [
+   "火鍋"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E6%B0%B8%E5%BA%B7%E5%8D%80%E4%B8%AD%E5%B1%B1%E5%8D%97%E8%B7%AF253%E8%99%9F"
+ },
+ {
+  "name": "高麗肉 韓式燒肉",
+  "county": "台南",
+  "district": "東區",
+  "tags": [
+   "燒肉"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E6%9D%B1%E5%8D%80%E5%B0%8F%E6%9D%B1%E8%B7%AF136%E8%99%9F"
+ },
+ {
+  "name": "暖嶼 Nuan Yu",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "義式料理",
+   "焗烤"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E8%87%A8%E5%AE%89%E8%B7%AF%E4%B8%80%E6%AE%B5128%E8%99%9F"
+ },
+ {
+  "name": "比鄰手作美式甜點",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "甜點",
+   "泡芙"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E4%B8%AD%E8%A5%BF%E5%8D%80%20%E6%AF%94%E9%84%B0%E6%89%8B%E4%BD%9C%E7%BE%8E%E5%BC%8F%E7%94%9C%E9%BB%9E"
+ },
+ {
+  "name": "Dor,留手工義大利麵",
+  "county": "台南",
+  "district": "中西區",
+  "tags": [
+   "義式料理"
+  ],
+  "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E5%8F%8B%E6%84%9B%E8%A1%97115%E5%B7%B75%E4%B9%8B7%E8%99%9F"
+ }
+]
