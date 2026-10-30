@@ -149,7 +149,9 @@ main{min-width:0;padding:0 0 16px}
 @media (max-width:520px){ .pgrid{grid-template-columns:repeat(2,minmax(0,1fr))} }
 /* 找餐廳：詳情頁 */
 #plist[hidden],#dview[hidden]{display:none}
-.dback{margin:0 0 10px}
+.dback{margin:0 0 10px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.dback .dreview{border-color:var(--accent);background:var(--accent);color:var(--on-accent);font-weight:600}
+.draftnote{margin:0 0 12px}
 .dback button{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--accent-mid);background:var(--field);color:var(--accent);font-family:inherit;font-size:15px;cursor:pointer}
 .dhead{display:flex;align-items:flex-start;gap:12px;padding:18px 16px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius)}
 .dhead .pgo{flex:none;margin:-4px -4px 0 0}
@@ -390,6 +392,7 @@ body[data-view="find"] main{width:100%;max-width:none}
           <button type="submit">新增</button>
           <div class="sugg" id="sugg" hidden></div>
         </form>
+        <p class="empty draftnote" id="draftNote" hidden>這間餐廳還沒有儲存。新增第一個餐點後才會正式建立；現在離開就不會留下這間餐廳。</p>
         <p class="empty" id="empty" hidden>這間餐廳還沒有品項。在上方輸入名字新增，再點「超好吃」「好吃」「普通」「有點雷」，選擇是誰要評。</p>
         <div id="list"></div>
       </div>
@@ -579,7 +582,17 @@ body[data-view="find"] main{width:100%;max-width:none}
   }
   var S = load();
   var cur = "";
-  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+  // 從「找餐廳」按「留下評價」建立的暫存餐廳：新增第一個餐點前只存在記憶體，不寫入本機也不送雲端
+  var DRAFT = null;
+  function dropDraft(){
+    if(!DRAFT) return;
+    var id = DRAFT.id;
+    S.restaurants = S.restaurants.filter(function(r){ return r.id !== id; });
+    DRAFT = null;
+  }
+  function save(){
+    try{ localStorage.setItem(KEY, JSON.stringify({ restaurants:S.restaurants.filter(function(r){ return !r.draft; }), items:S.items, members:S.members })); }catch(e){}
+  }
   function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
   function findItem(id){ return S.items.filter(function(i){ return i.id === id; })[0]; }
   function findRest(id){ return S.restaurants.filter(function(r){ return r.id === id; })[0]; }
@@ -650,6 +663,10 @@ body[data-view="find"] main{width:100%;max-width:none}
       if(it && !BAD[v.member]) it.votes[v.member] = { r:v.r, n:v.n, t:v.t };
     });
     S = normalize({ restaurants:st.restaurants, items:items, members:(st.members || []).filter(function(m){ return !BAD[m]; }) });
+    if(DRAFT){
+      var same = S.restaurants.filter(function(r){ return r.name.trim().toLowerCase() === DRAFT.name.toLowerCase(); })[0];
+      if(same){ if(cur === DRAFT.id) cur = same.id; DRAFT = null; } else S.restaurants.push(DRAFT);
+    }
     save();
     try{ localStorage.setItem(SYNCED_KEY, "1"); }catch(e){}
     pickCurrent();
@@ -914,7 +931,7 @@ body[data-view="find"] main{width:100%;max-width:none}
     var rate = p.rating ? DI.star + "<b>" + (+p.rating).toFixed(1) + "</b><span>Google 星數</span>" : '<span class="dnone">尚無 Google 星數</span>';
     var picks = (p.picks || []).length ? '<div class="dchips">' + p.picks.map(function(t){ return "<span>" + esc(t) + "</span>"; }).join("") + "</div>" : '<p class="dnone">尚未填寫</p>';
     var copy = p.address ? '<button type="button" class="dcopy" data-act="dcopy" data-v="' + esc(p.address) + '" aria-label="複製地址" title="複製地址">' + DI.copy + '</button>' : "";
-    return '<div class="dback"><button type="button" data-act="dback">‹ 返回</button></div>' +
+    return '<div class="dback"><button type="button" data-act="dback">‹ 返回</button><button type="button" class="dreview" data-act="dreview" data-name="' + esc(p.name) + '">✎ 留下評價</button></div>' +
       '<article class="dhead"><div class="dmain"><h2 class="dname">' + esc(p.name) + '</h2>' +
       (loc ? '<p class="dloc">' + loc + '</p>' : '') + (cat ? '<p class="dcat">' + cat + '</p>' : '') +
       '<div class="drate">' + rate + (src ? '<span class="dsrc">' + src + '</span>' : '') + '</div></div>' +
@@ -964,6 +981,7 @@ body[data-view="find"] main{width:100%;max-width:none}
   }
 
   function render(){
+    if(DRAFT && (cur !== DRAFT.id || view !== "review")) dropDraft();
     if(!findRest(cur)) pickCurrent();
     $("#rests").innerHTML = S.restaurants.map(function(r){
       return '<button type="button" class="rtab" role="tab" aria-selected="' + (r.id === cur ? "true" : "false") + '" data-act="pickrest" data-id="' + esc(r.id) + '">' + esc(r.name) + '</button>';
@@ -987,11 +1005,14 @@ body[data-view="find"] main{width:100%;max-width:none}
     }
     setTitle(rest ? rest.name : "");
     applyTheme(rest);
-    $("#restDelete").hidden = S.restaurants.length < 2;
+    var isDraft = !!(rest && rest.draft);
+    $("#draftNote").hidden = !isDraft;
+    $("#restDelete").hidden = isDraft || S.restaurants.length < 2;
+    $("#restRename").hidden = isDraft;
     document.title = "美食地圖";
     var items = S.items.filter(function(i){ return i.rid === cur; });
     $("#list").innerHTML = items.map(itemHTML).join("");
-    $("#empty").hidden = items.length > 0;
+    $("#empty").hidden = items.length > 0 || isDraft;
     var c = {"超好吃":0, "好吃":0, "普通":0, "有點雷":0};
     items.forEach(function(it){
       var v = it.votes || {};
@@ -1217,6 +1238,18 @@ body[data-view="find"] main{width:100%;max-width:none}
       if(PDpushed){ PDpushed = false; history.back(); }
       else { try{ history.replaceState(null, "", "#find"); }catch(err){} renderFind(); }
     }
+    else if(act === "dreview"){
+      var nm = b.dataset.name, short = nm.length > 20 ? cleanName(nm) : nm;
+      if(short.length > 20) short = short.slice(0, 20);
+      var have = S.restaurants.filter(function(r){ return !r.draft && r.name.trim().toLowerCase() === short.toLowerCase(); })[0];
+      if(have){ toast("「" + short + "」已經在寫評價裡了"); location.hash = "#" + have.id; return; }
+      if(S.restaurants.filter(function(r){ return !r.draft; }).length >= 30){ toast("餐廳數量已達上限"); return; }
+      dropDraft();
+      DRAFT = { id:newId("r"), name:short, draft:true };
+      S.restaurants.push(DRAFT);
+      location.hash = "#" + DRAFT.id;
+      window.scrollTo(0, 0);
+    }
     else if(act === "dcopy"){
       var v = b.dataset.v;
       if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(v).then(function(){ toast("已複製地址"); }, function(){ toast("複製失敗，請手動選取"); });
@@ -1273,6 +1306,13 @@ body[data-view="find"] main{width:100%;max-width:none}
     if(!name) return;
     var dup = S.items.some(function(i){ return i.rid === cur && i.name.trim().toLowerCase() === name.toLowerCase(); });
     if(dup){ toast("已經有「" + name + "」了"); return; }
+    var r = findRest(cur);
+    if(r && r.draft){
+      if(nameTaken(r.name, r.id)){ toast("已經有「" + r.name + "」了"); return; }
+      if(S.restaurants.length > 30){ toast("餐廳數量已達上限"); return; }
+      delete r.draft; DRAFT = null;
+      send({ op:"addRestaurant", id:r.id, name:r.name });
+    }
     var it = { id:newId(), rid:cur, name:name, votes:{} };
     S.items.push(it);
     send({ op:"addItem", id:it.id, name:name, rid:cur });
