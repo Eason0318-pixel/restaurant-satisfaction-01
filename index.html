@@ -822,7 +822,12 @@ body[data-view="find"] main{width:100%;max-width:none}
     }).join(" ");
   }
   function mapURL(p){
-    return p.map || "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent([p.county, p.district, cleanName(p.name)].filter(Boolean).join(" "));
+    var base = "https://www.google.com/maps/search/?api=1&query=", q = "";
+    try{ q = decodeURIComponent((String(p.map || "").match(/[?&]query=([^&]*)/) || [])[1] || ""); }catch(e){}
+    var pre = [p.county, p.district].filter(Boolean).join(" ") + " ";
+    if(q.indexOf(pre) === 0) q = q.slice(pre.length);
+    // 店名放在搜尋字詞最前面，Google 地圖才會直接定位到餐廳（只放地址會停在地址上）
+    return base + encodeURIComponent([p.name, p.address || q || [p.county, p.district].filter(Boolean).join("")].filter(Boolean).join(" "));
   }
   // 找餐廳：全部依加入時間（places.json 的順序，新的在前）排列，再依篩選條件留下符合的店
   var TYPE_NAME = { "中式料理":"中式", "韓式料理":"韓式", "泰式料理":"泰式", "義式料理":"義式" };
