@@ -128,22 +128,28 @@ main{min-width:0;padding:0 0 16px}
 .empty{margin:0;padding:18px 14px;color:var(--muted);font-size:14px;border-bottom:1px dashed var(--line)}
 /* 找餐廳：圖卡 */
 .pcount{margin:0;padding:10px 14px 0;font-size:13px;color:var(--muted)}
-.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;padding:12px 14px 16px}
-/* 每張卡佔 3 列（店名／地點／種類），用 subgrid 讓同一排的卡片上下對齊：店名 1 行的會跟著 2 行的往下移 */
-.pcard{grid-row:span 3;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:subgrid;row-gap:4px;column-gap:12px;min-width:0;
-  padding:14px 16px;background:var(--field);border:1px solid var(--line);border-radius:var(--radius);color:var(--ink);cursor:pointer;
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;padding:12px 12px 16px}
+/* 每張卡佔 3 列（店名＋導航／地點／種類），用 subgrid 讓同一排的卡片上下對齊：店名 1 行的會跟著 2 行的往下移。
+   第 1 列至少 44px 高，剛好放得下 2 行店名，也是導航按鈕的最小觸控尺寸 */
+.pcard{grid-row:span 3;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:subgrid;row-gap:3px;column-gap:4px;min-width:0;
+  padding:8px 8px 10px 12px;background:var(--field);border:1px solid var(--line);border-radius:16px;color:var(--ink);cursor:pointer;
   transition:border-color .15s,box-shadow .15s,transform .15s}
 .pcard:hover{border-color:var(--accent-mid);box-shadow:0 4px 14px rgba(0,0,0,.08);transform:translateY(-1px)}
-.pname{grid-column:1;grid-row:1;margin:0;font-size:17px;font-weight:700;line-height:1.35;text-wrap:balance;overflow-wrap:anywhere}
-.pname .w{white-space:nowrap}
-.ploc{grid-column:1;grid-row:2;margin:0;font-size:14px;color:var(--accent)}
-.pcat{grid-column:1;grid-row:3;margin:0;font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.pname{grid-column:1;grid-row:1;align-self:start;margin:4px 0 0;font-size:15px;font-weight:700;line-height:1.35;text-wrap:balance;overflow-wrap:anywhere}
+.pname .w{display:inline-block;max-width:100%;overflow-wrap:anywhere}
+.ploc{grid-column:1 / -1;grid-row:2;margin:0;padding-right:4px;font-size:13px;color:var(--accent)}
+.pcat{grid-column:1 / -1;grid-row:3;margin:0;padding-right:4px;font-size:12px;color:var(--muted);overflow-wrap:anywhere}
 .pcat b{color:var(--ink);font-weight:600}
-.ploc span+span,.pcat span+span{margin-left:.9em}
-.pgo{grid-column:2;grid-row:1 / 4;align-self:center;display:flex;align-items:center;justify-content:center;width:66px;aspect-ratio:1;border-radius:14px;
-  background:var(--go);color:#fff;font-size:14px;font-weight:700;letter-spacing:.04em;text-decoration:none;white-space:nowrap}
-.pgo:hover{filter:brightness(1.1)}
-.pgo:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ploc span+span,.pcat span+span{margin-left:.8em}
+.pgo{grid-column:2;grid-row:1;align-self:start;display:flex;align-items:center;justify-content:center;width:44px;height:44px;margin:-2px -2px 0 0;border-radius:12px;
+  color:var(--go);text-decoration:none}
+.pgo svg{width:26px;height:26px;padding:5px;box-sizing:content-box;border-radius:50%;background:var(--go);color:#fff;fill:currentColor}
+.pgo:hover svg{filter:brightness(1.12)}
+.pgo:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+@media (max-width:520px){ .pgrid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (min-width:821px){ .pgo{width:34px;height:34px;margin:0 0 0 0} .pgo svg{width:18px;height:18px;padding:5px} }
+#findView .card-list{border-top:1px solid var(--line);border-radius:var(--radius)}
+body[data-view="find"] .layout{max-width:1280px}
 .add{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px;background:var(--add-bg);border-bottom:1px solid var(--line)}
 .sugg{flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
 .sugg button{font-family:inherit;font-size:13px;min-height:34px;padding:0 14px;border-radius:999px;border:1px solid var(--accent-mid);background:var(--field);color:var(--ink);cursor:pointer}
@@ -179,7 +185,7 @@ main{min-width:0;padding:0 0 16px}
 }
 body[data-view="find"] .menu-btn,body[data-view="find"] .hd-actions,body[data-view="find"] .side,body[data-view="find"] .backdrop{display:none!important}
 body[data-view="find"] .layout{grid-template-columns:minmax(0,1fr)}
-body[data-view="find"] main{width:100%;max-width:720px;margin:0 auto}
+body[data-view="find"] main{width:100%;max-width:none}
 
 /* 留言身分頁面 */
 .overlay{position:fixed;inset:0;background:var(--scrim);display:flex;align-items:stretch;justify-content:center;z-index:60}
@@ -289,7 +295,6 @@ body[data-view="find"] main{width:100%;max-width:720px;margin:0 auto}
 
   <main>
     <section class="section" id="findView" hidden>
-      <div class="section-head"><h2>找餐廳</h2></div>
       <div class="card-list">
         <p class="pcount" id="pcount" hidden></p>
         <p class="empty" id="pempty" hidden></p>
@@ -702,7 +707,7 @@ body[data-view="find"] main{width:100%;max-width:720px;margin:0 auto}
   var SEG = (typeof Intl !== "undefined" && Intl.Segmenter) ? new Intl.Segmenter("zh-Hant", {granularity:"word"}) : null;
   function nameHTML(n){
     return cleanName(n).split(/\s+/).map(function(chunk){
-      if(SEG && /[一-鿿]{9,}/.test(chunk)){
+      if(SEG && chunk.length >= 6 && /[一-鿿]/.test(chunk)){
         var out = "";
         Array.from(SEG.segment(chunk)).forEach(function(s){ out += '<span class="w">' + esc(s.segment) + "</span>"; });
         return out;
@@ -723,7 +728,7 @@ body[data-view="find"] main{width:100%;max-width:720px;margin:0 auto}
         '<h3 class="pname">' + nameHTML(p.name) + '</h3>' +
         (loc ? '<p class="ploc">' + loc + '</p>' : '') +
         (cat ? '<p class="pcat">' + cat + '</p>' : '') +
-        '<a class="pgo" href="' + esc(mapURL(p)) + '" target="_blank" rel="noopener noreferrer" aria-label="帶我去 ' + esc(cleanName(p.name)) + '（Google 地圖）">帶我去</a></article>';
+        '<a class="pgo" href="' + esc(mapURL(p)) + '" target="_blank" rel="noopener noreferrer" aria-label="導航到 ' + esc(cleanName(p.name)) + '（Google 地圖）" title="導航"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4.5 20.3 12 16.5l7.5 3.8z"/></svg></a></article>';
     }).join("");
     $("#pcount").hidden = !list.length;
     $("#pcount").textContent = "共 " + list.length + " 間";
