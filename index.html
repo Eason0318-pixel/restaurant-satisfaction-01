@@ -728,7 +728,7 @@ body[data-view="find"] main{width:100%;max-width:none}
         '<h3 class="pname">' + nameHTML(p.name) + '</h3>' +
         (loc ? '<p class="ploc">' + loc + '</p>' : '') +
         (cat ? '<p class="pcat">' + cat + '</p>' : '') +
-        '<a class="pgo" href="' + esc(mapURL(p)) + '" target="_blank" rel="noopener noreferrer" aria-label="導航到 ' + esc(cleanName(p.name)) + '（Google 地圖）" title="導航"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4.5 20.3 12 16.5l7.5 3.8z"/></svg></a></article>';
+        '<a class="pgo" href="' + esc(mapURL(p)) + '" target="_blank" rel="noopener noreferrer" aria-label="導航到 ' + esc(cleanName(p.name)) + '（Google 地圖）" title="導航"><svg viewBox="0 0 24 24" aria-hidden="true"><path transform="translate(0 .8) rotate(45 12 11.2) scale(.92) translate(.96 .9)" d="M12 2 4.5 20.3 12 16.5l7.5 3.8z"/></svg></a></article>';
     }).join("");
     $("#pcount").hidden = !list.length;
     $("#pcount").textContent = "共 " + list.length + " 間";
