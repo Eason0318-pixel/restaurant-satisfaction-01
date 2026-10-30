@@ -149,6 +149,24 @@ main{min-width:0;padding:0 0 16px}
 @media (max-width:520px){ .pgrid{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (min-width:821px){ .pgo{width:34px;height:34px;margin:0 0 0 0} .pgo svg{width:18px;height:18px;padding:5px} }
 #findView .card-list{border-top:1px solid var(--line);border-radius:var(--radius)}
+/* 找餐廳：瀏覽方式（總覽／地區／種類）與分組圖卡 */
+.fbar{display:flex;width:fit-content;margin:0 auto 10px;padding:4px;gap:4px;background:var(--paper);border:1px solid var(--line);border-radius:999px}
+.fbar button{display:flex;align-items:center;justify-content:center;gap:6px;min-width:44px;min-height:44px;padding:0 18px;border:none;border-radius:999px;background:transparent;
+  font-family:inherit;font-size:15px;color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.fbar button:hover{color:var(--ink)}
+.fbar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);font-weight:700}
+.fbar svg{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.fcrumb{display:flex;align-items:center;gap:10px;padding:12px 12px 0}
+.fcrumb button{min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--accent-mid);background:var(--field);color:var(--accent);font-family:inherit;font-size:14px;cursor:pointer}
+.ftrail{font-size:14px;color:var(--muted);overflow-wrap:anywhere}
+.pgrid.groups{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.gcard{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;min-height:84px;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:var(--field);
+  font-family:inherit;color:var(--ink);text-align:left;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}
+.gcard:hover{border-color:var(--accent-mid);box-shadow:0 4px 14px rgba(0,0,0,.08);transform:translateY(-1px)}
+.gname{font-size:18px;font-weight:700;overflow-wrap:anywhere}
+.gcnt{font-size:13px;color:var(--accent)}
+@media (max-width:820px){ .fbar button{min-width:60px;padding:0 20px} .fbar .ft{display:none} }
+@media (max-width:520px){ .pgrid.groups{grid-template-columns:repeat(2,minmax(0,1fr))} }
 body[data-view="find"] .layout{max-width:1280px}
 .add{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px;background:var(--add-bg);border-bottom:1px solid var(--line)}
 .sugg{flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
@@ -295,7 +313,13 @@ body[data-view="find"] main{width:100%;max-width:none}
 
   <main>
     <section class="section" id="findView" hidden>
+      <div class="fbar" id="fbar" role="group" aria-label="瀏覽方式">
+        <button type="button" data-act="fmode" data-m="all" aria-label="總覽" title="總覽"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg><span class="ft">總覽</span></button>
+        <button type="button" data-act="fmode" data-m="region" aria-label="地區" title="地區"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 6.5 9 4.5l6 2 5.5-2v13l-5.5 2-6-2-5.5 2z"/><path d="M9 4.5v13M15 6.5v13"/></svg><span class="ft">地區</span></button>
+        <button type="button" data-act="fmode" data-m="type" aria-label="種類" title="種類"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v6.5a3 3 0 0 0 6 0V3M9 12.5V21M17.5 21V3c-2.7 1.2-4 4-4 7.5 0 2 .9 3 2 3h2"/></svg><span class="ft">種類</span></button>
+      </div>
       <div class="card-list">
+        <div class="fcrumb" id="fcrumb" hidden><button type="button" data-act="fback">‹ 返回</button><span class="ftrail" id="ftrail"></span></div>
         <p class="pcount" id="pcount" hidden></p>
         <p class="empty" id="pempty" hidden></p>
         <div class="pgrid" id="pgrid"></div>
@@ -718,20 +742,73 @@ body[data-view="find"] main{width:100%;max-width:none}
   function mapURL(p){
     return p.map || "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent([p.county, p.district, cleanName(p.name)].filter(Boolean).join(" "));
   }
+  // 找餐廳的瀏覽方式：總覽（全部，依加入時間，新的在前）／地區（縣市→市區→餐廳）／種類（料理種類→餐廳）
+  var FV = { mode:"all", a:"", b:"" };   // a = 縣市或種類，b = 市區
+  var TYPE_NAME = { "中式料理":"中式", "韓式料理":"韓式", "泰式料理":"泰式", "義式料理":"義式" };
+  var BROAD_ORDER = ["中式","日式","韓式","泰式","義式"];
+  function typeKeys(p){
+    var out = [];
+    (p.tags || []).forEach(function(t){ var k = TYPE_NAME[t] || t; if(out.indexOf(k) < 0) out.push(k); });
+    return out;
+  }
+  function distKey(p){ return p.district || "未填市區"; }
+  // 依 keyFn 分組（一間餐廳可以進多組），組內維持原本順序（＝加入時間，新的在前）
+  function groupBy(list, keyFn){
+    var map = {}, order = [];
+    list.forEach(function(p){ keyFn(p).forEach(function(k){ if(!map[k]){ map[k] = []; order.push(k); } map[k].push(p); }); });
+    return order.map(function(k){ return { k:k, n:map[k].length }; });
+  }
+  function placeCard(p){
+    var loc = [p.county, p.district].filter(Boolean).map(function(t){ return "<span>" + esc(t) + "</span>"; }).join("");
+    var cat = catHTML(p.tags || []);
+    return '<article class="pcard" role="button" tabindex="0" aria-label="' + esc(cleanName(p.name)) + '，查看詳細資料">' +
+      '<h3 class="pname">' + nameHTML(p.name) + '</h3>' +
+      (loc ? '<p class="ploc">' + loc + '</p>' : '') +
+      (cat ? '<p class="pcat">' + cat + '</p>' : '') +
+      '<a class="pgo" href="' + esc(mapURL(p)) + '" target="_blank" rel="noopener noreferrer" aria-label="導航到 ' + esc(cleanName(p.name)) + '（Google 地圖）" title="導航"><svg viewBox="0 0 24 24" aria-hidden="true"><path transform="translate(0 .8) rotate(45 12 11.2) scale(.92) translate(.96 .9)" d="M12 2 4.5 20.3 12 16.5l7.5 3.8z"/></svg></a></article>';
+  }
+  function groupCard(g){
+    return '<button type="button" class="gcard" data-act="fgroup" data-k="' + esc(g.k) + '"><span class="gname">' + esc(g.k) + '</span><span class="gcnt">' + g.n + ' 間</span></button>';
+  }
   function renderFind(){
     loadPlaces();
-    var list = PLACES || [];
-    $("#pgrid").innerHTML = list.map(function(p){
-      var loc = [p.county, p.district].filter(Boolean).map(function(t){ return "<span>" + esc(t) + "</span>"; }).join("");
-      var cat = catHTML(p.tags || []);
-      return '<article class="pcard" role="button" tabindex="0" aria-label="' + esc(cleanName(p.name)) + '，查看詳細資料">' +
-        '<h3 class="pname">' + nameHTML(p.name) + '</h3>' +
-        (loc ? '<p class="ploc">' + loc + '</p>' : '') +
-        (cat ? '<p class="pcat">' + cat + '</p>' : '') +
-        '<a class="pgo" href="' + esc(mapURL(p)) + '" target="_blank" rel="noopener noreferrer" aria-label="導航到 ' + esc(cleanName(p.name)) + '（Google 地圖）" title="導航"><svg viewBox="0 0 24 24" aria-hidden="true"><path transform="translate(0 .8) rotate(45 12 11.2) scale(.92) translate(.96 .9)" d="M12 2 4.5 20.3 12 16.5l7.5 3.8z"/></svg></a></article>';
-    }).join("");
+    var list = PLACES || [], m = FV.mode, items = null, groups = null, unit = "", trail = "";
+    Array.prototype.forEach.call(document.querySelectorAll("#fbar button"), function(b){
+      b.setAttribute("aria-pressed", b.dataset.m === m ? "true" : "false");
+    });
+    if(m === "all"){
+      items = list;
+    } else if(m === "region"){
+      if(!FV.a){
+        groups = groupBy(list, function(p){ return [p.county || "未填縣市"]; });
+        unit = "個縣市";
+      } else if(!FV.b){
+        groups = groupBy(list.filter(function(p){ return (p.county || "未填縣市") === FV.a; }), function(p){ return [distKey(p)]; });
+        unit = "個市區"; trail = "地區 › " + FV.a;
+      } else {
+        items = list.filter(function(p){ return (p.county || "未填縣市") === FV.a && distKey(p) === FV.b; });
+        trail = "地區 › " + FV.a + " › " + FV.b;
+      }
+    } else {
+      if(!FV.a){
+        groups = groupBy(list, typeKeys);
+        unit = "種類";
+      } else {
+        items = list.filter(function(p){ return typeKeys(p).indexOf(FV.a) >= 0; });
+        trail = "種類 › " + FV.a;
+      }
+    }
+    if(groups){
+      groups.forEach(function(g, i){ g.i = i; g.r = m === "type" && BROAD_ORDER.indexOf(g.k) >= 0 ? BROAD_ORDER.indexOf(g.k) : 99; });
+      groups.sort(function(x, y){ return x.r - y.r || y.n - x.n || x.i - y.i; });
+    }
+    $("#pgrid").className = "pgrid" + (groups ? " groups" : "");
+    $("#pgrid").innerHTML = groups ? groups.map(groupCard).join("") : items.map(placeCard).join("");
+    $("#fcrumb").hidden = !trail;
+    $("#ftrail").textContent = trail;
+    var n = groups ? groups.length : items.length;
     $("#pcount").hidden = !list.length;
-    $("#pcount").textContent = "共 " + list.length + " 間";
+    $("#pcount").textContent = "共 " + n + " " + (groups ? unit : "間");
     $("#pempty").hidden = list.length > 0;
     $("#pempty").textContent = PLACES === null || list.length ? "" : "還沒有餐廳資料。";
   }
@@ -965,6 +1042,9 @@ body[data-view="find"] main{width:100%;max-width:none}
     if(!b) return;
     var act = b.dataset.act;
     if(act === "view") setView(b.dataset.v);
+    else if(act === "fmode"){ FV = { mode:b.dataset.m, a:"", b:"" }; renderFind(); }
+    else if(act === "fgroup"){ if(FV.mode === "region" && FV.a) FV.b = b.dataset.k; else FV.a = b.dataset.k; renderFind(); window.scrollTo(0, 0); }
+    else if(act === "fback"){ if(FV.b) FV.b = ""; else FV.a = ""; renderFind(); window.scrollTo(0, 0); }
     else if(act === "pickrest"){ setCurrent(b.dataset.id); closeRestForm(); closeDrawer(); render(); }
     else if(act === "addrest") openRestForm("add");
     else if(act === "gotoitem") gotoItem(b.dataset.id);
