@@ -1,7 +1,8 @@
 /**
  * 餐廳評分簿・後端（多餐廳版）
  * 貼在「綁定試算表」的 Apps Script（試算表 → 擴充功能 → Apps Script）。
- * 會自動建立四張工作表：restaurants（餐廳）、items（品項）、votes（評分與備註）、members（留言身分）。
+ * 會自動建立五張工作表：restaurants（餐廳）、items（品項）、votes（評分與備註）、members（留言身分）、
+ * placeEdits（「找餐廳」詳情頁手動修改的欄位，疊加在網站的 places.json 之上）。
  * 舊版沒有餐廳欄位的品項，會自動歸入「茶六」。
  */
 
@@ -12,12 +13,15 @@ var HEADERS = {
   restaurants: ["id", "name", "createdAt"],
   items: ["id", "name", "createdAt", "restaurantId"],
   votes: ["itemId", "member", "rating", "note", "updatedAt"],
-  members: ["name"]
+  members: ["name"],
+  placeEdits: ["key", "field", "value", "updatedAt"]
 };
 // 這些欄位一律當純文字，避免有人輸入「=...」被當成公式執行
-var TEXT_COLS = { restaurants: [1, 2], items: [1, 2, 4], votes: [1, 2, 3, 4], members: [1] };
+var TEXT_COLS = { restaurants: [1, 2], items: [1, 2, 4], votes: [1, 2, 3, 4], members: [1], placeEdits: [1, 2, 3] };
 var RATINGS = ["超好吃", "好吃", "普通", "有點雷"];
-var LIMIT = { restaurants: 30, items: 500, members: 30, votes: 8000 };
+var LIMIT = { restaurants: 30, items: 500, members: 30, votes: 8000, placeEdits: 3000 };
+// 詳情頁允許修改的欄位（其他欄位一律拒絕）
+var PLACE_FIELDS = { rating: 1, ratingDate: 1, hours: 1, closed: 1, price: 1, address: 1, feature: 1, picks: 1 };
 var BAD_NAMES = ["__proto__", "constructor", "prototype"];
 
 function json_(obj) {
@@ -72,7 +76,10 @@ function state_() {
       return { itemId: String(r[0]), member: String(r[1]), r: String(r[2] || ""), n: String(r[3] || ""), t: Number(r[4]) || 0 };
     });
   var members = rows_("members").map(function (r) { return String(r[0]); }).filter(Boolean);
-  return { restaurants: restaurants, items: items, votes: votes, members: members };
+  var placeEdits = rows_("placeEdits")
+    .filter(function (r) { return r[0] && r[1]; })
+    .map(function (r) { return { k: String(r[0]), f: String(r[1]), v: String(r[2] == null ? "" : r[2]), t: Number(r[3]) || 0 }; });
+  return { restaurants: restaurants, items: items, votes: votes, members: members, placeEdits: placeEdits };
 }
 
 function validName_(s, max) {
@@ -221,6 +228,28 @@ function setVote_(itemId, member, r, n, t) {
   }
 }
 
+/* ---------- 找餐廳詳情頁的手動修改（key＝「店名|縣市」，一個欄位一列，空字串代表清空） ---------- */
+function setPlace_(key, field, value, t) {
+  key = String(key == null ? "" : key).trim();
+  if (!key || key.length > 80 || key.indexOf("|") < 0) throw new Error("店家代碼不正確");
+  field = String(field || "");
+  if (!Object.prototype.hasOwnProperty.call(PLACE_FIELDS, field)) throw new Error("這個欄位不能修改");
+  value = String(value == null ? "" : value).trim().slice(0, 500);
+  if (field === "rating" && value !== "" && !(Number(value) >= 0 && Number(value) <= 5)) throw new Error("星數要在 0 到 5 之間");
+  if (field === "ratingDate" && value !== "" && !/^\d{4}-\d{2}-\d{2}$/.test(value)) throw new Error("日期格式不正確");
+  t = Number(t) || Date.now();
+  var sh = sh_("placeEdits");
+  var rows = rows_("placeEdits");
+  for (var i = 0; i < rows.length; i++) {
+    if (String(rows[i][0]) === key && String(rows[i][1]) === field) {
+      sh.getRange(i + 2, 1, 1, 4).setValues([[key, field, value, t]]);
+      return;
+    }
+  }
+  if (rows.length >= LIMIT.placeEdits) throw new Error("修改筆數已達上限");
+  sh.appendRow([key, field, value, t]);
+}
+
 // 第一次連線時，把手機裡原本的資料合併上來
 // （同名餐廳、同名品項合併；同一人同一品項以較新的為準）
 function import_(restaurants, items) {
@@ -269,6 +298,7 @@ function handle_(op) {
     case "delItem": delItem_(op.id); break;
     case "setVote": setVote_(op.itemId, op.member, op.r, op.n, op.t); break;
     case "import": import_(op.restaurants, op.items); break;
+    case "setPlace": setPlace_(op.key, op.field, op.value, op.t); break;
     default: throw new Error("不支援的操作");
   }
 }

@@ -191,6 +191,22 @@ main{min-width:0;padding:0 0 16px}
 .dcopy{flex:none;display:flex;align-items:center;justify-content:center;width:44px;height:44px;margin:-8px -10px -8px 0;border:none;background:none;color:var(--muted);cursor:pointer}
 .dcopy:hover{color:var(--ink)}
 .dcopy svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.dedbtn{flex:none;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border:none;border-radius:50%;background:none;color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.dedbtn:hover{color:var(--ink);background:var(--hover)}
+.dedbtn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.dsec h3 .dedbtn{margin:-8px -8px -8px auto}
+.drow>.dedbtn{margin:-6px -8px -6px 0}
+.drate .dedbtn{margin-left:-4px}
+.dacts{display:flex;flex:none;margin:-6px -8px -6px 0}
+.dacts .dcopy{margin:0;width:36px;height:36px}
+.ddate{font-size:12px;color:var(--muted)}
+.dedit{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.dedit textarea,.dedit input{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--accent-mid);border-radius:12px;background:var(--field);color:var(--ink);font-family:inherit;font-size:16px;line-height:1.6}
+.dedit textarea{min-height:96px;resize:vertical}
+.dedit small{color:var(--muted);font-size:12px;line-height:1.5}
+.dedit .dbtns{display:flex;gap:8px}
+.dedit .dbtns button{min-height:40px;padding:0 18px;border-radius:999px;border:1px solid var(--accent-mid);background:var(--field);color:var(--accent);font-family:inherit;font-size:15px;cursor:pointer}
+.dedit .dbtns .dsave{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
 @media (min-width:821px){ .pgo{width:34px;height:34px;margin:0 0 0 0} .pgo svg{width:18px;height:18px;padding:5px} }
 #findView .card-list{border-top:1px solid var(--line);border-radius:var(--radius)}
 /* 找餐廳：篩選列（總覽／縣市／市區／種類，後三個可下拉複選） */
@@ -581,6 +597,10 @@ body[data-view="find"] main{width:100%;max-width:none}
     return normalize({});
   }
   var S = load();
+  // 找餐廳詳情頁手動修改的欄位（key＝「店名|縣市」→ { 欄位:值 }）；雲端是正本，本機只是快取
+  var PE_KEY = "meat-rating-pedits", PEDIT = {};
+  try{ var pe0 = JSON.parse(localStorage.getItem(PE_KEY)); if(pe0 && typeof pe0 === "object") PEDIT = pe0; }catch(e){}
+  function savePE(){ try{ localStorage.setItem(PE_KEY, JSON.stringify(PEDIT)); }catch(e){} }
   var cur = "";
   // 從「找餐廳」按「留下評價」建立的暫存餐廳：新增第一個餐點前只存在記憶體，不寫入本機也不送雲端
   var DRAFT = null;
@@ -663,6 +683,11 @@ body[data-view="find"] main{width:100%;max-width:none}
       if(it && !BAD[v.member]) it.votes[v.member] = { r:v.r, n:v.n, t:v.t };
     });
     S = normalize({ restaurants:st.restaurants, items:items, members:(st.members || []).filter(function(m){ return !BAD[m]; }) });
+    if(Array.isArray(st.placeEdits)){
+      PEDIT = {};
+      st.placeEdits.forEach(function(e){ if(e && e.k && e.f) (PEDIT[e.k] = PEDIT[e.k] || {})[e.f] = e.v; });
+      savePE();
+    }
     if(DRAFT){
       var same = S.restaurants.filter(function(r){ return r.name.trim().toLowerCase() === DRAFT.name.toLowerCase(); })[0];
       if(same){ if(cur === DRAFT.id) cur = same.id; DRAFT = null; } else S.restaurants.push(DRAFT);
@@ -687,17 +712,18 @@ body[data-view="find"] main{width:100%;max-width:none}
     }, function(err){
       pending--;
       setConn("error");
-      toast(err && err.message && err.message !== "fail" && err.message !== "Failed to fetch" ? err.message : "沒有存到雲端，請稍後再試一次");
+      toast(err && err.message === "不支援的操作" ? "後端還沒更新，請先到 Apps Script 更新成新版本"
+        : err && err.message && err.message !== "fail" && err.message !== "Failed to fetch" ? err.message : "沒有存到雲端，請稍後再試一次");
       if(pending === 0) refresh();
     });
   }
   function refresh(){
-    if(!REMOTE || pending > 0 || !$("#sheet").hidden) return Promise.resolve();
+    if(!REMOTE || pending > 0 || !$("#sheet").hidden || DEDIT) return Promise.resolve();
     return fetch(API_URL + "?t=" + Date.now())
       .then(function(r){ return r.json(); })
       .then(function(d){
         if(!d || !d.ok) throw new Error("bad");
-        if(pending === 0 && $("#sheet").hidden) adopt(d.state);
+        if(pending === 0 && $("#sheet").hidden && !DEDIT) adopt(d.state);
         setConn("ok");
       })
       .catch(function(){ setConn("error"); });
@@ -845,7 +871,7 @@ body[data-view="find"] main{width:100%;max-width:none}
       '<h3 class="pname">' + nameHTML(p.name) + '</h3>' +
       (loc ? '<p class="ploc">' + loc + '</p>' : '') +
       (cat ? '<p class="pcat">' + cat + '</p>' : '') +
-      '<a class="pgo" href="' + esc(mapURL(p)) + '" target="_blank" rel="noopener noreferrer" aria-label="導航到 ' + esc(cleanName(p.name)) + '（Google 地圖）" title="導航"><svg viewBox="0 0 24 24" aria-hidden="true"><path transform="translate(0 .8) rotate(45 12 11.2) scale(.92) translate(.96 .9)" d="M12 2 4.5 20.3 12 16.5l7.5 3.8z"/></svg></a></article>';
+      '<a class="pgo" href="' + esc(mapURL(effPlace(p))) + '" target="_blank" rel="noopener noreferrer" aria-label="導航到 ' + esc(cleanName(p.name)) + '（Google 地圖）" title="導航"><svg viewBox="0 0 24 24" aria-hidden="true"><path transform="translate(0 .8) rotate(45 12 11.2) scale(.92) translate(.96 .9)" d="M12 2 4.5 20.3 12 16.5l7.5 3.8z"/></svg></a></article>';
   }
   // 篩選：縣市、市區、種類各自可複選（同一項內「或」，不同項之間「且」）；「總覽」＝全部清除
   var FA = { county:[], district:[], type:[] }, FOpen = "", FPanelFor = "";
@@ -901,8 +927,9 @@ body[data-view="find"] main{width:100%;max-width:none}
     if(fk !== null) Array.prototype.some.call(panel.querySelectorAll("input"), function(i){ if(i.dataset.k === fk){ i.focus({ preventScroll:true }); return true; } });
   }
   // 詳情頁：網址 #find/編號（編號＝在 places.json 裡的順序），瀏覽器返回鍵可回到清單
-  var DETAIL_ON = false, PDscroll = 0, PDpushed = false;
+  var DETAIL_ON = false, PDscroll = 0, PDpushed = false, DEDIT = "", DEDIT_I = -1;
   var DI = {
+    edit:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14.5 7.5l3 3"/></svg>',
     star:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8l-5.2 2.8 1-5.8L3.5 9.7l5.9-.9z"/></svg>',
     ig:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r=".6"/></svg>',
     spark:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>',
@@ -921,6 +948,60 @@ body[data-view="find"] main{width:100%;max-width:none}
   function dRow(icon, label, body, extra){
     return '<div class="drow">' + DI[icon] + '<div><span class="dlabel">' + label + '</span>' + body + '</div>' + (extra || "") + '</div>';
   }
+  function pkey(p){ return p.name + "|" + (p.county || ""); }
+  // 把雲端／本機的手動修改疊加到 places.json 的原始資料上
+  function effPlace(p){
+    var e = PEDIT[pkey(p)];
+    if(!e) return p;
+    var o = {};
+    for(var k in p) o[k] = p[k];
+    Object.keys(e).forEach(function(f){
+      var v = e[f];
+      if(f === "picks") o.picks = v ? v.split(/[、,，\n]/).map(function(t){ return t.trim(); }).filter(Boolean) : [];
+      else if(f === "rating") o.rating = v === "" ? 0 : +v;
+      else o[f] = v;
+    });
+    return o;
+  }
+  function today(){
+    var d = new Date(), z = function(n){ return ("0" + n).slice(-2); };
+    return d.getFullYear() + "-" + z(d.getMonth() + 1) + "-" + z(d.getDate());
+  }
+  var EDIT_CFG = {
+    feature:{ tag:"textarea", max:300, hint:"" },
+    picks:{ tag:"input", max:200, hint:"用「、」隔開，例：鹽味拉麵、山椒拉麵" },
+    hours:{ tag:"textarea", max:300, hint:"只有一種時間就只寫時間；有多種時間請每行寫一種，開頭寫週幾，例：週一至週五 11:00～21:00" },
+    closed:{ tag:"input", max:60, hint:"例：週二、週三；每天營業請寫「無公休」；不確定請留空" },
+    price:{ tag:"input", max:40, hint:"例：每人 $200～400" },
+    address:{ tag:"input", max:120, hint:"" },
+    rating:{ tag:"input", type:"number", hint:"請填 Google 地圖上的星數（1～5），儲存後會記錄今天的日期" }
+  };
+  function edBtn(f, label){
+    return DEDIT === f ? "" : '<button type="button" class="dedbtn" data-act="dedit" data-f="' + f + '" aria-label="編輯' + label + '" title="編輯">' + DI.edit + '</button>';
+  }
+  function editorHTML(f, p){
+    var c = EDIT_CFG[f], v = f === "picks" ? (p.picks || []).join("、") : f === "rating" ? (p.rating || "") : (p[f] || "");
+    var ctl = c.tag === "textarea" ? '<textarea id="dedit" rows="4" maxlength="' + c.max + '">' + esc(v) + '</textarea>'
+      : '<input id="dedit" ' + (c.type === "number" ? 'type="number" step="0.1" min="1" max="5" inputmode="decimal"' : 'type="text" maxlength="' + c.max + '"') + ' value="' + esc(v) + '">';
+    return '<div class="dedit">' + ctl + (c.hint ? "<small>" + c.hint + "</small>" : "") +
+      '<div class="dbtns"><button type="button" class="dsave" data-act="dsave">儲存</button><button type="button" data-act="dcancel">取消</button></div></div>';
+  }
+  function savePlaceEdit(){
+    var list = PLACES || [], di = detailIndex(list), f = DEDIT, el = $("#dedit");
+    if(di < 0 || !f || !el) return;
+    var key = pkey(list[di]), v = el.value.trim();
+    if(f === "rating"){
+      if(v !== "" && !(+v >= 1 && +v <= 5)){ toast("星數請填 1 到 5 之間，例：4.3"); return; }
+      if(v !== "") v = String(+(+v).toFixed(1));
+    }
+    if(f === "picks") v = v.split(/[、,，\n]/).map(function(t){ return t.trim(); }).filter(Boolean).join("、");
+    if(f === "hours") v = v.split("\n").map(function(t){ return t.trim(); }).filter(Boolean).join("\n");
+    var ops = [[f, v]];
+    if(f === "rating") ops.push(["ratingDate", v === "" ? "" : today()]);
+    var t = Date.now(), e = PEDIT[key] = PEDIT[key] || {};
+    ops.forEach(function(o){ e[o[0]] = o[1]; send({ op:"setPlace", key:key, field:o[0], value:o[1], t:t }); });
+    savePE(); DEDIT = ""; renderFind(); toast("已儲存");
+  }
   function detailHTML(p){
     var loc = [p.county, p.district].filter(Boolean).map(function(t){ return "<span>" + esc(t) + "</span>"; }).join("");
     var cat = catHTML(p.tags || []);
@@ -928,22 +1009,24 @@ body[data-view="find"] main{width:100%;max-width:none}
     var src = posts.map(function(u, i){
       return '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer" aria-label="查看原貼文' + (posts.length > 1 ? " " + (i + 1) : "") + '" title="查看原貼文">' + DI.ig + (posts.length > 1 ? "<i>" + (i + 1) + "</i>" : "") + '</a>';
     }).join("");
-    var rate = p.rating ? DI.star + "<b>" + (+p.rating).toFixed(1) + "</b><span>Google 星數</span>" : '<span class="dnone">尚無 Google 星數</span>';
-    var picks = (p.picks || []).length ? '<div class="dchips">' + p.picks.map(function(t){ return "<span>" + esc(t) + "</span>"; }).join("") + "</div>" : '<p class="dnone">尚未填寫</p>';
+    var rate = (p.rating ? DI.star + "<b>" + (+p.rating).toFixed(1) + "</b><span>Google 星數</span>" : '<span class="dnone">尚無 Google 星數</span>') + edBtn("rating", "Google 星數") +
+      (p.rating && p.ratingDate ? '<span class="ddate">' + esc(String(p.ratingDate).replace(/-/g, "/")) + ' 更新</span>' : "");
+    var picks = DEDIT === "picks" ? editorHTML("picks", p) : (p.picks || []).length ? '<div class="dchips">' + p.picks.map(function(t){ return "<span>" + esc(t) + "</span>"; }).join("") + "</div>" : '<p class="dnone">尚未填寫</p>';
     var copy = p.address ? '<button type="button" class="dcopy" data-act="dcopy" data-v="' + esc(p.address) + '" aria-label="複製地址" title="複製地址">' + DI.copy + '</button>' : "";
+    var body = function(f, normal){ return DEDIT === f ? editorHTML(f, p) : normal; };
     return '<div class="dback"><button type="button" data-act="dback">‹ 返回</button><button type="button" class="dreview" data-act="dreview" data-name="' + esc(p.name) + '">✎ 留下評價</button></div>' +
       '<article class="dhead"><div class="dmain"><h2 class="dname">' + esc(p.name) + '</h2>' +
       (loc ? '<p class="dloc">' + loc + '</p>' : '') + (cat ? '<p class="dcat">' + cat + '</p>' : '') +
-      '<div class="drate">' + rate + (src ? '<span class="dsrc">' + src + '</span>' : '') + '</div></div>' +
+      '<div class="drate">' + rate + (src ? '<span class="dsrc">' + src + '</span>' : '') + '</div>' + (DEDIT === "rating" ? editorHTML("rating", p) : "") + '</div>' +
       '<a class="pgo" href="' + esc(mapURL(p)) + '" target="_blank" rel="noopener noreferrer" aria-label="導航到 ' + esc(cleanName(p.name)) + '（Google 地圖）" title="導航"><svg viewBox="0 0 24 24" aria-hidden="true"><path transform="translate(0 .8) rotate(45 12 11.2) scale(.92) translate(.96 .9)" d="M12 2 4.5 20.3 12 16.5l7.5 3.8z"/></svg></a></article>' +
       '<div class="dgrid"><div class="dleft">' +
-      '<section class="dsec"><h3>' + DI.spark + '特色</h3>' + dText(p.feature) + '</section>' +
-      '<section class="dsec"><h3>' + DI.heart + '推薦餐點</h3>' + picks + '</section></div>' +
+      '<section class="dsec"><h3>' + DI.spark + '特色' + edBtn("feature", "特色") + '</h3>' + body("feature", dText(p.feature)) + '</section>' +
+      '<section class="dsec"><h3>' + DI.heart + '推薦餐點' + edBtn("picks", "推薦餐點") + '</h3>' + picks + '</section></div>' +
       '<section class="dsec dinfo">' +
-      dRow("clock", "營業時間", dText(p.hours)) +
-      dRow("cal", "公休日", '<p class="dtext">' + esc(p.closed || "不確定") + '</p>') +
-      dRow("coin", "價位區間", dText(p.price)) +
-      dRow("pin", "地址", dText(p.address), copy) + '</section></div>';
+      dRow("clock", "營業時間", body("hours", dText(p.hours)), edBtn("hours", "營業時間")) +
+      dRow("cal", "公休日", body("closed", '<p class="dtext">' + esc(p.closed || "不確定") + '</p>'), edBtn("closed", "公休日")) +
+      dRow("coin", "價位區間", body("price", dText(p.price)), edBtn("price", "價位區間")) +
+      dRow("pin", "地址", body("address", dText(p.address)), '<span class="dacts">' + (DEDIT === "address" ? "" : copy) + edBtn("address", "地址") + '</span>') + '</section></div>';
   }
   function renderFind(){
     loadPlaces();
@@ -951,10 +1034,12 @@ body[data-view="find"] main{width:100%;max-width:none}
     $("#fwrap").hidden = $("#plist").hidden = di >= 0;
     $("#dview").hidden = di < 0;
     if(di >= 0){
+      if(DEDIT_I !== di){ DEDIT = ""; DEDIT_I = di; }
       DETAIL_ON = true;
-      $("#dview").innerHTML = detailHTML(list[di]);
+      $("#dview").innerHTML = detailHTML(effPlace(list[di]));
       return;
     }
+    DEDIT = ""; DEDIT_I = -1;
     var opts = filterOptions(list);
     FA.county = FA.county.filter(function(k){ return opts.county.some(function(o){ return o.k === k; }); });
     opts = filterOptions(list);
@@ -989,6 +1074,7 @@ body[data-view="find"] main{width:100%;max-width:none}
     }).join("") + '<button type="button" class="rtab radd" data-act="addrest">＋ 新增餐廳</button>';
     var rest = findRest(cur);
     var isFind = view === "find";
+    if(!isFind){ DEDIT = ""; DEDIT_I = -1; }
     document.body.setAttribute("data-view", view);
     Array.prototype.forEach.call(document.querySelectorAll("#topnav button"), function(b){
       b.setAttribute("aria-current", b.dataset.v === view ? "page" : "false");
@@ -1212,6 +1298,11 @@ body[data-view="find"] main{width:100%;max-width:none}
   document.addEventListener("click", openPlace);
   document.addEventListener("keydown", openPlace);
 
+  document.addEventListener("keydown", function(e){
+    if(!e.target || e.target.id !== "dedit") return;
+    if(e.key === "Escape"){ DEDIT = ""; renderFind(); }
+    else if(e.key === "Enter" && e.target.tagName === "INPUT"){ e.preventDefault(); savePlaceEdit(); }
+  });
   $("#fpanel").addEventListener("change", function(e){
     var k = e.target.dataset.k, a = FA[FOpen], i = a ? a.indexOf(k) : -1;
     if(!a || k === undefined) return;
@@ -1239,6 +1330,13 @@ body[data-view="find"] main{width:100%;max-width:none}
       if(PDpushed){ PDpushed = false; history.back(); }
       else { try{ history.replaceState(null, "", "#find"); }catch(err){} renderFind(); }
     }
+    else if(act === "dedit"){
+      DEDIT = b.dataset.f; renderFind();
+      var ed = $("#dedit");
+      if(ed){ ed.focus(); try{ ed.setSelectionRange(ed.value.length, ed.value.length); }catch(err){} }
+    }
+    else if(act === "dcancel"){ DEDIT = ""; renderFind(); }
+    else if(act === "dsave") savePlaceEdit();
     else if(act === "dreview"){
       var nm = b.dataset.name, short = nm.length > 20 ? cleanName(nm) : nm;
       if(short.length > 20) short = short.slice(0, 20);
