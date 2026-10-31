@@ -774,7 +774,9 @@ body[data-view="find"] main{width:100%;max-width:none}
 
   /* 找餐廳：資料來自 places.json（目前是從 Notion 匯出的預覽資料，缺的欄位先留空） */
   var PLACES = null;
-  var BROAD = [["中式","中式料理"],["日式","日式"],["韓式","韓式料理"],["泰式","泰式","泰式料理"],["義式","義式料理"]];
+  // 種類標籤裡的「X式料理」「印度料理」是大分類（粗體、可篩選），其餘標籤等重新分類後再開放篩選
+  var BROAD_ORDER = ["中式料理","日式料理","韓式料理","泰式料理","義式料理","印度料理"];
+  function isCuisine(t){ return /式料理$/.test(t) || t === "印度料理"; }
   function loadPlaces(){
     if(PLACES !== null) return;
     PLACES = [];
@@ -791,14 +793,8 @@ body[data-view="find"] main{width:100%;max-width:none}
     });
   }
   function catHTML(tags){
-    var big = [], used = {}, small = [];
-    BROAD.forEach(function(b){
-      for(var i = 1; i < b.length; i++){
-        used[b[i]] = 1;
-        if(tags.indexOf(b[i]) >= 0 && big.indexOf(b[0]) < 0) big.push(b[0]);
-      }
-    });
-    tags.forEach(function(t){ if(!used[t] && small.indexOf(t) < 0) small.push(t); });
+    var big = [], small = [];
+    tags.forEach(function(t){ var a = isCuisine(t) ? big : small; if(a.indexOf(t) < 0) a.push(t); });
     var parts = big.map(function(t){ return "<span><b>" + esc(t) + "</b></span>"; }).concat(small.map(function(t){ return "<span>" + esc(t) + "</span>"; }));
     return parts.join("");
   }
@@ -830,11 +826,9 @@ body[data-view="find"] main{width:100%;max-width:none}
     return base + encodeURIComponent([p.name, p.address || q || [p.county, p.district].filter(Boolean).join("")].filter(Boolean).join(" "));
   }
   // 找餐廳：全部依加入時間（places.json 的順序，新的在前）排列，再依篩選條件留下符合的店
-  var TYPE_NAME = { "中式料理":"中式", "韓式料理":"韓式", "泰式料理":"泰式", "義式料理":"義式" };
-  var BROAD_ORDER = ["中式","日式","韓式","泰式","義式"];
   function typeKeys(p){
     var out = [];
-    (p.tags || []).forEach(function(t){ var k = TYPE_NAME[t] || t; if(out.indexOf(k) < 0) out.push(k); });
+    (p.tags || []).forEach(function(t){ if(out.indexOf(t) < 0) out.push(t); });
     return out;
   }
   function distKey(p){ return p.district || "未填市區"; }
@@ -872,7 +866,7 @@ body[data-view="find"] main{width:100%;max-width:none}
     }
     list.forEach(function(p){
       add("county", ckey(p), ckey(p));
-      typeKeys(p).forEach(function(t){ if(/式$/.test(t)) add("type", t, t); });   // 種類選單只放「X式」，其他標籤等重新分類後再開放
+      typeKeys(p).forEach(function(t){ if(isCuisine(t)) add("type", t, t); });   // 種類選單只放「X式料理」「印度料理」，其他標籤等重新分類後再開放
     });
     o.county.sort(function(x, y){ return y.n - x.n || x.i - y.i; });
     var cidx = {};
