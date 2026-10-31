@@ -146,12 +146,17 @@
  {
   "name": "玉兔壽喜燒",
   "county": "台南",
-  "district": "",
+  "district": "中西區",
   "tags": [
    "壽喜燒",
    "火鍋"
   ],
-  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%20%E7%8E%89%E5%85%94%E5%A3%BD%E5%96%9C%E7%87%92"
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%20%E7%8E%89%E5%85%94%E5%A3%BD%E5%96%9C%E7%87%92",
+  "address": "臺南市中西區城隍里青年路90號",
+  "rating": 4.1,
+  "price": "每人 $400–600",
+  "hours": "週一至週日 11:30–14:30、17:00–21:00",
+  "closed": "無公休"
  },
  {
   "name": "音樂盒法式鄉村餐廳",
@@ -174,7 +179,12 @@
    "宵夜",
    "中式麵類"
   ],
-  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8C%97%20%E4%B8%AD%E6%AD%A3%E5%8D%80%20%E4%B8%80%E6%A8%82%E6%B6%BC%E9%BA%B5"
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8C%97%20%E4%B8%AD%E6%AD%A3%E5%8D%80%20%E4%B8%80%E6%A8%82%E6%B6%BC%E9%BA%B5",
+  "address": "臺北市中正區襄陽路29號1樓",
+  "rating": 4.1,
+  "price": "每人 $200–400",
+  "hours": "週一至週日 11:00–05:00",
+  "closed": "無公休"
  },
  {
   "name": "So Taipei 趖",
@@ -317,13 +327,19 @@
   "tags": [
    "火鍋"
   ],
-  "map": "https://www.google.com/maps/search/?api=1&query=%E6%96%B0%E7%AB%B9%E7%B8%A3%20%E7%AB%B9%E5%8C%97%E5%B8%82%20%E7%9C%9F%E6%B6%AE%E5%90%83%E5%88%B0%E9%A3%BD%E7%81%AB%E9%8D%8B"
+  "map": "https://www.google.com/maps/search/?api=1&query=%E6%96%B0%E7%AB%B9%E7%B8%A3%20%E7%AB%B9%E5%8C%97%E5%B8%82%20%E7%9C%9F%E6%B6%AE%E5%90%83%E5%88%B0%E9%A3%BD%E7%81%AB%E9%8D%8B",
+  "address": "新竹縣竹北市竹仁里中正東路307號",
+  "rating": 4.8,
+  "price": "每人 $400–600",
+  "hours": "週一至週日 11:30–21:30",
+  "closed": "無公休"
  },
  {
   "name": "咖哩厚台灣茶咖哩 中清支店",
   "county": "台中",
   "district": "北屯區",
   "tags": [
+   "日式",
    "咖哩"
   ],
   "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E4%B8%AD%20%E5%8C%97%E5%B1%AF%E5%8D%80%20%E5%92%96%E5%93%A9%E5%8E%9A%E5%8F%B0%E7%81%A3%E8%8C%B6%E5%92%96%E5%93%A9%20%E4%B8%AD%E6%B8%85%E6%94%AF%E5%BA%97",
@@ -336,6 +352,7 @@
   "county": "高雄",
   "district": "新興區",
   "tags": [
+   "日式",
    "咖哩"
   ],
   "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E6%96%B0%E8%88%88%E5%8D%80%E6%B4%9B%E9%99%BD%E8%A1%9727%E8%99%9F1F",
@@ -372,7 +389,8 @@
   "county": "台中",
   "district": "東區",
   "tags": [
-   "咖喱",
+   "日式",
+   "咖哩",
    "烤餅"
   ],
   "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E4%B8%AD%E5%B8%82%E6%9D%B1%E5%8D%80%E5%A4%A7%E5%8B%87%E8%A1%9727%E8%99%9F",
@@ -623,7 +641,8 @@
   "county": "高雄",
   "district": "鹽埕區",
   "tags": [
-   "咖喱"
+   "日式",
+   "咖哩"
   ],
   "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E9%B9%BD%E5%9F%95%E5%8D%80%E5%A0%80%E6%B1%9F%E8%A1%9711-2%E8%99%9F",
   "rating": 4.4,
@@ -635,6 +654,7 @@
   "county": "台中",
   "district": "南區",
   "tags": [
+   "日式",
    "咖哩"
   ],
   "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E4%B8%AD%E5%B8%82%E5%8D%97%E5%8D%80%E6%B0%B8%E8%88%88%E9%87%8C%E9%AB%98%E5%B7%A5%E8%B7%AF150%E8%99%9F",
@@ -753,18 +773,23 @@
   "county": "高雄",
   "district": "左營區",
   "tags": [
-   "咖哩",
-   "日式咖喱"
+   "日式",
+   "咖哩"
   ],
-  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%20%E5%B7%A6%E7%87%9F%E5%8D%80%20%E6%97%A5%E4%B9%83%E5%B1%8B%E5%92%96%E5%93%A9"
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%20%E5%B7%A6%E7%87%9F%E5%8D%80%20%E6%97%A5%E4%B9%83%E5%B1%8B%E5%92%96%E5%93%A9",
+  "address": "高雄市左營區新下里博愛二路777號B1",
+  "rating": 4.4,
+  "price": "每人 $200–400",
+  "hours": "週一至週日 11:00–22:00",
+  "closed": "無公休"
  },
  {
   "name": "日乃屋咖哩",
   "county": "台中",
   "district": "北屯區",
   "tags": [
-   "咖哩",
-   "日式咖喱"
+   "日式",
+   "咖哩"
   ],
   "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E4%B8%AD%E5%B8%82%E5%8C%97%E5%B1%AF%E5%8D%80%E5%B4%87%E5%BE%B7%E8%B7%AF%E4%B8%89%E6%AE%B5865%E8%99%9FB1",
   "rating": 4.4,
@@ -866,20 +891,27 @@
   "closed": "無公休"
  },
  {
-  "name": "邦拿 咖啡專門店",
+  "name": "邦拿 咖喱專門店",
   "county": "台南",
   "district": "南區",
   "tags": [
+   "日式",
    "咖哩"
   ],
-  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E5%8D%97%E5%8D%80%20%E9%82%A6%E6%8B%BF%20%E5%92%96%E5%95%A1%E5%B0%88%E9%96%80%E5%BA%97"
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E5%8D%97%E5%8D%80%20%E9%82%A6%E6%8B%BF%20%E5%92%96%E5%95%A1%E5%B0%88%E9%96%80%E5%BA%97",
+  "address": "臺南市南區廣州里夏林路26號",
+  "rating": 4.6,
+  "price": "每人 $200–400",
+  "hours": "週一、週三至週日 11:00–14:30、17:30–23:30",
+  "closed": "週二"
  },
  {
   "name": "咕嚕咕嚕家",
   "county": "高雄",
   "district": "左營區",
   "tags": [
-   "咖喱"
+   "日式",
+   "咖哩"
   ],
   "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E9%B3%B3%E5%B1%B1%E5%8D%80%E4%BA%94%E7%94%B2%E4%BA%8C%E8%B7%AF468%E8%99%9F",
   "rating": 4.4,
@@ -967,8 +999,9 @@
   "county": "高雄",
   "district": "苓雅區",
   "tags": [
-   "丼飯",
-   "咖喱"
+   "日式",
+   "咖哩",
+   "丼飯"
   ],
   "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E8%8B%93%E9%9B%85%E5%8D%80%E8%8B%93%E9%9B%85%E4%B8%80%E8%B7%AF314%E8%99%9F",
   "rating": 4.6,
@@ -1322,7 +1355,8 @@
   "county": "台南",
   "district": "東區",
   "tags": [
-   "印度咖喱",
+   "印度",
+   "咖哩",
    "烤餅"
   ],
   "map": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E5%8D%97%E5%B8%82%E6%9D%B1%E5%8D%80%E6%9D%B1%E8%88%88%E8%B7%AF8%E8%99%9F",

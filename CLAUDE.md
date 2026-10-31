@@ -122,4 +122,6 @@ menus/            各餐廳菜單截圖（參考用，已列入 .gitignore，不
 
 * **詳情頁「留下評價」鈕（2026-10，本機預覽中）：** 詳情頁左上「‹ 返回」右邊的實心按鈕。按下去會跳到寫評價並建立同名的「暫存餐廳」（`DRAFT`，只在記憶體，不寫本機 `save()`、不送雲端，頁面上方會提示「還沒有儲存」，且隱藏編輯名稱／刪除餐廳）。**新增第一個餐點時**才送出 `addRestaurant` 再送 `addItem`；中途切到別間餐廳、切到「找餐廳」、返回或重新整理，暫存餐廳就直接消失，避免誤觸產生空餐廳。同名餐廳（不分大小寫）已存在就直接帶過去，不重複建立。後端限制餐廳名稱 ≤20 字，超過時改用 `cleanName()` 簡稱、仍超過就截斷到 20 字（目前 places.json 有 2 間：OAKLA & BARK 美式 Barbecue、UNCLE SHAWN 燒肉餐酒館 高雄店）。後端沒有改動。
 
-* **詳情頁資料（2026-10 第一批）：** `places.json` 已填入 `rating`（Google 星數）、`hours`（營業時間）、`closed`（公休日，每天營業寫「無公休」，Google 查不到寫法則欄位留空，頁面顯示「不確定」）。資料來源是使用者把 `migration/for_gemini_N.txt` 交給 Gemini（App）查 Google 地圖後貼回的表格（`migration/gemini_result_N.md`，`migration/` 已列入 .gitignore）；只填「確認是同一間店＝是」的 102 間，「不確定」的 13 間先留空待處理。價位區間欄位 `price` 已在頁面上（公休日與地址之間），資料尚未填入。`feature`、`picks`、`address`、`posts` 還沒進公開檔，等資料庫轉到 Google 試算表時再處理；`migration/analyze.py` 是用 Notion 貼文＋Gemini 重新分析這幾個欄位的一次性程式。
+* **詳情頁資料（2026-10 第一批）：** `places.json` 已填入 `rating`（Google 星數）、`hours`（營業時間）、`closed`（公休日，每天營業寫「無公休」，Google 查不到寫法則欄位留空，頁面顯示「不確定」）。資料來源是使用者把 `migration/for_gemini_N.txt` 交給 Gemini（App）查 Google 地圖後貼回的表格（`migration/gemini_result_N.md`，`migration/` 已列入 .gitignore）；只填「確認是同一間店＝是」的 102 間；全部查無的 5 間（玉兔壽喜燒、一樂涼麵、真涮、日乃屋高雄、邦拿）由使用者手動查 Google 地圖補上（含地址、價位）；其餘「不確定」的 8 間待處理。價位區間欄位 `price` 已在頁面上（公休日與地址之間），資料尚未填入。`feature`、`picks`、`address`、`posts` 還沒進公開檔，等資料庫轉到 Google 試算表時再處理；`migration/analyze.py` 是用 Notion 貼文＋Gemini 重新分析這幾個欄位的一次性程式。
+
+* **咖哩標籤統一（2026-10）：** 一律寫「咖哩」（不用「咖喱」）；國別分開成獨立標籤，例：印度咖喱 → 「印度」＋「咖哩」，日式咖喱 → 「日式」＋「咖哩」，原資料沒註明國別的咖哩店預設「日式」＋「咖哩」。「印度」不是「X式」，所以目前不會出現在種類篩選（等使用者重新分類時再開放）。
