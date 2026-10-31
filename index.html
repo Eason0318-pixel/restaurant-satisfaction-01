@@ -683,10 +683,10 @@ body[data-view="find"] main{width:100%;max-width:none}
       if(it && !BAD[v.member]) it.votes[v.member] = { r:v.r, n:v.n, t:v.t };
     });
     S = normalize({ restaurants:st.restaurants, items:items, members:(st.members || []).filter(function(m){ return !BAD[m]; }) });
-    if(Array.isArray(st.placeEdits)){
-      PEDIT = {};
-      st.placeEdits.forEach(function(e){ if(e && e.k && e.f) (PEDIT[e.k] = PEDIT[e.k] || {})[e.f] = e.v; });
-      savePE();
+    if(Array.isArray(st.places)){
+      // 雲端的 places 工作表是正本，已經包含所有修改，所以暫存的修改可以清掉
+      SRV = st.places; PEDIT = {}; savePE();
+      applyPlaces(); maybeImportPlaces();
     }
     if(DRAFT){
       var same = S.restaurants.filter(function(r){ return r.name.trim().toLowerCase() === DRAFT.name.toLowerCase(); })[0];
@@ -798,25 +798,41 @@ body[data-view="find"] main{width:100%;max-width:none}
   window.addEventListener("resize", fitTitle);
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitle);
 
-  /* 找餐廳：資料來自 places.json（目前是從 Notion 匯出的預覽資料，缺的欄位先留空） */
-  var PLACES = null;
+  /* 找餐廳：資料正本是試算表的 places 工作表（SRV）；雲端還沒有資料（或還沒連上）時先用 places.json（SEED）。
+     雲端的 places 是空的時候，網頁會自動把 places.json 匯入一次（重複匯入不會覆蓋，所以安全）。 */
+  var PLACES = null, SEED = [], SEED_RAW = "", SEED_DONE = false, SRV = null, DEMO = [], importSent = false;
   // 種類標籤裡的「X式料理」「印度料理」是大分類（粗體、可篩選），其餘標籤等重新分類後再開放篩選
   var BROAD_ORDER = ["中式料理","日式料理","韓式料理","泰式料理","義式料理","印度料理"];
   function isCuisine(t){ return /式料理$/.test(t) || t === "印度料理"; }
+  var LOCAL_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+  var seedStarted = false;
   function loadPlaces(){
-    if(PLACES !== null) return;
-    PLACES = [];
+    if(seedStarted) return;
+    seedStarted = true;
     fetch("places.json", {cache:"no-store"}).then(function(r){ if(!r.ok) throw 0; return r.json(); })
-      .then(function(d){ PLACES = d; return loadDemo(); })
-      .catch(function(){ PLACES = PLACES || []; })
-      .then(function(){ if(view === "find") renderFind(); });
+      .then(function(d){ if(Array.isArray(d)){ SEED = d; SEED_RAW = JSON.stringify(d); } return loadDemo(); })
+      .catch(function(){})
+      .then(function(){ SEED_DONE = true; applyPlaces(); maybeImportPlaces(); if(view === "find") renderFind(); });
   }
-  // 只在本機預覽時，把 places.demo.json（示意用的假資料，不上傳）依店名合併進來，方便檢查詳情頁版面
+  // 雲端有資料就用雲端的，否則用 places.json
+  function applyPlaces(){
+    if(SRV && SRV.length) PLACES = SRV;
+    else if(SEED_DONE) PLACES = SEED;
+    else return;
+    // 只在本機預覽時，把 places.demo.json（示意用的假資料，不上傳）依店名合併進來，方便檢查詳情頁版面
+    DEMO.forEach(function(x){ PLACES.forEach(function(p){ if(p.name === x.name) for(var k in x) p[k] = x[k]; }); });
+  }
   function loadDemo(){
-    if(!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return null;
-    return fetch("places.demo.json", {cache:"no-store"}).then(function(r){ return r.ok ? r.json() : []; }).catch(function(){ return []; }).then(function(demo){
-      demo.forEach(function(x){ (PLACES || []).forEach(function(p){ if(p.name === x.name) for(var k in x) p[k] = x[k]; }); });
-    });
+    if(!LOCAL_HOST) return null;
+    return fetch("places.demo.json", {cache:"no-store"}).then(function(r){ return r.ok ? r.json() : []; }).catch(function(){ return []; }).then(function(demo){ DEMO = demo; });
+  }
+  // 雲端的 places 是空的（第一次）就把 places.json 分批匯入；本機預覽不匯入，避免示意資料寫進正式試算表
+  function maybeImportPlaces(){
+    if(importSent || !REMOTE || LOCAL_HOST || !SEED_DONE || !SRV || SRV.length || !SEED_RAW) return;
+    importSent = true;
+    var list = JSON.parse(SEED_RAW), base = Date.now();
+    list.forEach(function(p, i){ p.at = base - i * 1000; });
+    for(var i = 0; i < list.length; i += 50) send({ op:"importPlaces", places:list.slice(i, i + 50) });
   }
   function catHTML(tags){
     var big = [], small = [];
