@@ -154,7 +154,7 @@
   "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%20%E7%8E%89%E5%85%94%E5%A3%BD%E5%96%9C%E7%87%92",
   "address": "臺南市中西區城隍里青年路90號",
   "rating": 4.1,
-  "price": "每人 $400–600",
+  "price": "每人 $400～600",
   "hours": "11:30～14:30、17:00～21:00",
   "closed": "無公休"
  },
@@ -183,7 +183,7 @@
   "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8C%97%20%E4%B8%AD%E6%AD%A3%E5%8D%80%20%E4%B8%80%E6%A8%82%E6%B6%BC%E9%BA%B5",
   "address": "臺北市中正區襄陽路29號1樓",
   "rating": 4.1,
-  "price": "每人 $200–400",
+  "price": "每人 $200～400",
   "hours": "11:00～05:00",
   "closed": "無公休"
  },
@@ -307,7 +307,10 @@
   "tags": [
    "火鍋"
   ],
-  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E6%B0%B8%E5%BA%B7%E5%8D%80%20%E5%8F%B0%E5%8D%97%E5%B8%82%E6%B0%B8%E5%BA%B7%E5%8D%80%E4%B8%AD%E8%8F%AF%E8%B7%AF484%E8%99%9F"
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E6%B0%B8%E5%BA%B7%E5%8D%80%20%E5%8F%B0%E5%8D%97%E5%B8%82%E6%B0%B8%E5%BA%B7%E5%8D%80%E4%B8%AD%E8%8F%AF%E8%B7%AF484%E8%99%9F",
+  "rating": 4.8,
+  "hours": "週一至週五 11:00～15:30、17:00～23:00\n週六、週日 11:00～23:00",
+  "closed": "無公休"
  },
  {
   "name": "MIGU麵龜 手作麵疙瘩",
@@ -331,7 +334,7 @@
   "map": "https://www.google.com/maps/search/?api=1&query=%E6%96%B0%E7%AB%B9%E7%B8%A3%20%E7%AB%B9%E5%8C%97%E5%B8%82%20%E7%9C%9F%E6%B6%AE%E5%90%83%E5%88%B0%E9%A3%BD%E7%81%AB%E9%8D%8B",
   "address": "新竹縣竹北市竹仁里中正東路307號",
   "rating": 4.8,
-  "price": "每人 $400–600",
+  "price": "每人 $400～600",
   "hours": "11:30～21:30",
   "closed": "無公休"
  },
@@ -780,7 +783,7 @@
   "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%20%E5%B7%A6%E7%87%9F%E5%8D%80%20%E6%97%A5%E4%B9%83%E5%B1%8B%E5%92%96%E5%93%A9",
   "address": "高雄市左營區新下里博愛二路777號B1",
   "rating": 4.4,
-  "price": "每人 $200–400",
+  "price": "每人 $200～400",
   "hours": "11:00～22:00",
   "closed": "無公休"
  },
@@ -902,7 +905,7 @@
   "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E5%8D%97%E5%8D%80%20%E9%82%A6%E6%8B%BF%20%E5%92%96%E5%95%A1%E5%B0%88%E9%96%80%E5%BA%97",
   "address": "臺南市南區廣州里夏林路26號",
   "rating": 4.6,
-  "price": "每人 $200–400",
+  "price": "每人 $200～400",
   "hours": "11:00～14:30、17:30～23:30",
   "closed": "週二"
  },
@@ -1028,7 +1031,10 @@
   "tags": [
    "牛肉麵"
   ],
-  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E4%B8%89%E6%B0%91%E5%8D%80%E6%BE%84%E6%B8%85%E8%B7%AF%20449%20%E8%99%9F"
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E4%B8%89%E6%B0%91%E5%8D%80%E6%BE%84%E6%B8%85%E8%B7%AF%20449%20%E8%99%9F",
+  "rating": 4.2,
+  "hours": "11:00～20:30",
+  "closed": "無公休"
  },
  {
   "name": "暮嶼",
@@ -1106,7 +1112,10 @@
   "tags": [
    "拌面"
   ],
-  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E5%B7%A6%E7%87%9F%E5%8D%80%E5%AF%8C%E6%B0%91%E8%B7%AF128%E8%99%9F"
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E5%B7%A6%E7%87%9F%E5%8D%80%E5%AF%8C%E6%B0%91%E8%B7%AF128%E8%99%9F",
+  "rating": 4.7,
+  "hours": "11:30～20:30",
+  "closed": "無公休"
  },
  {
   "name": "金波日式炸物食飯店",
@@ -1213,7 +1222,10 @@
   "tags": [
    "手搖"
   ],
-  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E4%B8%AD%E8%A5%BF%E5%8D%80%20TUGU%E8%8C%B6%E8%B0%B7"
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E4%B8%AD%E8%A5%BF%E5%8D%80%20TUGU%E8%8C%B6%E8%B0%B7",
+  "rating": 4.3,
+  "hours": "11:00～21:00",
+  "closed": "無公休"
  },
  {
   "name": "和爺麻辣 北門店",
@@ -1255,21 +1267,31 @@
  {
   "name": "麻佬二",
   "county": "台南",
-  "district": "北區",
+  "district": "永康區",
   "tags": [
    "火鍋",
    "四川麻辣"
   ],
-  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E5%8C%97%E5%8D%80%20%E9%BA%BB%E4%BD%AC%E4%BA%8C"
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E5%8C%97%E5%8D%80%20%E9%BA%BB%E4%BD%AC%E4%BA%8C",
+  "address": "臺南市永康區五王里中華路420號",
+  "rating": 4.6,
+  "price": "每人 $200～400",
+  "hours": "11:00～14:30、16:30～22:30",
+  "closed": "週二"
  },
  {
   "name": "食大客牛排",
   "county": "台南",
-  "district": "東區",
+  "district": "永康區",
   "tags": [
    "牛排"
   ],
-  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E6%9D%B1%E5%8D%80%20%E9%A3%9F%E5%A4%A7%E5%AE%A2%E7%89%9B%E6%8E%92"
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%20%E6%9D%B1%E5%8D%80%20%E9%A3%9F%E5%A4%A7%E5%AE%A2%E7%89%9B%E6%8E%92",
+  "address": "臺南市永康區五王里中山南路282號",
+  "rating": 4,
+  "price": "每人 $1～200",
+  "hours": "14:00～20:00",
+  "closed": "無公休"
  },
  {
   "name": "食大客牛排",
@@ -1278,7 +1300,10 @@
   "tags": [
    "牛排"
   ],
-  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E6%A5%A0%E6%A2%93%E5%8D%80%E7%BF%A0%E5%B1%8F%E9%87%8C%E6%B5%B7%E5%B0%88%E8%B7%AF418-1%E8%99%9F"
+  "map": "https://www.google.com/maps/search/?api=1&query=%E9%AB%98%E9%9B%84%E5%B8%82%E6%A5%A0%E6%A2%93%E5%8D%80%E7%BF%A0%E5%B1%8F%E9%87%8C%E6%B5%B7%E5%B0%88%E8%B7%AF418-1%E8%99%9F",
+  "rating": 4.3,
+  "hours": "11:00～13:30、17:00～20:30",
+  "closed": "無公休"
  },
  {
   "name": "揪丼",
@@ -1288,7 +1313,10 @@
    "丼飯",
    "牛排"
   ],
-  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E4%B8%AD%E5%B1%B1%E8%B7%AF166%E8%99%9F7%E6%A8%93"
+  "map": "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E4%B8%AD%E8%A5%BF%E5%8D%80%E4%B8%AD%E5%B1%B1%E8%B7%AF166%E8%99%9F7%E6%A8%93",
+  "rating": 4.4,
+  "hours": "11:00～22:00",
+  "closed": "無公休"
  },
  {
   "name": "聚門鍋物",
