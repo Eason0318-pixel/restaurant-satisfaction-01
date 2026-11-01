@@ -132,4 +132,6 @@ menus/            各餐廳菜單截圖（參考用，已列入 .gitignore，不
 * **Google 星數日期：** `places.json` 每筆有 `ratingDate`（`YYYY-MM-DD`，目前 115 筆都是 2026-10-31），頁面顯示在星數旁「2026/10/31 更新」。之後新增餐廳或重新查星數，一律寫入當天日期。
 * **搬家資料（2026-11）：** 特色（`feature`）、推薦餐點（`picks`）、地址（`address`，只補原本空白的）、貼文連結（`post1`／`post2`）由 `migration/analyze2.py` 對照 Notion 貼文、逐間請 Gemini 分析後，用 `migration/push_to_sheet.py` 寫入試算表 `places`（只填空白格，不蓋掉手動修改；`migration/` 不上傳）。每間店最多 2 篇貼文，同一篇的不同追蹤網址視為同一篇，超過 2 篇時隨機留 2 篇（目前只有曼菲斯牛排原有 3 篇）。價位區間先不補，由使用者手動填。後端新增 `setPlaces` 批次操作（`PLACE_FIELDS` 另含 tags、post1、post2，詳情頁編輯鈕不提供），需更新 Apps Script 新版本。
 
+* **手機分享新增餐廳（2026-11，iPhone 捷徑）：** 在 IG／Threads 貼文按分享 →「美食地圖」捷徑，把貼文網址以 POST 送到 `/exec`（`{"op":"shareUrl","url":…}`）。後端 `share_()`：只收 instagram.com／threads.net／threads.com 的 https 網址、拿掉追蹤參數、重複貼文不重收；抓貼文文字（Meta 爬蟲 og 標籤，備援 Jina Reader）→ Gemini 整理店名、縣市、區、地址、特色、推薦餐點、營業時間、公休日，價位另外問一次（查不到留空）→ 直接新增到 `places`（同名同縣市已存在就只把貼文補進 post1／post2）。星數與星數日期留空，由 Claude 之後一間一間讀 Google 地圖補（補星數時寫入當天日期）；種類標籤由 Gemini 一併分析：國別（X式料理／印度料理）＋食物類型（拉麵、咖喱…，最多 3 個）；判斷不出國別時只寫食物類型，通知訊息會提醒「判斷不出是哪一國料理」（之後使用者會新增專門的提醒欄位）。舊的 Telegram 機器人（fly.io `food-map-tg-bot`）已於 2026-11-01 停止（只 stop 機器、沒刪除，可用 `fly machine start` 再啟動）。Gemini 金鑰放 Apps Script「指令碼屬性」`GEMINI_API_KEY`（不放程式碼），每天最多 40 次分享。需要更新 Apps Script 新版本。
+
 * **未來新增入口規則：** 手機分享 IG 的新入口寫入資料時，要另外對 Gemini 送「專門查每人價位」的指令；查不到就寫「尚未填寫」（留空），由使用者之後補。
