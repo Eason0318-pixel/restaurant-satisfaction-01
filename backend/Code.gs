@@ -22,7 +22,8 @@ var TEXT_COLS = { restaurants: [1, 2], items: [1, 2, 4], votes: [1, 2, 3, 4], me
 var RATINGS = ["超好吃", "好吃", "普通", "有點雷"];
 var LIMIT = { restaurants: 30, items: 500, members: 30, votes: 8000, places: 600 };
 // 詳情頁允許修改的欄位與它在 places 工作表的第幾欄（其他欄位一律拒絕）
-var PLACE_FIELDS = { rating: 7, ratingDate: 8, hours: 9, closed: 10, price: 11, address: 12, feature: 13, picks: 14 };
+// （tags、post1、post2 不在詳情頁的編輯鈕裡，只給搬家程式整批寫入）
+var PLACE_FIELDS = { tags: 5, rating: 7, ratingDate: 8, hours: 9, closed: 10, price: 11, address: 12, feature: 13, picks: 14, post1: 15, post2: 16 };
 var BAD_NAMES = ["__proto__", "constructor", "prototype"];
 
 function json_(obj) {
@@ -244,14 +245,40 @@ function setVote_(itemId, member, r, n, t) {
 }
 
 /* ---------- 找餐廳：詳情頁修改單一欄位（key＝「店名|縣市」，空字串代表清空） ---------- */
-function setPlace_(key, field, value) {
-  key = String(key == null ? "" : key).trim();
-  if (!key || key.length > 80 || key.indexOf("|") < 0) throw new Error("店家代碼不正確");
-  field = String(field || "");
+function placeValue_(field, value) {
   if (!Object.prototype.hasOwnProperty.call(PLACE_FIELDS, field)) throw new Error("這個欄位不能修改");
   value = String(value == null ? "" : value).trim().slice(0, 500);
   if (field === "rating" && value !== "" && !(Number(value) >= 0 && Number(value) <= 5)) throw new Error("星數要在 0 到 5 之間");
   if (field === "ratingDate" && value !== "" && !/^\d{4}-\d{2}-\d{2}$/.test(value)) throw new Error("日期格式不正確");
+  if ((field === "post1" || field === "post2") && value !== "" && !/^https:\/\//.test(value)) throw new Error("貼文網址要以 https 開頭");
+  return value;
+}
+
+// 一次改很多間店的多個欄位（給搬家程式用）：list 是 [{ key:"店名|縣市", fields:{ 欄位:值 } }]，一次最多 100 間
+function setPlaces_(list) {
+  if (!Array.isArray(list)) throw new Error("資料格式不正確");
+  var rows = rows_("places");
+  var at = {};
+  rows.forEach(function (r, i) { at[String(r[0])] = i; });
+  var changed = false;
+  list.slice(0, 100).forEach(function (x) {
+    if (!x || typeof x !== "object" || !x.fields || typeof x.fields !== "object") return;
+    var i = at[String(x.key)];
+    if (i === undefined) return;
+    Object.keys(x.fields).forEach(function (f) {
+      var v = placeValue_(f, x.fields[f]);
+      rows[i][PLACE_FIELDS[f] - 1] = v;
+      changed = true;
+    });
+  });
+  if (changed) sh_("places").getRange(2, 1, rows.length, HEADERS.places.length).setValues(rows);
+}
+
+function setPlace_(key, field, value) {
+  key = String(key == null ? "" : key).trim();
+  if (!key || key.length > 80 || key.indexOf("|") < 0) throw new Error("店家代碼不正確");
+  field = String(field || "");
+  value = placeValue_(field, value);
   var rows = rows_("places");
   for (var i = 0; i < rows.length; i++) {
     if (String(rows[i][0]) === key) {
@@ -347,6 +374,7 @@ function handle_(op) {
     case "import": import_(op.restaurants, op.items); break;
     case "setPlace": setPlace_(op.key, op.field, op.value); break;
     case "importPlaces": importPlaces_(op.places); break;
+    case "setPlaces": setPlaces_(op.list); break;
     default: throw new Error("不支援的操作");
   }
 }
