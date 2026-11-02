@@ -564,6 +564,43 @@ function share_(rawUrl, pageHtml) {
     (similar.length ? "\n⚠ 資料庫已有相似的店：" + similar.slice(0, 3).join("、") + "，請確認是否重複" : "");
 }
 
+/* ---------- 智慧搜尋：把一句話交給 Gemini，拆成縣市、區、種類、關鍵字（只回傳條件，比對由網頁自己做） ---------- */
+var SEARCH_DAILY_MAX = 300;
+function search_(q) {
+  q = String(q == null ? "" : q).replace(/\s+/g, " ").trim().slice(0, 100);
+  if (!q) throw new Error("請輸入要搜尋的內容");
+  var props = PropertiesService.getScriptProperties();
+  var day = Utilities.formatDate(new Date(), "Asia/Taipei", "yyyy-MM-dd");
+  var cnt = props.getProperty("SEARCH_DAY") === day ? Number(props.getProperty("SEARCH_COUNT") || 0) : 0;
+  if (cnt >= SEARCH_DAILY_MAX) throw new Error("今天的智慧搜尋次數已達上限");
+  props.setProperties({ SEARCH_DAY: day, SEARCH_COUNT: String(cnt + 1) });
+
+  var counties = {}, districts = {}, tags = {};
+  rows_("places").forEach(function (r) {
+    if (r[2]) counties[r[2]] = 1;
+    if (r[3]) districts[r[3]] = 1;
+    String(r[4] || "").split("、").forEach(function (t) { if (t) tags[t] = 1; });
+  });
+  var info = gemini_("你是餐廳資料庫的搜尋助手。使用者用一句話描述想找的餐廳，請拆解成篩選條件。\n" +
+    "【使用者輸入】" + q + "\n\n" +
+    "【資料庫現有的縣市】" + Object.keys(counties).join("、") + "\n" +
+    "【資料庫現有的區】" + Object.keys(districts).join("、") + "\n" +
+    "【資料庫現有的種類標籤】" + Object.keys(tags).join("、") + "\n\n" +
+    "請輸出 JSON：\n" +
+    '- "counties": 使用者提到的縣市陣列，必須用資料庫現有的寫法（例：使用者寫「台南市」「臺南」都要寫成「台南」；「新竹」若資料庫是「新竹市」就寫「新竹市」）。沒提到就空陣列\n' +
+    '- "districts": 使用者提到的區陣列，必須用資料庫現有的寫法。沒提到就空陣列\n' +
+    '- "types": 使用者想吃的料理或食物類型陣列。盡量對應資料庫現有的種類標籤（例：拉麵、燒肉、火鍋、咖喱；「咖哩」要寫「咖喱」；「日本料理」寫「日式料理」）；資料庫沒有的種類也可以照使用者的意思寫（例：鍋貼）。沒提到就空陣列\n' +
+    '- "keywords": 其他特定店名、餐點名稱或特色字詞陣列（不要重複放縣市、區、種類）。沒有就空陣列\n' +
+    '- "understood": 一句話繁體中文，白話說明你理解的條件，例：台南、高雄的拉麵。完全看不懂就空字串');
+  function list(v) {
+    return (Array.isArray(v) ? v : []).map(function (x) { return String(x == null ? "" : x).trim().slice(0, 20); }).filter(Boolean).slice(0, 10);
+  }
+  return {
+    counties: list(info.counties).map(normCounty_), districts: list(info.districts), types: list(info.types).map(function (t) { return t.replace(/咖哩/g, "咖喱"); }),
+    keywords: list(info.keywords), understood: String(info.understood || "").trim().slice(0, 100)
+  };
+}
+
 // 在 Apps Script 編輯器上方選這個函式按「執行」：第一次會要求授權「連到外部網站」，執行後看「執行記錄」
 function testShare() {
   var url = "https://www.instagram.com/p/DAe0f2oS-0K/";
@@ -597,6 +634,13 @@ function doPost(e) {
   var lock = LockService.getScriptLock();
   try {
     var op = JSON.parse(e.postData.contents);
+    if (op && op.op === "searchPlaces") { // 智慧搜尋：只讀資料、問 Gemini，不佔鎖
+      try {
+        return json_({ ok: true, intent: search_(op.q) });
+      } catch (err) {
+        return json_({ ok: false, error: String(err && err.message || err) });
+      }
+    }
     if (op && op.op === "shareUrl") { // 抓貼文與問 Gemini 要等一陣子，不佔著鎖；只有寫入試算表時才上鎖
       try {
         return json_({ ok: true, message: share_(op.url, op.html) });

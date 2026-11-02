@@ -135,3 +135,5 @@ menus/            各餐廳菜單截圖（參考用，已列入 .gitignore，不
 * **手機分享新增餐廳（2026-11，iPhone 捷徑）：** 在 IG／Threads 貼文按分享 →「美食地圖」捷徑，把貼文網址以 POST 送到 `/exec`（`{"op":"shareUrl","url":…}`）。後端 `share_()`：只收 instagram.com／threads.net／threads.com 的 https 網址、拿掉追蹤參數、重複貼文不重收；抓貼文文字（Meta 爬蟲 og 標籤，備援 Jina Reader）→ Gemini 整理店名、縣市、區、地址、特色、推薦餐點、營業時間、公休日，價位另外問一次（查不到留空）→ 直接新增到 `places`（同名同縣市已存在就只把貼文補進 post1／post2）。星數與星數日期留空，由 Claude 之後一間一間讀 Google 地圖補（補星數時寫入當天日期）；種類標籤由 Gemini 一併分析：國別（X式料理／印度料理）＋食物類型（拉麵、咖喱…，最多 3 個）；判斷不出國別時只寫食物類型，通知訊息會提醒「判斷不出是哪一國料理」（之後使用者會新增專門的提醒欄位）。舊的 Telegram 機器人（fly.io `food-map-tg-bot`）已於 2026-11-01 停止（只 stop 機器、沒刪除，可用 `fly machine start` 再啟動）。Gemini 金鑰放 Apps Script「指令碼屬性」`GEMINI_API_KEY`（不放程式碼），每天最多 40 次分享。需要更新 Apps Script 新版本。
 
 * **未來新增入口規則：** 手機分享 IG 的新入口寫入資料時，要另外對 Gemini 送「專門查每人價位」的指令；查不到就寫「尚未填寫」（留空），由使用者之後補。
+
+* **找餐廳智慧搜尋（2026-11）：** 篩選列右邊的圓形放大鏡鈕（`#sbtn`），按下去展開成長條膠囊＋白底蓋住整頁（`#sov`）。輸入一句話（例：「我想找台南市和高雄市的拉麵」），按鍵盤搜尋鍵送出：網頁呼叫後端新操作 `searchPlaces`（`search_()`，不佔鎖、每天上限 300 次），Gemini 拆成 counties／districts／types／keywords，網頁用 `placeMatches()` 在本機比對（縣市、區、種類之間「且」，同一組內「或」），結果卡片直接顯示在搜尋畫面，點卡片進詳情頁。Gemini 不能用或後端還沒更新時，自動改用 `localIntent()` 一般字串比對。**需要後端新版本**。「寫評價」頁的搜尋還沒做。

@@ -216,8 +216,26 @@ main{min-width:0;padding:0 0 16px}
 .fbar button:hover{color:var(--ink)}
 .fbar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);font-weight:700}
 .fbar svg{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.fwrap{position:relative;width:fit-content;margin:0 auto 10px}
+.fwrap{position:relative;width:fit-content;margin:0}
 .fwrap .fbar{margin:0}
+.frow{display:flex;justify-content:center;align-items:flex-start;gap:10px;margin:0 auto 10px}
+.sbtn{order:2;flex:none;width:54px;height:54px;display:flex;align-items:center;justify-content:center;padding:0;border-radius:50%;background:var(--paper);border:1px solid var(--line);color:var(--accent);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.sbtn:hover{border-color:var(--accent-mid)}
+.sbtn svg,.spill svg{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+/* 搜尋：圓鈕展開成長條膠囊，白底蓋住整個頁面 */
+.sov{position:fixed;inset:0;z-index:90;background:var(--bg);color:var(--ink);overflow-y:auto;overscroll-behavior:contain;opacity:0;transition:opacity .2s}
+.sov.on{opacity:1}
+.sov[hidden]{display:none}
+.sbox{max-width:1280px;margin:0 auto;padding:12px 16px 40px}
+.srow{display:flex;align-items:center;gap:10px;padding-top:var(--st,0px);transition:padding-top .28s ease}
+.spill{display:flex;align-items:center;gap:10px;height:54px;padding:0 16px;border-radius:999px;background:var(--paper);border:1px solid var(--line);color:var(--muted);overflow:hidden;flex:none;width:var(--sw,54px);margin-left:var(--sl,0px);transition:width .28s ease,margin-left .28s ease}
+.spill input{flex:1;min-width:0;height:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:17px;color:var(--ink);opacity:0;transition:opacity .15s .1s}
+.sov.open .spill input{opacity:1}
+.scancel{flex:none;border:none;background:transparent;color:var(--accent);font-family:inherit;font-size:16px;min-height:44px;padding:0 6px;cursor:pointer;opacity:0;transition:opacity .15s .15s}
+.sov.open .scancel{opacity:1}
+.shint{margin:18px 4px;font-size:14px;line-height:1.6;color:var(--muted)}
+.shint strong{color:var(--ink);font-weight:600}
+.sbody .pgrid{margin-top:6px}
 .fbar button{position:relative}
 .fn{position:absolute;top:3px;right:6px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--go);color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center}
 .fn[hidden]{display:none}
@@ -237,7 +255,7 @@ main{min-width:0;padding:0 0 16px}
 .fpfoot{display:flex;gap:8px;margin-top:8px}
 .fpfoot button{flex:1;min-height:42px;border-radius:999px;border:1px solid var(--accent-mid);background:var(--field);color:var(--accent);font-family:inherit;font-size:15px;cursor:pointer}
 .fpfoot button[data-act="fclose"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
-@media (max-width:820px){ .fbar button{min-width:60px;padding:0 20px} .fbar .ft{display:none} }
+@media (max-width:820px){ .fbar button{min-width:52px;padding:0 14px} .fbar .ft{display:none} }
 body[data-view="find"] .layout{max-width:1280px}
 .add{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px;background:var(--add-bg);border-bottom:1px solid var(--line)}
 .sugg{flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
@@ -384,6 +402,8 @@ body[data-view="find"] main{width:100%;max-width:none}
 
   <main>
     <section class="section" id="findView" hidden>
+      <div class="frow" id="frow">
+      <button type="button" class="sbtn" id="sbtn" data-act="sopen" aria-label="搜尋餐廳" title="搜尋"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.2"/><path d="M15.2 15.2 20 20"/></svg></button>
       <div class="fwrap" id="fwrap">
       <div class="fbar" id="fbar" role="group" aria-label="篩選">
         <button type="button" data-act="fmode" data-m="all" aria-label="總覽" title="總覽"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg><span class="ft">總覽</span></button>
@@ -393,12 +413,28 @@ body[data-view="find"] main{width:100%;max-width:none}
       </div>
       <div class="fpanel" id="fpanel" hidden></div>
       </div>
+      </div>
       <div class="card-list" id="plist">
         <p class="pcount" id="pcount" hidden></p>
         <p class="empty" id="pempty" hidden></p>
         <div class="pgrid" id="pgrid"></div>
       </div>
       <div class="dview" id="dview" hidden></div>
+      <div class="sov" id="sov" role="dialog" aria-label="搜尋餐廳" hidden>
+        <div class="sbox" id="sbox">
+          <form class="srow" id="sform" autocomplete="off">
+            <div class="spill" id="spill">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.2"/><path d="M15.2 15.2 20 20"/></svg>
+              <input id="sq" type="search" enterkeyhint="search" maxlength="100" placeholder="搜尋" aria-label="搜尋餐廳，可以直接說一句話">
+            </div>
+            <button type="button" class="scancel" data-act="sclose">取消</button>
+          </form>
+          <div class="sbody">
+            <p class="shint" id="shint">直接說你想找什麼，例如：「我想找台南和高雄的拉麵」，按鍵盤的搜尋鍵送出。</p>
+            <div class="pgrid" id="sgrid"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section class="section" id="reviewView">
@@ -1047,7 +1083,7 @@ body[data-view="find"] main{width:100%;max-width:none}
   function renderFind(){
     loadPlaces();
     var list = PLACES || [], di = detailIndex(list);
-    $("#fwrap").hidden = $("#plist").hidden = di >= 0;
+    $("#frow").hidden = $("#plist").hidden = di >= 0;
     $("#dview").hidden = di < 0;
     if(di >= 0){
       if(DEDIT_I !== di){ DEDIT = ""; DEDIT_I = di; }
@@ -1081,6 +1117,91 @@ body[data-view="find"] main{width:100%;max-width:none}
     $("#pempty").textContent = PLACES === null || list.length ? "" : "還沒有餐廳資料。";
     if(DETAIL_ON){ DETAIL_ON = false; window.scrollTo(0, PDscroll); }
   }
+
+  // 智慧搜尋：整句話交給 Gemini（後端 searchPlaces）拆成縣市、區、種類、關鍵字，結果在網頁上自己比對；Gemini 不能用時改用一般字串比對
+  var SOPEN = false, SBUSY = 0;
+  function sNorm(s){ return String(s || "").replace(/臺/g, "台").replace(/[市縣區鄉鎮]$/, "").toLowerCase(); }
+  function sHay(p){ return [p.name, p.county, p.district, (p.tags || []).join(" "), p.feature, (p.picks || []).join(" "), p.address].join(" ").replace(/臺/g, "台").replace(/咖哩/g, "咖喱").toLowerCase(); }
+  function localIntent(q, list){
+    var it = { counties:[], districts:[], types:[], keywords:[], understood:"" }, seenC = {}, seenD = {}, seenT = {};
+    var nq = q.replace(/臺/g, "台").replace(/咖哩/g, "咖喱").toLowerCase();
+    list.forEach(function(p){
+      if(p.county && !seenC[p.county] && nq.indexOf(sNorm(p.county)) >= 0){ seenC[p.county] = 1; it.counties.push(p.county); }
+      if(p.district && !seenD[p.district] && sNorm(p.district).length > 1 && nq.indexOf(sNorm(p.district)) >= 0){ seenD[p.district] = 1; it.districts.push(p.district); }
+      (p.tags || []).forEach(function(t){ if(!seenT[t] && nq.indexOf(t.toLowerCase()) >= 0){ seenT[t] = 1; it.types.push(t); } });
+    });
+    if(!it.counties.length && !it.districts.length && !it.types.length) it.keywords = [q];
+    return it;
+  }
+  function placeMatches(p, it){
+    var h = sHay(p);
+    if(it.counties.length && !it.counties.some(function(c){ return sNorm(c) === sNorm(p.county); })) return false;
+    if(it.districts.length && !it.districts.some(function(d){ return sNorm(d) === sNorm(p.district); })) return false;
+    if(it.types.length && !it.types.some(function(t){ t = String(t).replace(/臺/g, "台").toLowerCase(); return h.indexOf(t) >= 0 || (p.tags || []).some(function(x){ return t.indexOf(x.toLowerCase()) >= 0; }); })) return false;
+    if(it.keywords.length && !it.keywords.some(function(k){ return h.indexOf(String(k).replace(/臺/g, "台").replace(/咖哩/g, "咖喱").toLowerCase()) >= 0; })) return false;
+    return true;
+  }
+  function openSearch(){
+    if(SOPEN) return;
+    SOPEN = true; FOpen = "";
+    var ov = $("#sov"), btn = $("#sbtn").getBoundingClientRect();
+    ov.hidden = false;
+    var left = $("#sbox").getBoundingClientRect().left + 16;
+    ov.style.setProperty("--sl", Math.max(0, btn.left - left) + "px");
+    ov.style.setProperty("--st", Math.max(0, btn.top - 12) + "px");
+    ov.style.setProperty("--sw", "54px");
+    void ov.offsetWidth;
+    document.body.style.overflow = "hidden";
+    ov.classList.add("on");
+    $("#sq").focus({ preventScroll:true });
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){
+      ov.classList.add("open");
+      ov.style.setProperty("--sl", "0px"); ov.style.setProperty("--st", "0px"); ov.style.setProperty("--sw", "calc(100% - 68px)");
+    }); });
+  }
+  function closeSearch(){
+    if(!SOPEN) return;
+    SOPEN = false; SBUSY++;
+    var ov = $("#sov");
+    ov.classList.remove("on", "open");
+    document.body.style.overflow = "";
+    setTimeout(function(){ if(!SOPEN) ov.hidden = true; }, 220);
+  }
+  function showSearch(it, note){
+    var list = PLACES || [], items = list.filter(function(p){ return placeMatches(effPlace(p), it); });
+    var parts = [].concat(it.counties, it.districts, it.types, it.keywords).filter(Boolean);
+    $("#shint").innerHTML = (items.length ? '共 <strong>' + items.length + '</strong> 間' : '沒有找到符合的餐廳') +
+      (it.understood || parts.length ? '　辨識條件：' + esc(it.understood || parts.join("、")) : '') + (note ? '<br>' + esc(note) : '');
+    $("#sgrid").innerHTML = items.map(placeCard).join("");
+  }
+  function runSearch(){
+    var q = $("#sq").value.replace(/\s+/g, " ").trim();
+    if(!q){ $("#shint").textContent = "直接說你想找什麼，例如：「我想找台南和高雄的拉麵」，按鍵盤的搜尋鍵送出。"; $("#sgrid").innerHTML = ""; return; }
+    loadPlaces();
+    var list = PLACES || [], my = ++SBUSY;
+    $("#sgrid").innerHTML = "";
+    if(!REMOTE){ showSearch(localIntent(q, list), "目前是離線模式，用一般字串比對"); return; }
+    $("#shint").textContent = "Gemini 正在理解你的需求…";
+    var ctl = window.AbortController ? new AbortController() : null, tm = setTimeout(function(){ if(ctl) ctl.abort(); }, 20000);
+    fetch(API_URL, { method:"POST", headers:{ "Content-Type":"text/plain;charset=utf-8" }, body:JSON.stringify({ op:"searchPlaces", q:q }), signal:ctl ? ctl.signal : undefined })
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if(!d || !d.ok || !d.intent) throw new Error((d && d.error) || "fail"); return d.intent; })
+      .then(function(it){
+        clearTimeout(tm);
+        if(my !== SBUSY) return;
+        ["counties", "districts", "types", "keywords"].forEach(function(k){ it[k] = Array.isArray(it[k]) ? it[k] : []; });
+        if(!it.counties.length && !it.districts.length && !it.types.length && !it.keywords.length) it.keywords = [q];
+        showSearch(it, "");
+      })
+      .catch(function(err){
+        clearTimeout(tm);
+        if(my !== SBUSY) return;
+        var msg = String(err && err.message || "");
+        showSearch(localIntent(q, list), /次數已達上限/.test(msg) ? "今天的智慧搜尋次數用完了，改用一般比對" : "智慧辨識暫時不能用，改用一般字串比對");
+      });
+  }
+  $("#sform").addEventListener("submit", function(e){ e.preventDefault(); runSearch(); $("#sq").blur(); });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape" && SOPEN) closeSearch(); });
 
   function render(){
     if(DRAFT && (cur !== DRAFT.id || view !== "review")) dropDraft();
@@ -1307,6 +1428,7 @@ body[data-view="find"] main{width:100%;max-width:none}
     if(!card) return;
     if(e.type === "keydown" && e.key !== "Enter" && e.key !== " ") return;
     e.preventDefault();
+    closeSearch();
     FOpen = ""; PDscroll = window.scrollY; PDpushed = true;
     location.hash = "#find/" + card.dataset.i;
     window.scrollTo(0, 0);
@@ -1337,6 +1459,8 @@ body[data-view="find"] main{width:100%;max-width:none}
     if(!b) return;
     var act = b.dataset.act;
     if(act === "view") setView(b.dataset.v);
+    else if(act === "sopen") openSearch();
+    else if(act === "sclose") closeSearch();
     else if(act === "fmode"){
       if(b.dataset.m === "all"){ FA = { county:[], district:[], type:[] }; FOpen = ""; }
       else FOpen = FOpen === b.dataset.m ? "" : b.dataset.m;
