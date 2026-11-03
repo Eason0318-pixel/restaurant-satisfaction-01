@@ -726,6 +726,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     if(Array.isArray(st.places)){
       // 雲端的 places 工作表是正本，已經包含所有修改，所以暫存的修改可以清掉
       SRV = st.places; PEDIT = {}; savePE();
+      try{ if(SRV.length) localStorage.setItem(PCACHE_KEY, JSON.stringify(SRV)); }catch(e){}
       applyPlaces(); maybeImportPlaces();
     }
     if(DRAFT){
@@ -766,7 +767,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
         if(pending === 0 && $("#sheet").hidden && !DEDIT) adopt(d.state);
         setConn("ok");
       })
-      .catch(function(){ setConn("error"); });
+      .catch(function(){ setConn("error"); cloudFail(); });
   }
   function startSync(){
     if(!REMOTE){ setConn("local"); return; }
@@ -846,9 +847,18 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   function isCuisine(t){ return /式料理$/.test(t) || t === "印度料理"; }
   var LOCAL_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
   var seedStarted = false;
+  // 連上雲端之前先用「上次從雲端收到的 places」（存在這支裝置），沒有的話就等雲端，不先秀舊的 places.json，避免畫面先出現舊資料再跳成新資料
+  var PCACHE_KEY = "meat-rating-places", CACHE = null, CLOUD_FAIL = false;
+  try{ CACHE = JSON.parse(localStorage.getItem(PCACHE_KEY)); if(!Array.isArray(CACHE) || !CACHE.length) CACHE = null; }catch(e){ CACHE = null; }
+  function cloudFail(){
+    if(CLOUD_FAIL || SRV !== null) return;
+    CLOUD_FAIL = true; applyPlaces(); if(view === "find") renderFind();
+  }
   function loadPlaces(){
     if(seedStarted) return;
     seedStarted = true;
+    applyPlaces();
+    setTimeout(cloudFail, 8000);
     fetch("places.json", {cache:"no-store"}).then(function(r){ if(!r.ok) throw 0; return r.json(); })
       .then(function(d){ if(Array.isArray(d)){ SEED = d; SEED_RAW = JSON.stringify(d); } return loadDemo(); })
       .catch(function(){})
@@ -857,7 +867,8 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   // 雲端有資料就用雲端的，否則用 places.json
   function applyPlaces(){
     if(SRV && SRV.length) PLACES = SRV;
-    else if(SEED_DONE) PLACES = SEED;
+    else if(SRV === null && REMOTE && CACHE) PLACES = CACHE;
+    else if(SEED_DONE && (SRV || !REMOTE || CLOUD_FAIL)) PLACES = SEED;
     else return;
     // 只在本機預覽時，把 places.demo.json（示意用的假資料，不上傳）依店名合併進來，方便檢查詳情頁版面
     DEMO.forEach(function(x){ PLACES.forEach(function(p){ if(p.name === x.name) for(var k in x) p[k] = x[k]; }); });
@@ -1118,7 +1129,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     $("#pcount").hidden = !list.length;
     $("#pcount").textContent = "共 " + items.length + " 間" + (sel ? "　" + sel : "");
     $("#pempty").hidden = list.length > 0;
-    $("#pempty").textContent = PLACES === null || list.length ? "" : "還沒有餐廳資料。";
+    $("#pempty").textContent = list.length ? "" : PLACES === null ? "載入中…" : "還沒有餐廳資料。";
     if(DETAIL_ON){ DETAIL_ON = false; window.scrollTo(0, PDscroll); }
   }
 
