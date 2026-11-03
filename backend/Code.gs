@@ -590,14 +590,23 @@ function search_(q) {
     '- "counties": 使用者提到的縣市陣列，必須用資料庫現有的寫法（例：使用者寫「台南市」「臺南」都要寫成「台南」；「新竹」若資料庫是「新竹市」就寫「新竹市」）。沒提到就空陣列\n' +
     '- "districts": 使用者提到的區陣列，必須用資料庫現有的寫法。沒提到就空陣列\n' +
     '- "types": 使用者想吃的料理或食物類型陣列。盡量對應資料庫現有的種類標籤（例：拉麵、燒肉、火鍋、咖喱；「咖哩」要寫「咖喱」；「日本料理」寫「日式料理」）；資料庫沒有的種類也可以照使用者的意思寫（例：鍋貼）。沒提到就空陣列\n' +
-    '- "keywords": 其他特定店名、餐點名稱或特色字詞陣列（不要重複放縣市、區、種類）。沒有就空陣列\n' +
+    '- "keywords": 其他特定店名、餐點名稱或特色字詞陣列（不要重複放縣市、區、種類，也不要把營業時間、星數的要求放進來）。沒有就空陣列\n' +
+    '- "closeAfter": 使用者要求「營業到比某時間更晚」時填 24 小時制 HH:MM（例：「營業超過 21 點」「開到很晚」→ 21:00；「宵夜、深夜」→ 22:00；「營業到凌晨」→ 24:00）。沒要求就空字串\n' +
+    '- "openAt": 使用者要求「某個時間點有在營業」時填 24 小時制 HH:MM（例：「晚上十點還有開」→ 22:00；「早上七點就有開」→ 07:00）。沒要求就空字串\n' +
+    '- "openBefore": 使用者要求「很早開門、比某時間更早開始營業」時填 HH:MM（例：「早上八點前就開」→ 08:00；「早餐」→ 10:00）。沒要求就空字串\n' +
+    '- "minRating": 使用者要求 Google 星數至少多少時填數字（例：「4.5 星以上」→ 4.5；「高評價」→ 4.3）。沒要求就填 0\n' +
     '- "understood": 一句話繁體中文，白話說明你理解的條件，例：台南、高雄的拉麵。完全看不懂就空字串');
+  function hhmm(v) {
+    var m = String(v == null ? "" : v).trim().match(/^(\d{1,2}):(\d{2})$/);
+    return m && Number(m[1]) <= 24 && Number(m[2]) < 60 ? ("0" + m[1]).slice(-2) + ":" + m[2] : "";
+  }
   function list(v) {
     return (Array.isArray(v) ? v : []).map(function (x) { return String(x == null ? "" : x).trim().slice(0, 20); }).filter(Boolean).slice(0, 10);
   }
   return {
     counties: list(info.counties).map(normCounty_), districts: list(info.districts), types: list(info.types).map(function (t) { return t.replace(/咖哩/g, "咖喱"); }),
-    keywords: list(info.keywords), understood: String(info.understood || "").trim().slice(0, 100)
+    keywords: list(info.keywords), closeAfter: hhmm(info.closeAfter), openAt: hhmm(info.openAt), openBefore: hhmm(info.openBefore),
+    minRating: Math.max(0, Math.min(5, Number(info.minRating) || 0)), understood: String(info.understood || "").trim().slice(0, 100)
   };
 }
 
