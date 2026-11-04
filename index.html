@@ -321,7 +321,8 @@ body[data-view="find"] main{width:100%;max-width:none}
 /* 找餐廳不需要頁首（「找餐廳」三個字就是下方切換鈕），篩選列直接貼到頂端 */
 body[data-view="find"] header{display:none}
 body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0px))}
-@media (min-width:821px) and (max-width:1000px){ body[data-view="find"] .layout{padding-top:70px} }
+@media (min-width:821px){ body[data-view="find"] .dock{left:max(12px,env(safe-area-inset-left,0px),calc(50% - 640px))} }
+@media (min-width:821px) and (max-width:1180px){ body[data-view="find"] .layout{padding-top:70px} }
 
 /* 留言身分頁面 */
 .overlay{position:fixed;inset:0;background:var(--scrim);display:flex;align-items:stretch;justify-content:center;z-index:60}
@@ -375,8 +376,8 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   .kebab{width:40px;padding:0}
   header h1{grid-column:2;max-width:100%;font-size:20px;letter-spacing:.1em;line-height:1.25;margin:0 auto}
   .summary{margin-top:2px}
-  body{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
-  .dock{position:fixed;top:auto;left:50%;bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 20px));transform:translateX(-50%);z-index:40;width:min(calc(100% - 32px),400px)}
+  body{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+  .dock{position:fixed;top:auto;left:50%;bottom:max(18px,calc(env(safe-area-inset-bottom,0px) - 8px));transform:translateX(-50%);z-index:40;width:min(calc(100% - 32px),400px)}
   .topnav{flex:1;width:auto;height:auto;padding:5px;border:1px solid rgba(0,0,0,.08);border-radius:999px;
     background:rgba(255,255,255,.82);-webkit-backdrop-filter:saturate(1.6) blur(14px);backdrop-filter:saturate(1.6) blur(14px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
   .topnav::before{top:5px;bottom:5px;left:5px;width:calc(50% - 5px)}
@@ -385,7 +386,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   .nbell{width:58px;box-shadow:0 8px 24px rgba(0,0,0,.2)}
   .npanel{top:auto;bottom:calc(100% + 12px);left:auto;right:0;width:100%}
   .npanel::before{top:auto;bottom:-7px;left:auto;right:19px;transform:rotate(225deg)}
-  #toast{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+  #toast{bottom:calc(104px + env(safe-area-inset-bottom,0px))}
   /* 品項卡片：每個餐點獨立一張卡，餐點名稱為主、評價按鈕為輔 */
   .section-head{border-radius:var(--radius);margin-bottom:10px}
   .card-list{background:transparent;border:none;border-radius:0}
