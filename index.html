@@ -384,7 +384,12 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   .topnav button{gap:6px;min-height:46px;font-size:17px;letter-spacing:.08em;line-height:1.3}
   .ni{font-size:20px;line-height:1.2}
   .nbell{width:58px;box-shadow:0 8px 24px rgba(0,0,0,.2)}
-  .npanel{top:auto;bottom:calc(100% + 12px);left:auto;right:0;width:100%}
+  /* 手機：泡泡固定撐滿底部頁籤上方整個畫面，通知變多時每則的位置不會跟著跳動（裡面自己捲動） */
+  .npanel{top:auto;bottom:calc(100% + 12px);left:auto;right:0;width:100%;display:flex;flex-direction:column;height:calc(100vh - 160px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+  @supports (height:100dvh){ .npanel{height:calc(100dvh - 160px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))} }
+  .npanel[hidden]{display:none}
+  .npanes{flex:1;min-height:0}
+  .npane{max-height:none}
   .npanel::before{top:auto;bottom:-7px;left:auto;right:19px;transform:rotate(225deg)}
   #toast{bottom:calc(104px + env(safe-area-inset-bottom,0px))}
   /* 品項卡片：每個餐點獨立一張卡，餐點名稱為主、評價按鈕為輔 */
