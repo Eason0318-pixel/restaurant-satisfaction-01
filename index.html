@@ -56,7 +56,7 @@ header h1{flex:0 1 auto;min-width:0;margin:0;line-height:44px;font-family:var(--
 /* 加到主畫面（全螢幕）時，頂端狀態列會蓋住一段漸層：頁首整體往下挪，按鈕才不會被擋到 */
 @media (display-mode: standalone){
   header{padding-top:calc(34px + env(safe-area-inset-top,0px))}
-  .menu-btn,.hd-actions,.topnav{top:calc(34px + env(safe-area-inset-top,0px))}
+  .menu-btn,.hd-actions,.dock{top:calc(34px + env(safe-area-inset-top,0px))}
 }
 
 /* 左側邊選單 + 內容 */
@@ -274,14 +274,39 @@ body[data-view="find"] .layout{max-width:1280px}
 .hint[data-s="error"]{color:var(--danger)}
 
 /* 第一階層導覽：找餐廳 / 寫評價（桌機在頁首下方，手機固定在畫面底部） */
-.topnav{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));left:max(12px,env(safe-area-inset-left,0px),calc(50% - 504px));z-index:30;display:flex;width:230px;height:44px;padding:4px;border:1px solid rgba(0,0,0,.08);border-radius:999px;
+.dock{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));left:max(12px,env(safe-area-inset-left,0px),calc(50% - 504px));z-index:30;display:flex;align-items:stretch;gap:8px}
+.topnav{position:relative;display:flex;width:250px;height:44px;padding:4px;border:1px solid rgba(0,0,0,.08);border-radius:999px;
   background:rgba(255,255,255,.88);-webkit-backdrop-filter:saturate(1.6) blur(14px);backdrop-filter:saturate(1.6) blur(14px);box-shadow:0 4px 14px rgba(0,0,0,.18)}
 .topnav::before{content:"";position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;background:rgba(0,0,0,.09);transition:transform .25s cubic-bezier(.3,.8,.3,1)}
 .topnav[data-v="review"]::before{transform:translateX(100%)}
-.topnav button{position:relative;flex:1 1 0;display:flex;align-items:center;justify-content:center;gap:4px;padding:0;background:none;border:none;border-radius:999px;font-family:inherit;font-size:14px;letter-spacing:.1em;color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.topnav button{position:relative;flex:1 1 0;display:flex;align-items:center;justify-content:center;gap:4px;padding:0;background:none;border:none;border-radius:999px;font-family:inherit;font-size:16px;letter-spacing:.08em;color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .topnav button:hover{color:var(--ink)}
 .topnav button[aria-current="page"]{color:var(--accent-deep);font-weight:700}
-.ni{display:inline;font-size:15px;line-height:1}
+/* 通知：頁籤右邊的圓形訊息鈕＋蓋在頁面上的對話泡泡 */
+.nbell{position:relative;flex:none;width:44px;display:flex;align-items:center;justify-content:center;padding:0;border:1px solid rgba(0,0,0,.08);border-radius:50%;background:rgba(255,255,255,.88);-webkit-backdrop-filter:saturate(1.6) blur(14px);backdrop-filter:saturate(1.6) blur(14px);box-shadow:0 4px 14px rgba(0,0,0,.18);color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.nbell svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.nbell:hover,.nbell[aria-expanded="true"]{color:var(--accent-deep)}
+.nbadge{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:var(--danger);color:#fff;font-size:12px;font-weight:700;line-height:20px;text-align:center;box-sizing:border-box;box-shadow:0 0 0 2px var(--bg)}
+.nbadge[hidden]{display:none}
+.npanel{position:absolute;z-index:45;top:calc(100% + 12px);left:0;width:min(380px,calc(100vw - 24px));background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.22);color:var(--ink)}
+.npanel[hidden]{display:none}
+.npanel::before{content:"";position:absolute;top:-7px;left:272px;width:12px;height:12px;background:var(--paper);border-left:1px solid var(--line);border-top:1px solid var(--line);transform:rotate(45deg)}
+.ntabs{display:flex;gap:4px;padding:8px 8px 0}
+.ntabs button{flex:1;font-family:inherit;font-size:15px;padding:9px 4px;border:none;border-bottom:2px solid transparent;background:none;color:var(--muted);cursor:pointer}
+.ntabs button[aria-selected="true"]{color:var(--accent-deep);font-weight:700;border-bottom-color:var(--accent)}
+.npanes{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-top:1px solid var(--line);border-radius:0 0 18px 18px}
+.npanes::-webkit-scrollbar{display:none}
+.npane{flex:0 0 100%;scroll-snap-align:start;max-height:min(60vh,440px);overflow-y:auto;overscroll-behavior:contain}
+.nitem{display:block;width:100%;text-align:left;font-family:inherit;color:inherit;background:none;border:none;border-bottom:1px dashed var(--line);padding:11px 14px;cursor:pointer}
+.nitem:last-child{border-bottom:none}
+.nitem:hover{background:var(--hover)}
+.nitem[data-new]{background:var(--field)}
+.nmsg{display:block;font-size:15px;line-height:1.5;overflow-wrap:anywhere}
+.nchip{display:inline-block;margin-right:6px;padding:0 7px;border-radius:999px;background:var(--accent);color:var(--on-accent);font-size:12px;line-height:20px;vertical-align:1px}
+.nchip[data-t="review"]{background:var(--gold)}
+.ndate{display:block;margin-top:3px;font-size:12px;color:var(--muted)}
+.nempty{margin:0;padding:26px 14px;text-align:center;font-size:14px;color:var(--muted)}
+.ni{display:inline;font-size:18px;line-height:1}
 /* 電腦版：改名/刪除餐廳直接並排顯示，不收成下拉選單 */
 @media (min-width:821px){
   .kebab{display:none}
@@ -351,11 +376,15 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   header h1{grid-column:2;max-width:100%;font-size:20px;letter-spacing:.1em;line-height:1.25;margin:0 auto}
   .summary{margin-top:2px}
   body{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
-  .topnav{position:fixed;top:auto;height:auto;left:50%;bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 20px));transform:translateX(-50%);z-index:40;width:min(calc(100% - 32px),360px);padding:5px;border:1px solid rgba(0,0,0,.08);border-radius:999px;
+  .dock{position:fixed;top:auto;left:50%;bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 20px));transform:translateX(-50%);z-index:40;width:min(calc(100% - 32px),400px)}
+  .topnav{flex:1;width:auto;height:auto;padding:5px;border:1px solid rgba(0,0,0,.08);border-radius:999px;
     background:rgba(255,255,255,.82);-webkit-backdrop-filter:saturate(1.6) blur(14px);backdrop-filter:saturate(1.6) blur(14px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
   .topnav::before{top:5px;bottom:5px;left:5px;width:calc(50% - 5px)}
-  .topnav button{flex-direction:column;gap:0;min-height:54px;font-size:13px;letter-spacing:.12em;line-height:1.3}
-  .ni{display:block;font-size:20px;line-height:1.2}
+  .topnav button{gap:6px;min-height:46px;font-size:17px;letter-spacing:.08em;line-height:1.3}
+  .ni{font-size:20px;line-height:1.2}
+  .nbell{width:58px;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+  .npanel{top:auto;bottom:calc(100% + 12px);left:auto;right:0;width:100%}
+  .npanel::before{top:auto;bottom:-7px;left:auto;right:19px;transform:rotate(225deg)}
   #toast{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
   /* 品項卡片：每個餐點獨立一張卡，餐點名稱為主、評價按鈕為輔 */
   .section-head{border-radius:var(--radius);margin-bottom:10px}
@@ -385,10 +414,17 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     <span>有點雷 <b id="c4">0</b></span>
   </div>
 </header>
-<nav class="topnav" id="topnav" aria-label="主要功能">
-  <button type="button" data-act="view" data-v="find"><span class="ni" aria-hidden="true">🔎</span>找餐廳</button>
-  <button type="button" data-act="view" data-v="review"><span class="ni" aria-hidden="true">📝</span>寫評價</button>
-</nav>
+<div class="dock" id="dock">
+  <nav class="topnav" id="topnav" aria-label="主要功能">
+    <button type="button" data-act="view" data-v="find"><span class="ni" aria-hidden="true">🔎</span>找餐廳</button>
+    <button type="button" data-act="view" data-v="review"><span class="ni" aria-hidden="true">📝</span>寫評價</button>
+  </nav>
+  <button type="button" class="nbell" id="nbell" data-act="nbell" aria-label="通知" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5h16a1.5 1.5 0 0 1 1.5 1.5v10a1.5 1.5 0 0 1-1.5 1.5h-8l-4.5 3.5v-3.5H4A1.5 1.5 0 0 1 2.5 16V6A1.5 1.5 0 0 1 4 4.5z"/></svg><span class="nbadge" id="nbadge" hidden></span></button>
+  <div class="npanel" id="npanel" role="dialog" aria-label="通知" hidden>
+    <div class="ntabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-act="ntab" data-c="0">新增／編輯</button><button type="button" role="tab" aria-selected="false" data-act="ntab" data-c="1">異常／刪除</button></div>
+    <div class="npanes" id="npanes"><div class="npane" id="np0"></div><div class="npane" id="np1"></div></div>
+  </div>
+</div>
 
 <div class="backdrop" id="backdrop"></div>
 <div class="layout">
@@ -711,7 +747,65 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
       : "暫時連不上雲端，目前顯示上次的資料";
     var el = $("#conn"); el.textContent = txt; el.dataset.s = s;
   }
+  /* 通知：後端 notices 工作表（新增/編輯、異常/刪除）。「已讀」記在這支裝置：點開泡泡就全部已讀，小圓點只算還沒看過的 */
+  var NOTICES = [], NSEEN_KEY = "meat-rating-notice-seen", NOPEN = false, NFRESH = 0, NCOL = 0, NSIG = "";
+  function nSeen(){ try{ var v = localStorage.getItem(NSEEN_KEY); return v === null ? -1 : Number(v) || 0; }catch(e){ return 0; } }
+  function nMax(){ return NOTICES.reduce(function(m, n){ return Math.max(m, n.at); }, 0); }
+  function nMarkRead(){ try{ localStorage.setItem(NSEEN_KEY, String(nMax())); }catch(e){} }
+  function nDate(at){ var d = new Date(at); return d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate() + " " + hhmm(d); }
+  function renderBell(){
+    var seen = nSeen(), n = NOPEN ? 0 : NOTICES.filter(function(x){ return x.at > seen; }).length, el = $("#nbadge");
+    el.hidden = !n; el.textContent = n > 99 ? "99+" : n;
+    $("#nbell").setAttribute("aria-label", n ? "通知，" + n + " 則未讀" : "通知");
+  }
+  function renderNotices(){
+    [1, 2].forEach(function(c){
+      var html = NOTICES.map(function(n, i){ return n.col === c ? '<button type="button" class="nitem"' + (n.at > NFRESH ? " data-new" : "") + ' data-act="nopen" data-i="' + i + '"><span class="nmsg"><span class="nchip" data-t="' + n.tab + '">' + (n.tab === "find" ? "找餐廳" : "寫評價") + '</span>' + esc(n.msg) + '</span><span class="ndate">' + nDate(n.at) + '</span></button>' : ""; }).join("");
+      $("#np" + (c - 1)).innerHTML = html || '<p class="nempty">目前沒有通知</p>';
+    });
+  }
+  function setNCol(c){
+    NCOL = c;
+    Array.prototype.forEach.call(document.querySelectorAll(".ntabs button"), function(b){ b.setAttribute("aria-selected", String(Number(b.dataset.c) === c)); });
+  }
+  function setNOpen(on){
+    NOPEN = on;
+    $("#npanel").hidden = !on;
+    $("#nbell").setAttribute("aria-expanded", String(on));
+    if(on){
+      NFRESH = nSeen(); NSIG = "";
+      renderNotices(); nMarkRead();
+      var pn = $("#npanes"); pn.scrollLeft = NCOL * pn.clientWidth;
+    }
+    renderBell();
+  }
+  function syncNotices(list){
+    NOTICES = list;
+    if(nSeen() < 0) nMarkRead(); // 這支裝置第一次看到通知：之前的都當作已讀
+    var sig = list.length + ":" + nMax();
+    if(NOPEN){ nMarkRead(); if(sig !== NSIG){ NSIG = sig; renderNotices(); } }
+    renderBell();
+  }
+  function openNotice(i){
+    var n = NOTICES[i];
+    if(!n) return;
+    setNOpen(false);
+    if(n.tab === "find"){
+      var at = -1, list = PLACES || [];
+      if(n.ref) list.forEach(function(p, k){ if(at < 0 && p.name + "|" + p.county === n.ref) at = k; });
+      if(at >= 0){
+        closeSearch(); FOpen = ""; PDscroll = 0; PDpushed = true;
+        if(location.hash === "#find/" + at){ view = "find"; render(); } else location.hash = "#find/" + at;
+      } else { if(view !== "find") setView("find"); if(n.ref) toast("找不到這間店了"); }
+    } else if(n.ref && findRest(n.ref)){
+      if(view === "review" && cur === n.ref) return;
+      location.hash = "#" + n.ref;
+    } else { if(view !== "review") setView("review"); if(n.ref) toast("這間餐廳已經不存在了"); }
+    window.scrollTo(0, 0);
+  }
+
   function adopt(st){
+    if(Array.isArray(st.notices)) syncNotices(st.notices);
     var map = {};
     var items = (st.items || []).map(function(i){
       var o = { id:i.id, rid:i.rid, name:i.name, votes:{} };
@@ -1476,6 +1570,9 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     location.hash = "#find/" + card.dataset.i;
     window.scrollTo(0, 0);
   }
+  document.addEventListener("click", function(e){ if(NOPEN && !e.target.closest("#npanel") && !e.target.closest("#nbell")) setNOpen(false); });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape" && NOPEN) setNOpen(false); });
+  $("#npanes").addEventListener("scroll", function(){ var pn = $("#npanes"), c = Math.round(pn.scrollLeft / (pn.clientWidth || 1)); if(c !== NCOL) setNCol(c); });
   document.addEventListener("click", openPlace);
   document.addEventListener("keydown", openPlace);
 
@@ -1503,6 +1600,9 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     var act = b.dataset.act;
     if(act === "view") setView(b.dataset.v);
     else if(act === "sopen") openSearch();
+    else if(act === "nbell") setNOpen(!NOPEN);
+    else if(act === "ntab"){ var pn = $("#npanes"); setNCol(Number(b.dataset.c)); pn.scrollTo({ left:NCOL * pn.clientWidth, behavior:"smooth" }); }
+    else if(act === "nopen") openNotice(Number(b.dataset.i));
     else if(act === "sclose") closeSearch();
     else if(act === "fmode"){
       if(b.dataset.m === "all"){ FA = { county:[], district:[], type:[] }; FOpen = ""; }

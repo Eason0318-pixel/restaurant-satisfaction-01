@@ -15,10 +15,14 @@ var HEADERS = {
   votes: ["itemId", "member", "rating", "note", "updatedAt"],
   members: ["name"],
   // key＝「店名|縣市」；tags、picks 用「、」隔開；post1、post2 是原貼文網址（只收 https）；createdAt 越大越新
-  places: ["key", "name", "county", "district", "tags", "map", "rating", "ratingDate", "hours", "closed", "price", "address", "feature", "picks", "post1", "post2", "createdAt"]
+  places: ["key", "name", "county", "district", "tags", "map", "rating", "ratingDate", "hours", "closed", "price", "address", "feature", "picks", "post1", "post2", "createdAt"],
+  // 網頁「通知」：at＝時間（毫秒）；col＝1 新增/編輯、2 異常/刪除；tab＝find 找餐廳／review 寫評價；
+  // msg＝內容；ref＝點下去要去哪（找餐廳＝店家 key「店名|縣市」，寫評價＝餐廳 id）。只留最近 NOTICE_KEEP 筆
+  notices: ["at", "col", "tab", "msg", "ref"]
 };
 // 這些欄位一律當純文字，避免有人輸入「=...」被當成公式執行
-var TEXT_COLS = { restaurants: [1, 2], items: [1, 2, 4], votes: [1, 2, 3, 4], members: [1], places: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16] };
+var TEXT_COLS = { restaurants: [1, 2], items: [1, 2, 4], votes: [1, 2, 3, 4], members: [1], places: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], notices: [1, 2, 3, 4, 5] };
+var NOTICE_KEEP = 200;
 var RATINGS = ["超好吃", "好吃", "普通", "有點雷"];
 var LIMIT = { restaurants: 30, items: 500, members: 30, votes: 8000, places: 600 };
 // 詳情頁允許修改的欄位與它在 places 工作表的第幾欄（其他欄位一律拒絕）
@@ -83,8 +87,31 @@ function state_() {
     .map(function (r, i) { var p = placeObj_(r); p.i = i; return p; })
     .sort(function (a, b) { return (b.at - a.at) || (a.i - b.i); })
     .map(function (p) { delete p.i; delete p.at; return p; });
-  return { restaurants: restaurants, items: items, votes: votes, members: members, places: places };
+  var notices = rows_("notices")
+    .filter(function (r) { return r[0] && r[3]; })
+    .map(function (r) { return { at: Number(r[0]) || 0, col: Number(r[1]) === 2 ? 2 : 1, tab: String(r[2]) === "find" ? "find" : "review", msg: String(r[3]), ref: String(r[4] || "") }; })
+    .sort(function (a, b) { return b.at - a.at; })
+    .slice(0, 60);
+  return { restaurants: restaurants, items: items, votes: votes, members: members, places: places, notices: notices };
 }
+
+// 記一則通知（呼叫端要已經拿著鎖）；寫不進去也不要影響原本的操作
+function log_(col, tab, msg, ref) {
+  try {
+    var sh = sh_("notices");
+    var row = sh.getLastRow() + 1;
+    if (row > sh.getMaxRows()) sh.insertRowsAfter(sh.getMaxRows(), 1);
+    sh.getRange(row, 1, 1, 5).setValues([[String(Date.now()), String(col), tab, String(msg).slice(0, 400), String(ref || "").slice(0, 100)]]);
+    var extra = sh.getLastRow() - 1 - NOTICE_KEEP;
+    if (extra > 0) sh.deleteRows(2, extra); // 最舊的在最上面
+  } catch (_) {}
+}
+function restName_(rid) {
+  var rows = rows_("restaurants");
+  for (var i = 0; i < rows.length; i++) if (String(rows[i][0]) === rid) return String(rows[i][1]);
+  return "餐廳";
+}
+var PLACE_LABEL = { rating: "Google 星數", hours: "營業時間", closed: "公休日", price: "價位區間", address: "地址", feature: "特色", picks: "推薦餐點", tags: "種類" };
 
 function placeObj_(r) {
   function s(i) { return String(r[i] == null ? "" : r[i]); }
@@ -133,6 +160,7 @@ function addRestaurant_(id, name) {
   if (findRestaurantRow_(id) || findRestaurantIdByName_(name)) return;
   if (rows_("restaurants").length >= LIMIT.restaurants) throw new Error("餐廳數量已達上限");
   sh_("restaurants").appendRow([id, name, Date.now()]);
+  log_(1, "review", "新增了一間餐廳「" + name + "」", id);
 }
 
 function renameRestaurant_(id, name) {
@@ -143,7 +171,9 @@ function renameRestaurant_(id, name) {
   if (!row) throw new Error("找不到這間餐廳");
   var other = findRestaurantIdByName_(name);
   if (other && other !== id) throw new Error("已經有同名的餐廳");
+  var old = String(sh_("restaurants").getRange(row, 2).getValue());
   sh_("restaurants").getRange(row, 2).setValue(name);
+  if (old !== name) log_(1, "review", "餐廳「" + old + "」改名為「" + name + "」", id);
 }
 
 function delRestaurant_(id) {
@@ -152,6 +182,7 @@ function delRestaurant_(id) {
   if (rrows.length <= 1) throw new Error("至少要保留一間餐廳");
   var row = findRestaurantRow_(id);
   if (!row) return;
+  var rname = restName_(id);
   var is = sh_("items");
   var irows = rows_("items");
   var gone = {};
@@ -167,6 +198,7 @@ function delRestaurant_(id) {
     if (gone[String(vrows[j][0])]) vs.deleteRow(j + 2);
   }
   sh_("restaurants").deleteRow(row);
+  log_(2, "review", "刪除了餐廳「" + rname + "」（連同它的品項與評價）", "");
 }
 
 /* ---------- 品項與評分 ---------- */
@@ -207,12 +239,17 @@ function addItem_(id, name, rid) {
   if (findItemRow_(id) || findItemIdByName_(name, rid)) return;
   if (rows_("items").length >= LIMIT.items) throw new Error("品項數量已達上限");
   sh_("items").appendRow([id, name, Date.now(), rid]);
+  log_(1, "review", "在「" + restName_(rid) + "」新增了品項「" + name + "」", rid);
 }
 
 function delItem_(id) {
   id = String(id || "");
   var row = findItemRow_(id);
-  if (row) sh_("items").deleteRow(row);
+  if (row) {
+    var irow = sh_("items").getRange(row, 1, 1, 4).getValues()[0];
+    log_(2, "review", "在「" + restName_(effRid_(irow)) + "」刪除了品項「" + irow[1] + "」", effRid_(irow));
+    sh_("items").deleteRow(row);
+  }
   var vs = sh_("votes");
   var rows = rows_("votes");
   for (var i = rows.length - 1; i >= 0; i--) {
@@ -222,7 +259,8 @@ function delItem_(id) {
 
 function setVote_(itemId, member, r, n, t) {
   itemId = String(itemId || "");
-  if (!findItemRow_(itemId)) return;
+  var itemRow = findItemRow_(itemId);
+  if (!itemRow) return;
   member = validName_(member, 12);
   if (!member) throw new Error("身分名稱不正確");
   r = RATINGS.indexOf(r) >= 0 ? r : "";
@@ -231,9 +269,18 @@ function setVote_(itemId, member, r, n, t) {
   ensureMember_(member);
   var sh = sh_("votes");
   var row = findVoteRow_(itemId, member);
+  var irow = sh_("items").getRange(itemRow, 1, 1, 4).getValues()[0], rid = effRid_(irow);
+  var where = "在「" + restName_(rid) + "」的「" + irow[1] + "」";
+  var oldR = "", oldN = "";
+  if (row) { var ov = sh.getRange(row, 3, 1, 2).getValues()[0]; oldR = String(ov[0] || ""); oldN = String(ov[1] || ""); }
   if (!r && !n) {
-    if (row) sh.deleteRow(row);
+    if (row) { sh.deleteRow(row); log_(2, "review", member + " " + where + "移除了評價與備註", rid); }
     return;
+  }
+  if (r && r !== oldR) log_(1, "review", member + " 已" + where + "留下一則評價：" + r, rid);
+  if (n !== oldN) {
+    if (n) log_(1, "review", member + " 已" + where + (oldN ? "修改了備註" : "新增了一則備註"), rid);
+    else log_(2, "review", member + " 刪除了" + where + "的備註", rid);
   }
   var vals = [itemId, member, r, n, t];
   if (row) {
@@ -282,7 +329,13 @@ function setPlace_(key, field, value) {
   var rows = rows_("places");
   for (var i = 0; i < rows.length; i++) {
     if (String(rows[i][0]) === key) {
+      var oldV = String(rows[i][PLACE_FIELDS[field] - 1] || "");
       sh_("places").getRange(i + 2, PLACE_FIELDS[field]).setValue(value);
+      var label = PLACE_LABEL[field];
+      if (label && oldV !== value) {
+        if (value) log_(1, "find", "「" + rows[i][1] + "」" + (oldV ? "更新了" : "新增了") + label, key);
+        else log_(2, "find", "「" + rows[i][1] + "」的" + label + "被清空了", key);
+      }
       return;
     }
   }
@@ -457,6 +510,11 @@ function gemini_(prompt) {
   throw new Error("Gemini 暫時無法使用（" + last + "），請稍後再試");
 }
 
+function logLocked_(col, tab, msg, ref) {
+  var lock = LockService.getScriptLock();
+  try { lock.waitLock(5000); log_(col, tab, msg, ref); } catch (_) {} finally { try { lock.releaseLock(); } catch (_) {} }
+}
+
 function normCounty_(c) {
   c = String(c == null ? "" : c).trim().replace(/臺/g, "台");
   return c.replace(/^(台北|台中|台南|高雄)市$/, "$1").slice(0, 12);
@@ -473,7 +531,7 @@ function share_(rawUrl, pageHtml) {
   props.setProperties({ SHARE_DAY: day, SHARE_COUNT: String(cnt + 1) });
 
   var dup = rows_("places").filter(function (r) { return String(r[14]) === url || String(r[15]) === url; })[0];
-  if (dup) return "這篇貼文已經收錄過了：" + dup[1];
+  if (dup) { logLocked_(2, "find", "這篇貼文已經收錄過了：" + dup[1], dup[0]); return "這篇貼文已經收錄過了：" + dup[1]; }
 
   FETCH_LOG_ = [];
   var text = "";
@@ -534,8 +592,9 @@ function share_(rawUrl, pageHtml) {
     var rows = rows_("places");
     for (var i = 0; i < rows.length; i++) {
       if (String(rows[i][0]) === key) { // 店已存在：只補貼文連結
-        if (!rows[i][14]) { sh_("places").getRange(i + 2, 15).setValue(url); return "「" + name + "」已經有了，已把這篇貼文加到它的貼文連結"; }
-        if (!rows[i][15]) { sh_("places").getRange(i + 2, 16).setValue(url); return "「" + name + "」已經有了，已把這篇貼文加到它的貼文連結"; }
+        if (!rows[i][14]) { sh_("places").getRange(i + 2, 15).setValue(url); log_(1, "find", "「" + name + "」新增了貼文連結", key); return "「" + name + "」已經有了，已把這篇貼文加到它的貼文連結"; }
+        if (!rows[i][15]) { sh_("places").getRange(i + 2, 16).setValue(url); log_(1, "find", "「" + name + "」新增了貼文連結", key); return "「" + name + "」已經有了，已把這篇貼文加到它的貼文連結"; }
+        log_(2, "find", "「" + name + "」已經有 2 篇貼文連結，這篇沒有新增", key);
         return "「" + name + "」已經有了，而且已經有 2 篇貼文連結，這篇沒有新增";
       }
     }
@@ -554,6 +613,17 @@ function share_(rawUrl, pageHtml) {
     sh.getRange(row, 1, 1, HEADERS.places.length).setValues([[key, name, county, String(info.district || "").trim().slice(0, 20), tagList.join("、"), map, "", "",
       hours, closed, price, addr,
       String(info.feature || "").trim().slice(0, 500), picks, url, "", Date.now()]]);
+    var district = String(info.district || "").trim().slice(0, 20);
+    log_(1, "find", "新增了一間「" + name + "」（" + ([county, district].filter(Boolean).join("") || "縣市未填") + "　" + (tagList.join("、") || "種類未填") + "）", key);
+    var lack = [];
+    if (!county) lack.push("縣市");
+    if (!district) lack.push("市區");
+    if (!cuisine) lack.push("國別（X式料理）");
+    if (!hours) lack.push("營業時間");
+    if (!addr) lack.push("地址");
+    if (!price) lack.push("價位區間");
+    if (lack.length) log_(2, "find", "「" + name + "」缺少資訊：" + lack.join("、"), key);
+    if (similar.length) log_(2, "find", "「" + name + "」可能與資料庫已有的店重複：" + similar.slice(0, 3).join("、"), key);
   } finally {
     try { lock.releaseLock(); } catch (_) {}
   }
@@ -655,6 +725,7 @@ function doPost(e) {
         return json_({ ok: true, message: share_(op.url, op.html) });
       } catch (err) { // 失敗也帶 message，捷徑只要取同一個欄位顯示
         var why = String(err && err.message || err);
+        logLocked_(2, "find", "手機分享失敗：" + why.split("。診斷")[0].slice(0, 120), "");
         return json_({ ok: false, error: why, message: "沒有新增：" + why });
       }
     }
