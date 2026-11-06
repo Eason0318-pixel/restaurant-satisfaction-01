@@ -290,6 +290,7 @@ body[data-view="find"] .layout{max-width:1280px}
 .nbadge[hidden]{display:none}
 .npanel{position:absolute;z-index:45;top:calc(100% + 12px);left:0;width:min(380px,calc(100vw - 24px));background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.22);color:var(--ink)}
 .npanel[hidden]{display:none}
+.nscrim{display:none;position:fixed;inset:0;z-index:39;background:rgba(0,0,0,.35)}
 .npanel::before{content:"";position:absolute;top:-7px;left:272px;width:12px;height:12px;background:var(--paper);border-left:1px solid var(--line);border-top:1px solid var(--line);transform:rotate(45deg)}
 .ntabs{display:flex;gap:4px;padding:8px 8px 0}
 .ntabs button{flex:1;font-family:inherit;font-size:15px;padding:9px 4px;border:none;border-bottom:2px solid transparent;background:none;color:var(--muted);cursor:pointer}
@@ -385,10 +386,11 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   .ni{font-size:20px;line-height:1.2}
   .nbell{width:58px;box-shadow:0 8px 24px rgba(0,0,0,.2)}
   /* 手機：泡泡固定撐滿底部頁籤上方整個畫面，通知變多時每則的位置不會跟著跳動（裡面自己捲動） */
-  .npanel{top:auto;bottom:calc(100% + 12px);left:auto;right:0;width:100%;display:flex;flex-direction:column;height:calc(100vh - 160px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
-  @supports (height:100dvh){ .npanel{height:calc(100dvh - 160px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))} }
+  .npanel{top:auto;bottom:calc(100% + 12px);left:auto;right:0;width:100%;display:flex;flex-direction:column;height:calc(100vh - 80px - max(18px,calc(env(safe-area-inset-bottom,0px) - 8px)) - env(safe-area-inset-top,0px))}
+  @supports (height:100dvh){ .npanel{height:calc(100dvh - 80px - max(18px,calc(env(safe-area-inset-bottom,0px) - 8px)) - env(safe-area-inset-top,0px))} }
   .npanel[hidden]{display:none}
   .npanes{flex:1;min-height:0}
+  .nscrim:not([hidden]){display:block}
   .npane{max-height:none}
   .npanel::before{top:auto;bottom:-7px;left:auto;right:19px;transform:rotate(225deg)}
   #toast{bottom:calc(104px + env(safe-area-inset-bottom,0px))}
@@ -420,6 +422,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     <span>有點雷 <b id="c4">0</b></span>
   </div>
 </header>
+<div class="nscrim" id="nscrim" hidden></div>
 <div class="dock" id="dock">
   <nav class="topnav" id="topnav" aria-label="主要功能">
     <button type="button" data-act="view" data-v="find"><span class="ni" aria-hidden="true">🔎</span>找餐廳</button>
@@ -776,7 +779,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   }
   function setNOpen(on){
     NOPEN = on;
-    $("#npanel").hidden = !on;
+    $("#npanel").hidden = !on; $("#nscrim").hidden = !on;
     $("#nbell").setAttribute("aria-expanded", String(on));
     if(on){
       NFRESH = nSeen(); NSIG = "";
