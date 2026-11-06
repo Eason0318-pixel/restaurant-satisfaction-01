@@ -357,6 +357,36 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
 .names{font-size:11px}
 .notes{margin-top:12px;padding:10px 12px;background:var(--add-bg);border-top:none;border-radius:12px}
 
+/* 電腦版寫評價：一個品項一橫列（名稱｜評價按鈕｜備註格）。備註格 2x2：我的備註永遠第一格；
+   只有 1 則佔滿、2 則上下各 2 格、3～4 則各 1 格、超過 4 格時顯示 3 格＋「查看所有備註」 */
+.dn{display:none}
+#npop{display:none}
+@media (min-width:821px){
+  body[data-view="review"] .layout{max-width:1280px}
+  .item{display:grid;grid-template-columns:150px minmax(0,27rem) minmax(0,1fr);column-gap:18px;align-items:start}
+  .item-top{grid-column:1;grid-row:1;align-items:flex-start}
+  .opts{grid-column:2;grid-row:1;margin-top:0;padding-top:0;border-top:none}
+  .notes,.addnote{display:none}
+  .dn{display:grid;grid-column:3;grid-row:1;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-auto-rows:minmax(0,1fr);gap:6px;height:124px;min-width:0}
+  .dc{--lc:2;display:block;min-width:0;min-height:0;overflow:hidden;padding:3px 9px;background:var(--add-bg);border-radius:10px;font-size:12.5px;line-height:1.35;color:var(--ink);text-align:left;font-family:inherit}
+  .dc.me{background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--accent)}
+  .dc.f{grid-column:span 2;grid-row:span 2;--lc:5}
+  .dc.h{grid-column:span 2}
+  .dh{display:flex;align-items:baseline;gap:6px;white-space:nowrap;overflow:hidden}
+  .dh .who{font-size:12.5px;overflow:hidden;text-overflow:ellipsis}
+  .dh .xnote{font-size:11.5px;padding:0 2px;text-decoration:underline}
+  .dt{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:var(--lc);overflow:hidden;overflow-wrap:anywhere}
+  .dc.add,.dc.more{display:flex;align-items:center;justify-content:center;text-align:center;background:transparent;border:1px dashed var(--accent-mid);color:var(--accent);cursor:pointer}
+  .dc.add:hover,.dc.more:hover{background:var(--add-bg)}
+  .dc.more{text-decoration:underline}
+  #npop{display:block;position:fixed;z-index:45;width:max-content;min-width:min(240px,calc(100vw - 16px));max-width:min(360px,calc(100vw - 16px));overflow:auto;background:var(--paper);color:var(--ink);border:1px solid var(--accent);border-radius:12px;padding:10px 12px;box-shadow:0 8px 24px rgba(0,0,0,.22);font-size:13px;line-height:1.45}
+  #npop[hidden]{display:none}
+  .pn{margin-bottom:9px}.pn:last-child{margin-bottom:0}
+  .pn p{margin:2px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+  .pn .dh{overflow:visible}
+  .pn .addnote{display:inline-block;margin-top:0}
+}
+
 /* 手機：餐廳選單改成左上角的下拉選單；第一階層頁籤變成底部的浮動膠囊列 */
 @media (max-width:820px){
   .menu-btn{display:block}
@@ -423,6 +453,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   </div>
 </header>
 <div class="nscrim" id="nscrim" hidden></div>
+<div id="npop" hidden></div>
 <div class="dock" id="dock">
   <nav class="topnav" id="topnav" aria-label="主要功能">
     <button type="button" data-act="view" data-v="find"><span class="ni" aria-hidden="true">🔎</span>找餐廳</button>
@@ -915,8 +946,88 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
       '<div class="opts">' + cols + '</div>' +
       '<ul class="notes">' + notes + '</ul>' +
       '<button type="button" class="addnote" data-act="note" data-id="' + esc(it.id) + '">＋ 留下備註</button>' +
+      dnHTML(it) +
     '</div>';
   }
+
+  /* 電腦版備註格 */
+  var ME_KEY = "meat-rating-me";
+  function getMe(){ try{ return localStorage.getItem(ME_KEY) || ""; }catch(e){ return ""; } }
+  function setMe(m){ try{ localStorage.setItem(ME_KEY, m); }catch(e){} }
+  function noteList(it){
+    var votes = it.votes || {}, me = getMe(), L = [];
+    Object.keys(votes).forEach(function(m){ if(votes[m].n) L.push({ m:m, r:votes[m].r, n:votes[m].n, mine:m === me }); });
+    L.sort(function(a, b){ return (b.mine ? 1 : 0) - (a.mine ? 1 : 0); });
+    return L;
+  }
+  function dnHead(c, it){
+    return '<div class="dh"><span class="who">' + esc(c.m) + (c.mine ? '（我）' : '') + '</span>' +
+      (c.mine ? '<button type="button" class="xnote" data-act="editnote" data-id="' + esc(it.id) + '" data-m="' + esc(c.m) + '">編輯</button>' +
+        '<button type="button" class="xnote" data-act="delnote" data-id="' + esc(it.id) + '" data-m="' + esc(c.m) + '">刪除</button>' : '') + '</div>';
+  }
+  function dnHTML(it){
+    var L = noteList(it), cells = L.slice();
+    if(!(L.length && L[0].mine)) cells.push({ add:true });
+    var k = cells.length, show = cells, h = "";
+    var cls = k === 1 ? " f" : k === 2 ? " h" : "";
+    if(k > 4) show = cells.slice(0, 3);
+    show.forEach(function(c){
+      if(c.add) h += '<button type="button" class="dc add' + cls + '" data-act="note" data-id="' + esc(it.id) + '">＋ 新增備註</button>';
+      else h += '<div class="dc' + (c.mine ? ' me' : '') + cls + '" data-id="' + esc(it.id) + '" data-m="' + esc(c.m) + '">' + dnHead(c, it) + '<div class="dt">' + esc(c.n) + '</div></div>';
+    });
+    if(k > 4) h += '<button type="button" class="dc more" data-act="nmore" data-id="' + esc(it.id) + '">查看所有備註（共 ' + L.length + ' 則）</button>';
+    return '<div class="dn">' + h + '</div>';
+  }
+  var NP = $("#npop"), NPT = null, NPA = null;
+  function hideNP(){ clearTimeout(NPT); NP.hidden = true; NPA = null; }
+  function npopHTML(it, m){
+    var L = noteList(it);
+    if(m) L = L.filter(function(c){ return c.m === m; });
+    var h = L.map(function(c){
+      return '<div class="pn">' + dnHead(c, it) + (c.r ? '<span class="tag" data-r="' + KEYOF[c.r] + '">' + esc(c.r) + '</span>' : '') + '<p>' + esc(c.n) + '</p></div>';
+    }).join("");
+    if(!m && !(L.length && L[0].mine)) h += '<div class="pn"><button type="button" class="addnote" data-act="note" data-id="' + esc(it.id) + '">＋ 新增備註</button></div>';
+    return h;
+  }
+  function showNP(el){
+    var it = findItem(el.dataset.id);
+    if(!it) return;
+    NP.innerHTML = npopHTML(it, el.dataset.m || "");
+    NP.hidden = false; NPA = el;
+    var vw = document.documentElement.clientWidth, vh = window.innerHeight;
+    NP.style.maxHeight = (vh - 16) + "px"; NP.style.left = "0px"; NP.style.top = "0px";
+    var r = el.getBoundingClientRect(), w = NP.offsetWidth, hh = NP.offsetHeight;
+    var left = Math.max(8, Math.min(r.right - w, vw - w - 8));
+    var top = r.bottom - 2;
+    if(top + hh > vh - 8) top = r.top - hh + 2;
+    top = Math.max(8, Math.min(top, vh - hh - 8));
+    NP.style.left = left + "px"; NP.style.top = top + "px";
+  }
+  function truncated(c){
+    var t = c.querySelector(".dt");
+    if(!t) return false;
+    var shown = t.clientHeight;
+    t.style.webkitLineClamp = "unset"; t.style.display = "block";
+    var full = t.scrollHeight;
+    t.style.webkitLineClamp = ""; t.style.display = "";
+    return full > shown + 1;
+  }
+  function wideNow(){ return window.matchMedia("(min-width:821px)").matches; }
+  document.addEventListener("mouseover", function(e){
+    if(!wideNow()) return;
+    if(e.target.closest("#npop")){ clearTimeout(NPT); return; }
+    var c = e.target.closest(".dc.more, .dc[data-m]");
+    if(c && (c.classList.contains("more") || truncated(c))){
+      clearTimeout(NPT);
+      if(NPA !== c) showNP(c);
+    } else if(!NP.hidden){
+      clearTimeout(NPT); NPT = setTimeout(hideNP, 200);
+    }
+  });
+  document.addEventListener("click", function(e){ if(!NP.hidden && !e.target.closest("#npop") && !e.target.closest(".dc")) hideNP(); });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") hideNP(); });
+  window.addEventListener("scroll", function(){ if(!NP.hidden) hideNP(); }, { passive:true });
+  window.addEventListener("resize", function(){ if(!NP.hidden) hideNP(); });
 
   /* ---------- 頁首店名：盡量維持一行（必要時自動縮小字級），真的放不下才換行 ----------
      TITLE_BREAKS：店名太長必須換行時，用「|」標出換行位置（沒列的就由瀏覽器平均分行）。 */
@@ -1350,6 +1461,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   document.addEventListener("keydown", function(e){ if(e.key === "Escape" && SOPEN) closeSearch(); });
 
   function render(){
+    if(typeof hideNP === "function") hideNP();
     if(DRAFT && (cur !== DRAFT.id || view !== "review")) dropDraft();
     if(!findRest(cur)) pickCurrent();
     $("#rests").innerHTML = S.restaurants.map(function(r){
@@ -1555,6 +1667,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
       msg = member + " 留下了備註";
     }
     c.t = Date.now();
+    setMe(member);
     if(c.r || c.n) it.votes[member] = c; else delete it.votes[member];
     if(S.members.indexOf(member) < 0) S.members.push(member);
     send({ op:"setVote", itemId:it.id, member:member, r:c.r, n:c.n || "", t:c.t });
@@ -1652,8 +1765,9 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     else if(act === "addrest") openRestForm("add");
     else if(act === "gotoitem") gotoItem(b.dataset.id);
     else if(act === "rate") openSheet(b.dataset.id, b.dataset.v);
-    else if(act === "note") openSheet(b.dataset.id, null);
-    else if(act === "editnote") openEdit(b.dataset.id, b.dataset.m);
+    else if(act === "note"){ hideNP(); openSheet(b.dataset.id, null); }
+    else if(act === "nmore"){ if(NPA === b) hideNP(); else showNP(b); }
+    else if(act === "editnote"){ hideNP(); openEdit(b.dataset.id, b.dataset.m); }
     else if(act === "delitem"){
       arm(b, "確定刪除", function(){
         S.items = S.items.filter(function(i){ return i.id !== b.dataset.id; });
