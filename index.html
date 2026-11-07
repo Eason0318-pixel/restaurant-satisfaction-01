@@ -197,6 +197,7 @@ main{min-width:0;padding:0 0 16px}
 .dsec h3 .dedbtn{margin:-8px -8px -8px auto}
 .drow>.dedbtn{margin:-6px -8px -6px 0}
 .drate .dedbtn{margin-left:-4px}
+.dname .dedbtn{margin:-6px 0 -6px 4px;vertical-align:middle}
 .dcat .dedbtn{margin:-8px 0 -8px 2px;vertical-align:middle}
 .dcat span+.dedbtn{margin-left:2px}
 .dacts{display:flex;flex:none;margin:-6px -8px -6px 0}
@@ -326,6 +327,8 @@ body[data-view="find"] header{display:none}
 body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0px))}
 @media (min-width:821px){ .dock{left:max(12px,env(safe-area-inset-left,0px),calc(50% - 640px))} }
 @media (min-width:821px) and (max-width:1180px){ body[data-view="find"] .layout{padding-top:70px} }
+/* 寬螢幕：頁籤膠囊浮在內容區左上角，詳情頁的「返回」要往下讓開（821～1180px 已由上面的 70px 內距讓開） */
+@media (min-width:1181px){ #dview .dback{margin-top:56px} }
 
 /* 留言身分頁面 */
 .overlay{position:fixed;inset:0;background:var(--scrim);display:flex;align-items:stretch;justify-content:center;z-index:60}
@@ -1059,8 +1062,8 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
      雲端的 places 是空的時候，網頁會自動把 places.json 匯入一次（重複匯入不會覆蓋，所以安全）。 */
   var PLACES = null, SEED = [], SEED_RAW = "", SEED_DONE = false, SRV = null, DEMO = [], importSent = false;
   // 種類標籤裡的「X式料理」「印度料理」是大分類（粗體、可篩選），其餘標籤等重新分類後再開放篩選
-  var BROAD_ORDER = ["中式料理","日式料理","韓式料理","泰式料理","義式料理","印度料理"];
-  function isCuisine(t){ return /式料理$/.test(t) || t === "印度料理"; }
+  var BROAD_ORDER = ["中式料理","日式料理","韓式料理","泰式料理","義式料理","印度料理","甜點","手搖"];
+  function isCuisine(t){ return /式料理$/.test(t) || t === "印度料理" || t === "甜點" || t === "手搖"; }
   var LOCAL_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
   var seedStarted = false;
   // 連上雲端之前先用「上次從雲端收到的 places」（存在這支裝置），沒有的話就等雲端，不先秀舊的 places.json，避免畫面先出現舊資料再跳成新資料
@@ -1254,7 +1257,8 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   var EDIT_CFG = {
     feature:{ tag:"textarea", max:300, hint:"" },
     picks:{ tag:"input", max:200, hint:"用「、」隔開，例：鹽味拉麵、山椒拉麵" },
-    tags:{ tag:"input", max:80, hint:"用「、」隔開，國別寫成「X式料理」或「印度料理」，例：日式料理、拉麵、咖喱" },
+    tags:{ tag:"input", max:80, hint:"用「、」隔開。大分類「X式料理」「印度料理」「甜點」「手搖」會以粗體顯示並出現在篩選裡，例：日式料理、拉麵、咖喱" },
+    name:{ tag:"input", max:60, hint:"改名後，這間店的店名與找餐廳的搜尋都會用新名字" },
     hours:{ tag:"textarea", max:300, hint:"只有一種時間就只寫時間；有多種時間請每行寫一種，開頭寫週幾，例：週一至週五 11:00～21:00" },
     closed:{ tag:"input", max:60, hint:"例：週二、週三；每天營業請寫「無公休」；不確定請留空" },
     price:{ tag:"input", max:40, hint:"例：每人 $200～400" },
@@ -1275,6 +1279,8 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     var list = PLACES || [], di = detailIndex(list), f = DEDIT, el = $("#dedit");
     if(di < 0 || !f || !el) return;
     var key = pkey(list[di]), v = el.value.trim();
+    var sendKey = pkey(effPlace(list[di]));   // 改過店名後，雲端的代碼已是新店名
+    if(f === "name" && !v){ toast("店名不能空白"); return; }
     if(f === "rating"){
       if(v !== "" && !(+v >= 1 && +v <= 5)){ toast("星數請填 1 到 5 之間，例：4.3"); return; }
       if(v !== "") v = String(+(+v).toFixed(1));
@@ -1285,7 +1291,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     var ops = [[f, v]];
     if(f === "rating") ops.push(["ratingDate", v === "" ? "" : today()]);
     var t = Date.now(), e = PEDIT[key] = PEDIT[key] || {};
-    ops.forEach(function(o){ e[o[0]] = o[1]; send({ op:"setPlace", key:key, field:o[0], value:o[1], t:t }); });
+    ops.forEach(function(o){ e[o[0]] = o[1]; send({ op:"setPlace", key:sendKey, field:o[0], value:o[1], t:t }); });
     savePE(); DEDIT = ""; renderFind(); toast("已儲存");
   }
   function detailHTML(p){
@@ -1301,7 +1307,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     var copy = p.address ? '<button type="button" class="dcopy" data-act="dcopy" data-v="' + esc(p.address) + '" aria-label="複製地址" title="複製地址">' + DI.copy + '</button>' : "";
     var body = function(f, normal){ return DEDIT === f ? editorHTML(f, p) : normal; };
     return '<div class="dback"><button type="button" data-act="dback">‹ 返回</button><button type="button" class="dreview" data-act="dreview" data-name="' + esc(p.name) + '">✎ 留下評價</button></div>' +
-      '<article class="dhead"><div class="dmain"><h2 class="dname">' + esc(p.name) + '</h2>' +
+      '<article class="dhead"><div class="dmain">' + (DEDIT === "name" ? editorHTML("name", p) : '<h2 class="dname">' + esc(p.name) + edBtn("name", "店名") + '</h2>') +
       (loc ? '<p class="dloc">' + loc + '</p>' : '') + (DEDIT === "tags" ? editorHTML("tags", p) : '<p class="dcat">' + (cat || '<span class="dnone">尚未填寫種類</span>') + edBtn("tags", "種類") + '</p>') +
       '<div class="drate">' + rate + (src ? '<span class="dsrc">' + src + '</span>' : '') + '</div>' + (DEDIT === "rating" ? editorHTML("rating", p) : "") + '</div>' +
       '<a class="pgo" href="' + esc(mapURL(p)) + '" target="_blank" rel="noopener noreferrer" aria-label="導航到 ' + esc(cleanName(p.name)) + '（Google 地圖）" title="導航"><svg viewBox="0 0 24 24" aria-hidden="true"><path transform="translate(0 .8) rotate(45 12 11.2) scale(.92) translate(.96 .9)" d="M12 2 4.5 20.3 12 16.5l7.5 3.8z"/></svg></a></article>' +

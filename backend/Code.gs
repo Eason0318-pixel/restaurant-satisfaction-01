@@ -321,10 +321,26 @@ function setPlaces_(list) {
   if (changed) sh_("places").getRange(2, 1, rows.length, HEADERS.places.length).setValues(rows);
 }
 
+// 改店名：店名與代碼（店名|縣市）一起改；新代碼若已被別間店使用就拒絕
+function renamePlace_(key, value) {
+  var name = validName_(value, 60);
+  if (!name) throw new Error("店名不正確");
+  var rows = rows_("places"), at = -1;
+  rows.forEach(function (r, i) { if (String(r[0]) === key) at = i; });
+  if (at < 0) throw new Error("找不到這間店");
+  var newKey = name + "|" + String(rows[at][2] || "");
+  if (newKey === key) return;
+  rows.forEach(function (r, i) { if (i !== at && String(r[0]) === newKey) throw new Error("已經有同名的店了"); });
+  var old = String(rows[at][1]);
+  sh_("places").getRange(at + 2, 1, 1, 2).setValues([[newKey, name]]);
+  log_(1, "find", "店名「" + old + "」改成了「" + name + "」", newKey);
+}
+
 function setPlace_(key, field, value) {
   key = String(key == null ? "" : key).trim();
   if (!key || key.length > 80 || key.indexOf("|") < 0) throw new Error("店家代碼不正確");
   field = String(field || "");
+  if (field === "name") { renamePlace_(key, value); return; }
   value = placeValue_(field, value);
   var rows = rows_("places");
   for (var i = 0; i < rows.length; i++) {
