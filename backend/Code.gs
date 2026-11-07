@@ -520,6 +520,87 @@ function normCounty_(c) {
   return c.replace(/^(台北|台中|台南|高雄)市$/, "$1").slice(0, 12);
 }
 
+/* ---------- 重複餐廳判斷與合併（欄位順序同 HEADERS.places：0 key、1 name、2 county、3 district、4 tags、5 map、6 rating、7 ratingDate、8 hours、9 closed、10 price、11 address、12 feature、13 picks、14 post1、15 post2、16 createdAt） ---------- */
+function normAddr_(s) {
+  return String(s == null ? "" : s).toLowerCase().replace(/臺/g, "台").replace(/^\s*\d{3,6}/, "").replace(/台灣/g, "").replace(/[^0-9a-z一-鿿]/g, "").replace(/^\d{3,6}/, "");
+}
+function simName_(s) {
+  return String(s).toLowerCase().replace(/[（(][^）)]*[）)]/g, "").replace(/(分店|總店|本店|門市|店)$/, "").replace(/[\s\-_·・.,，、]/g, "");
+}
+// 地址相同才算確定是同一間（兩邊都要有地址）；一邊地址是另一邊的一部分時，店名也要相似
+function samePlace_(a, b) {
+  var x = normAddr_(a[11]), y = normAddr_(b[11]);
+  if (x.length < 6 || y.length < 6) return false;
+  if (x === y) return true;
+  var sa = simName_(a[1]), sb = simName_(b[1]);
+  var nameLike = sa && sb && (sa === sb || (Math.min(sa.length, sb.length) >= 3 && (sa.indexOf(sb) >= 0 || sb.indexOf(sa) >= 0)));
+  return nameLike && Math.min(x.length, y.length) >= 8 && (x.indexOf(y) >= 0 || y.indexOf(x) >= 0);
+}
+// 把 b 併進 a（a 是原本的那筆）：店名取較詳細的、種類不衝突就都留、空白欄位用 b 補、貼文最多留 2 篇
+function mergeRows_(a, b) {
+  var m = a.slice(), s = function (v) { return String(v == null ? "" : v).trim(); };
+  if (s(b[1]).length > s(a[1]).length) m[1] = s(b[1]);
+  m[2] = s(a[2]) || s(b[2]);
+  m[3] = s(a[3]) || s(b[3]);
+  m[0] = m[1] + "|" + m[2];
+  var isC = function (t) { return /^(日|中|韓|泰|義|美|越|法|台)式料理$|^印度料理$/.test(t); };
+  var tags = s(a[4]) ? s(a[4]).split("、") : [], added = [];
+  s(b[4]).split("、").forEach(function (t) {
+    if (!t || tags.indexOf(t) >= 0) return;
+    if (isC(t) && tags.some(isC)) return; // 兩邊國別不同時以原本的為準
+    if (tags.length >= 6) return;
+    tags.push(t); added.push(t);
+  });
+  m[4] = tags.join("、");
+  m[5] = s(a[5]) || s(b[5]);
+  if (s(a[6]) === "" && s(b[6]) !== "") { m[6] = b[6]; m[7] = b[7]; }
+  [8, 9, 10, 11, 12].forEach(function (i) { if (s(a[i]) === "") m[i] = b[i]; });
+  var picks = s(a[13]) ? s(a[13]).split("、") : [];
+  s(b[13]).split("、").forEach(function (t) { if (t && picks.indexOf(t) < 0 && picks.length < 8) picks.push(t); });
+  m[13] = picks.join("、");
+  var posts = [];
+  [a[14], a[15], b[14], b[15]].forEach(function (u) { u = s(u); if (u && posts.indexOf(u) < 0) posts.push(u); });
+  m[14] = posts[0] || "";
+  m[15] = posts[1] || "";
+  m[16] = Math.min(Number(a[16]) || Date.now(), Number(b[16]) || Date.now());
+  return { row: m, tagsAdded: added.join("、"), postDropped: posts.length > 2 };
+}
+
+// 一次性整理：把試算表裡「地址相同」的重複店合併成一筆。先執行 previewMergeDuplicates 看報告（不會改任何資料），確認後再執行 runMergeDuplicates
+function previewMergeDuplicates() { return mergeDuplicates_(false); }
+function runMergeDuplicates() { return mergeDuplicates_(true); }
+function mergeDuplicates_(apply) {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try {
+    var rows = rows_("places"), gone = {}, report = [];
+    for (var i = 0; i < rows.length; i++) {
+      if (gone[i]) continue;
+      for (var j = i + 1; j < rows.length; j++) {
+        if (gone[j] || !samePlace_(rows[i], rows[j])) continue;
+        var older = (Number(rows[i][16]) || 0) <= (Number(rows[j][16]) || 0);
+        var base = older ? i : j, other = older ? j : i;
+        var mg = mergeRows_(rows[base], rows[other]);
+        report.push("「" + rows[base][1] + "」＋「" + rows[other][1] + "」→「" + mg.row[1] + "」種類：" + (mg.row[4] || "（空）") + (mg.postDropped ? "（貼文超過 2 篇，多的捨棄）" : ""));
+        rows[base] = mg.row; gone[other] = true;
+        if (other === i) break;
+      }
+    }
+    var gi = Object.keys(gone).map(Number).sort(function (x, y) { return y - x; });
+    if (apply && gi.length) {
+      var sh = sh_("places");
+      Object.keys(rows).forEach(function (k) { if (!gone[k]) sh.getRange(Number(k) + 2, 1, 1, HEADERS.places.length).setValues([rows[k]]); });
+      gi.forEach(function (k) { sh.deleteRow(k + 2); });
+      log_(1, "find", "合併了 " + gi.length + " 組重複的店", "");
+    }
+    var out = (apply ? "已合併 " : "預覽：會合併 ") + gi.length + " 組\n" + report.join("\n");
+    Logger.log(out);
+    return out;
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
 // 回傳給「捷徑」顯示的訊息；成功或失敗都用 ok:true 帶 message，真的出錯才丟例外
 function share_(rawUrl, pageHtml) {
   var url = cleanShareUrl_(rawUrl);
@@ -590,12 +671,22 @@ function share_(rawUrl, pageHtml) {
   lock.waitLock(15000);
   try {
     var rows = rows_("places");
+    var newRow = [key, name, county, String(info.district || "").trim().slice(0, 20), tagList.join("、"), map, "", "",
+      hours, closed, price, addr, String(info.feature || "").trim().slice(0, 500), picks, url, "", Date.now()];
     for (var i = 0; i < rows.length; i++) {
-      if (String(rows[i][0]) === key) { // 店已存在：只補貼文連結
-        if (!rows[i][14]) { sh_("places").getRange(i + 2, 15).setValue(url); log_(1, "find", "「" + name + "」新增了貼文連結", key); return "「" + name + "」已經有了，已把這篇貼文加到它的貼文連結"; }
-        if (!rows[i][15]) { sh_("places").getRange(i + 2, 16).setValue(url); log_(1, "find", "「" + name + "」新增了貼文連結", key); return "「" + name + "」已經有了，已把這篇貼文加到它的貼文連結"; }
-        log_(2, "find", "「" + name + "」已經有 2 篇貼文連結，這篇沒有新增", key);
-        return "「" + name + "」已經有了，而且已經有 2 篇貼文連結，這篇沒有新增";
+      // 同一間店：代碼相同，或地址相同（店名寫法不同也算，例：「Manniu 慢牛 創意牛肉料理」與「慢牛 創意牛肉料理」）→ 合併成一筆
+      if (String(rows[i][0]) === key || samePlace_(rows[i], newRow)) {
+        var mg = mergeRows_(rows[i], newRow);
+        var oldName = String(rows[i][1]);
+        if (mg.row[0] !== String(rows[i][0])) { // 店名換成較詳細的版本；若新代碼已被別間店用走就保留舊名
+          var taken = rows.some(function (r, k) { return k !== i && String(r[0]) === mg.row[0]; });
+          if (taken) { mg.row[0] = rows[i][0]; mg.row[1] = rows[i][1]; }
+        }
+        sh_("places").getRange(i + 2, 1, 1, HEADERS.places.length).setValues([mg.row]);
+        var said = "「" + oldName + "」已經有了，這篇貼文已合併進去" + (mg.row[1] !== oldName ? "（店名改為「" + mg.row[1] + "」）" : "") + (mg.tagsAdded ? "，種類補上：" + mg.tagsAdded : "");
+        if (mg.postDropped) said = "「" + oldName + "」已經有了，而且已經有 2 篇貼文連結，這篇貼文沒有新增（其他資料已合併）";
+        log_(mg.postDropped ? 2 : 1, "find", said, mg.row[0]);
+        return said;
       }
     }
     if (rows.length >= LIMIT.places) throw new Error("店家數量已達上限");

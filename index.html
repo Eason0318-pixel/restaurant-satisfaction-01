@@ -197,6 +197,8 @@ main{min-width:0;padding:0 0 16px}
 .dsec h3 .dedbtn{margin:-8px -8px -8px auto}
 .drow>.dedbtn{margin:-6px -8px -6px 0}
 .drate .dedbtn{margin-left:-4px}
+.dcat .dedbtn{margin:-8px 0 -8px 2px;vertical-align:middle}
+.dcat span+.dedbtn{margin-left:2px}
 .dacts{display:flex;flex:none;margin:-6px -8px -6px 0}
 .dacts .dcopy{margin:0;width:36px;height:36px}
 .ddate{font-size:12px;color:var(--muted)}
@@ -1239,6 +1241,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     Object.keys(e).forEach(function(f){
       var v = e[f];
       if(f === "picks") o.picks = v ? v.split(/[、,，\n]/).map(function(t){ return t.trim(); }).filter(Boolean) : [];
+      else if(f === "tags") o.tags = v ? v.split(/[、,，\n]/).map(function(t){ return t.trim(); }).filter(Boolean) : [];
       else if(f === "rating") o.rating = v === "" ? 0 : +v;
       else o[f] = v;
     });
@@ -1251,6 +1254,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   var EDIT_CFG = {
     feature:{ tag:"textarea", max:300, hint:"" },
     picks:{ tag:"input", max:200, hint:"用「、」隔開，例：鹽味拉麵、山椒拉麵" },
+    tags:{ tag:"input", max:80, hint:"用「、」隔開，國別寫成「X式料理」或「印度料理」，例：日式料理、拉麵、咖喱" },
     hours:{ tag:"textarea", max:300, hint:"只有一種時間就只寫時間；有多種時間請每行寫一種，開頭寫週幾，例：週一至週五 11:00～21:00" },
     closed:{ tag:"input", max:60, hint:"例：週二、週三；每天營業請寫「無公休」；不確定請留空" },
     price:{ tag:"input", max:40, hint:"例：每人 $200～400" },
@@ -1261,7 +1265,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     return DEDIT === f ? "" : '<button type="button" class="dedbtn" data-act="dedit" data-f="' + f + '" aria-label="編輯' + label + '" title="編輯">' + DI.edit + '</button>';
   }
   function editorHTML(f, p){
-    var c = EDIT_CFG[f], v = f === "picks" ? (p.picks || []).join("、") : f === "rating" ? (p.rating || "") : (p[f] || "");
+    var c = EDIT_CFG[f], v = f === "picks" ? (p.picks || []).join("、") : f === "tags" ? (p.tags || []).join("、") : f === "rating" ? (p.rating || "") : (p[f] || "");
     var ctl = c.tag === "textarea" ? '<textarea id="dedit" rows="4" maxlength="' + c.max + '">' + esc(v) + '</textarea>'
       : '<input id="dedit" ' + (c.type === "number" ? 'type="number" step="0.1" min="1" max="5" inputmode="decimal"' : 'type="text" maxlength="' + c.max + '"') + ' value="' + esc(v) + '">';
     return '<div class="dedit">' + ctl + (c.hint ? "<small>" + c.hint + "</small>" : "") +
@@ -1276,6 +1280,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
       if(v !== "") v = String(+(+v).toFixed(1));
     }
     if(f === "picks") v = v.split(/[、,，\n]/).map(function(t){ return t.trim(); }).filter(Boolean).join("、");
+    if(f === "tags") v = v.split(/[、,，\n]/).map(function(t){ return t.trim().replace(/咖哩/g, "咖喱"); }).filter(Boolean).join("、");
     if(f === "hours") v = v.split("\n").map(function(t){ return t.trim(); }).filter(Boolean).join("\n");
     var ops = [[f, v]];
     if(f === "rating") ops.push(["ratingDate", v === "" ? "" : today()]);
@@ -1297,7 +1302,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     var body = function(f, normal){ return DEDIT === f ? editorHTML(f, p) : normal; };
     return '<div class="dback"><button type="button" data-act="dback">‹ 返回</button><button type="button" class="dreview" data-act="dreview" data-name="' + esc(p.name) + '">✎ 留下評價</button></div>' +
       '<article class="dhead"><div class="dmain"><h2 class="dname">' + esc(p.name) + '</h2>' +
-      (loc ? '<p class="dloc">' + loc + '</p>' : '') + (cat ? '<p class="dcat">' + cat + '</p>' : '') +
+      (loc ? '<p class="dloc">' + loc + '</p>' : '') + (DEDIT === "tags" ? editorHTML("tags", p) : '<p class="dcat">' + (cat || '<span class="dnone">尚未填寫種類</span>') + edBtn("tags", "種類") + '</p>') +
       '<div class="drate">' + rate + (src ? '<span class="dsrc">' + src + '</span>' : '') + '</div>' + (DEDIT === "rating" ? editorHTML("rating", p) : "") + '</div>' +
       '<a class="pgo" href="' + esc(mapURL(p)) + '" target="_blank" rel="noopener noreferrer" aria-label="導航到 ' + esc(cleanName(p.name)) + '（Google 地圖）" title="導航"><svg viewBox="0 0 24 24" aria-hidden="true"><path transform="translate(0 .8) rotate(45 12 11.2) scale(.92) translate(.96 .9)" d="M12 2 4.5 20.3 12 16.5l7.5 3.8z"/></svg></a></article>' +
       '<div class="dgrid"><div class="dleft">' +
