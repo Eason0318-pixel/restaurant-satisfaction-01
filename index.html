@@ -1218,6 +1218,10 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     edit:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14.5 7.5l3 3"/></svg>',
     star:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8l-5.2 2.8 1-5.8L3.5 9.7l5.9-.9z"/></svg>',
     ig:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r=".6"/></svg>',
+    threads:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.3 9C16.5 5.8 14.4 4.2 12 4.2c-4 0-6.5 3-6.5 7.8s2.5 7.8 6.5 7.8c3.6 0 5.6-2 5.6-4.4 0-2.3-2-3.5-4.6-3.5-2 0-3.3.9-3.3 2.2 0 1.2 1 2 2.5 2 2.1 0 3.2-1.6 3.2-4.7"/></svg>',
+    fb:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 21v-8h3l.5-3.5H14V7.6c0-1 .4-1.7 1.8-1.7h1.8V3c-.4 0-1.5-.2-2.7-.2-2.7 0-4.4 1.6-4.4 4.4v2.3H7.5V13h2.9v8"/></svg>',
+    yt:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.8" y="5.5" width="18.4" height="13" rx="4"/><path d="M10 9.2v5.6l4.8-2.8z"/></svg>',
+    link:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>',
     spark:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>',
     heart:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
     clock:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
@@ -1294,12 +1298,24 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     ops.forEach(function(o){ e[o[0]] = o[1]; send({ op:"setPlace", key:sendKey, field:o[0], value:o[1], t:t }); });
     savePE(); DEDIT = ""; renderFind(); toast("已儲存");
   }
+  // 依貼文網址的網站決定按鈕圖示（不認得的網站用連結圖示）
+  function postKind(u){
+    var h = "";
+    try{ h = new URL(u).hostname.toLowerCase(); }catch(e){}
+    function on(d){ return h === d || h.slice(-d.length - 1) === "." + d; }
+    if(on("instagram.com")) return { icon:"ig", label:"Instagram" };
+    if(on("threads.net") || on("threads.com")) return { icon:"threads", label:"Threads" };
+    if(on("facebook.com") || on("fb.com") || on("fb.watch")) return { icon:"fb", label:"Facebook" };
+    if(on("youtube.com") || on("youtu.be")) return { icon:"yt", label:"YouTube" };
+    return { icon:"link", label:"網頁連結" };
+  }
   function detailHTML(p){
     var loc = [p.county, p.district].filter(Boolean).map(function(t){ return "<span>" + esc(t) + "</span>"; }).join("");
     var cat = catHTML(p.tags || []);
     var posts = (p.posts || []).filter(function(u){ return /^https:\/\//.test(u); }).slice(0, 2);
     var src = posts.map(function(u, i){
-      return '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer" aria-label="查看原貼文' + (posts.length > 1 ? " " + (i + 1) : "") + '" title="查看原貼文">' + DI.ig + (posts.length > 1 ? "<i>" + (i + 1) + "</i>" : "") + '</a>';
+      var kind = postKind(u);
+      return '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer" aria-label="查看原貼文（' + kind.label + '）' + (posts.length > 1 ? " " + (i + 1) : "") + '" title="查看原貼文（' + kind.label + '）">' + DI[kind.icon] + (posts.length > 1 ? "<i>" + (i + 1) + "</i>" : "") + '</a>';
     }).join("");
     var rate = (p.rating ? DI.star + "<b>" + (+p.rating).toFixed(1) + "</b><span>Google 星數</span>" : '<span class="dnone">尚無 Google 星數</span>') + edBtn("rating", "Google 星數") +
       (p.rating && p.ratingDate ? '<span class="ddate">' + esc(String(p.ratingDate).replace(/-/g, "/")) + ' 更新</span>' : "");
