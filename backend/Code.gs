@@ -526,6 +526,53 @@ function gemini_(prompt) {
   throw new Error("Gemini 暫時無法使用（" + last + "），請稍後再試");
 }
 
+// 帶搜尋工具的 Gemini 呼叫（不能同時要求 JSON 格式，所以從回覆文字裡取出 JSON）。依序試：Google 地圖 → Google 搜尋；失敗回傳 { why }
+function geminiGround_(prompt) {
+  var key = PropertiesService.getScriptProperties().getProperty("GEMINI_API_KEY");
+  if (!key) return { why: "沒設定 Gemini 金鑰" };
+  var combos = [
+    ["gemini-2.5-flash", { googleMaps: {} }],
+    ["gemini-2.5-flash", { google_search: {} }],
+    ["gemini-2.5-flash-lite", { google_search: {} }]
+  ];
+  var why = [];
+  for (var i = 0; i < combos.length; i++) {
+    try {
+      var r = UrlFetchApp.fetch("https://generativelanguage.googleapis.com/v1beta/models/" + combos[i][0] + ":generateContent", {
+        method: "post", contentType: "application/json", muteHttpExceptions: true, headers: { "x-goog-api-key": key },
+        payload: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], tools: [combos[i][1]] })
+      });
+      var code = r.getResponseCode();
+      if (code !== 200) { why.push(Object.keys(combos[i][1])[0] + " " + code); continue; }
+      var parts = JSON.parse(r.getContentText()).candidates[0].content.parts || [];
+      var text = parts.map(function (p) { return p.text || ""; }).join("");
+      var m = text.match(/\{[\s\S]*\}/);
+      if (!m) { why.push(Object.keys(combos[i][1])[0] + " 沒回 JSON"); continue; }
+      var data = JSON.parse(m[0]);
+      if (data && typeof data === "object") return { data: data };
+    } catch (e) { why.push(String(e && e.message || e).slice(0, 40)); }
+  }
+  return { why: why.join("、") || "查詢失敗" };
+}
+
+// 到 Google 地圖找「這間店本身」（用地址對照，不是只定位地址），讀取星數、營業時間；不確定是同一間就不採用
+function lookupGoogle_(name, county, district, addr) {
+  if (!name || (!addr && !county)) return { ok: false, why: "貼文沒有地址或縣市，無法確認是哪一間" };
+  var res = geminiGround_("請在 Google 地圖上找到下面這間餐廳「店家本身」的頁面（不是只定位地址），讀取它的 Google 星數與營業時間。\n" +
+    "店名：" + name + "\n地址：" + (addr || "（貼文沒寫）") + "\n縣市區：" + [county, district].filter(Boolean).join("") + "\n\n" +
+    "規則：1. 必須確認找到的是同一間店（店名相近且位置／地址相符），分店不同、地址不符就視為找不到。2. 查不到的欄位一律留空，不要猜。3. 只輸出一個 JSON，不要其他文字：\n" +
+    '{"found": true 或 false, "rating": Google 星數數字（例 4.3，查不到就 0）, "address": "Google 上的完整地址（去掉郵遞區號，查不到空字串）", ' +
+    '"hours": "營業時間，時間用「～」。只有一種營業模式就只寫時間（例：11:30～14:30、17:00～21:00）；不同日子時間不同則每種一行（用 \\n），每行開頭寫週幾（例：週一至週五 11:00～15:00\\n週六至週日 11:00～22:00）；查不到空字串", ' +
+    '"closed": "公休日，例：週二；每天營業寫「無公休」；查不到空字串"}');
+  if (!res.data) return { ok: false, why: res.why };
+  var d = res.data;
+  if (d.found !== true) return { ok: false, why: "Google 地圖上沒確認到同一間店" };
+  var rt = Number(d.rating);
+  var hours = String(d.hours || "").trim().slice(0, 500), closed = String(d.closed || "").trim().slice(0, 500);
+  if (!closed && hours && /每天|每日|週一至週日|週日至週六|全週/.test(hours)) closed = "無公休";
+  return { ok: true, rating: rt >= 1 && rt <= 5 ? String(Math.round(rt * 10) / 10) : "", hours: hours, closed: closed, address: String(d.address || "").trim().slice(0, 500) };
+}
+
 function logLocked_(col, tab, msg, ref) {
   var lock = LockService.getScriptLock();
   try { lock.waitLock(5000); log_(col, tab, msg, ref); } catch (_) {} finally { try { lock.releaseLock(); } catch (_) {} }
@@ -680,14 +727,23 @@ function share_(rawUrl, pageHtml) {
   if (!closed && hours && (/每天|每日|週一至週日|週日至週六|全週/.test(hours) || (/平日|週一至週五/.test(hours) && /六日|週六至週日|週末|假日/.test(hours)))) closed = "無公休";
   var picks = (Array.isArray(info.picks) ? info.picks : []).map(function (x) { return String(x).trim().slice(0, 12).replace(/、/g, "，"); }).filter(Boolean).slice(0, 8).join("、");
   var addr = String(info.address || "").trim().slice(0, 500);
-  var q = [county, String(info.district || "").trim(), name, addr].filter(Boolean).join(" ");
+  // 交給 Gemini 到 Google 地圖上找這間店本身，讀 Google 星數與營業時間（失敗就維持貼文內容，星數留空）
+  var rating = "", ratingDate = "", gnote = "";
+  var g = lookupGoogle_(name, county, String(info.district || "").trim(), addr);
+  if (g.ok) {
+    if (g.rating) { rating = g.rating; ratingDate = day; }
+    if (g.hours) hours = g.hours;           // 以 Google 地圖為準
+    if (g.closed) closed = g.closed;
+    if (!addr && g.address) addr = g.address;
+  } else gnote = g.why;
+  var q =[county, String(info.district || "").trim(), name, addr].filter(Boolean).join(" ");
   var map = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
 
   var lock = LockService.getScriptLock();
   lock.waitLock(15000);
   try {
     var rows = rows_("places");
-    var newRow = [key, name, county, String(info.district || "").trim().slice(0, 20), tagList.join("、"), map, "", "",
+    var newRow = [key, name, county, String(info.district || "").trim().slice(0, 20), tagList.join("、"), map, rating, ratingDate,
       hours, closed, price, addr, String(info.feature || "").trim().slice(0, 500), picks, url, "", Date.now()];
     for (var i = 0; i < rows.length; i++) {
       // 同一間店：代碼相同，或地址相同（店名寫法不同也算，例：「Manniu 慢牛 創意牛肉料理」與「慢牛 創意牛肉料理」）→ 合併成一筆
@@ -717,7 +773,7 @@ function share_(rawUrl, pageHtml) {
     var sh = sh_("places");
     var row = sh.getLastRow() + 1;
     if (row > sh.getMaxRows()) sh.insertRowsAfter(sh.getMaxRows(), 1);
-    sh.getRange(row, 1, 1, HEADERS.places.length).setValues([[key, name, county, String(info.district || "").trim().slice(0, 20), tagList.join("、"), map, "", "",
+    sh.getRange(row, 1, 1, HEADERS.places.length).setValues([[key, name, county, String(info.district || "").trim().slice(0, 20), tagList.join("、"), map, rating, ratingDate,
       hours, closed, price, addr,
       String(info.feature || "").trim().slice(0, 500), picks, url, "", Date.now()]]);
     var district = String(info.district || "").trim().slice(0, 20);
@@ -726,6 +782,7 @@ function share_(rawUrl, pageHtml) {
     if (!county) lack.push("縣市");
     if (!district) lack.push("市區");
     if (!cuisine) lack.push("國別（X式料理）");
+    if (!rating) lack.push("Google 星數" + (gnote ? "（" + gnote + "）" : ""));
     if (!hours) lack.push("營業時間");
     if (!addr) lack.push("地址");
     if (!price) lack.push("價位區間");
@@ -737,7 +794,7 @@ function share_(rawUrl, pageHtml) {
   var where = [county, String(info.district || "").trim()].filter(Boolean).join("");
   return "已新增「" + name + "」" + (where ? "（" + where + "）" : "（縣市沒讀到，請到詳情頁確認）") +
     (cuisine ? "，種類：" + tagList.join("、") : "，⚠ 判斷不出是哪一國料理，請之後自己標") +
-    "。Google 星數之後再補" + (hours ? "" : "，貼文沒寫營業時間") +
+    (rating ? "。Google 星數 " + rating : "。沒查到 Google 星數，之後再補") + (hours ? "" : "，查不到營業時間") +
     (similar.length ? "\n⚠ 資料庫已有相似的店：" + similar.slice(0, 3).join("、") + "，請確認是否重複" : "");
 }
 

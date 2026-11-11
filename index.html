@@ -626,6 +626,27 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
         ".menu-btn{border-color:#ffffff;color:#ffffff}"
       ].join("\n")
     },
+    // 邦拿 咖喱專門店：深焦褐頁首（菜單的墨色＋深灰餐盤）、咖喱橘當主色、蛋黃金色標題列、暖白紙面（取自菜單與招牌生蛋咖喱的擺盤）
+    "邦拿": {
+      fontUrl: "",
+      vars: {
+        "--bg":"#f6f1ea", "--paper":"#fffdfa", "--field":"#ffffff", "--add-bg":"#f5ece1",
+        "--line":"#e3d8ca", "--ink":"#2b1f1a", "--muted":"#75675d", "--gold":"#b8741a", "--danger":"#b3261e",
+        "--accent":"#b9461a", "--accent-deep":"#8f3412", "--accent-mid":"#d2672b", "--neutral":"#8a8079", "--hover":"#fbeedf",
+        "--on-accent":"#ffffff",
+        "--band":"#2b1f1a", "--on-band":"#ffffff", "--band-sub":"#e9d5c3", "--band-warn":"#ffd79a",
+        "--sec-head":"#f2a93b", "--on-sec":"#2b1f1a",
+        "--side-bg":"#fffdfa", "--side-active":"#f2a93b", "--on-side-active":"#2b1f1a",
+        "--scrim":"rgba(35,24,19,.55)", "--toast-bg":"#2b1f1a", "--toast-fg":"#fff3e0"
+      },
+      css: [
+        ".rtab.radd{border-color:#b9461a;color:#b9461a}",
+        ".rbtn{border-color:#d2672b;color:#8f3412}",
+        ".rbtn[data-r=\"ok\"]{border-color:#8a8079;color:#5f5650}",
+        ".cnt{color:#b9461a}",
+        ".cnt[data-r=\"ok\"]{color:#8a8079}"
+      ].join("\n")
+    },
     // 享鴨：朱紅底、白色紙面、蜜桃色與橘紅色塊、黑色粗明體（取自該店菜單的配色與版面）
     "享鴨": {
       fontUrl: "",
@@ -1036,7 +1057,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
 
   /* ---------- 頁首店名：盡量維持一行（必要時自動縮小字級），真的放不下才換行 ----------
      TITLE_BREAKS：店名太長必須換行時，用「|」標出換行位置（沒列的就由瀏覽器平均分行）。 */
-  var TITLE_BREAKS = { "大師兄銷魂麵鋪":"大師兄|銷魂麵鋪" };
+  var TITLE_BREAKS = { "大師兄銷魂麵鋪":"大師兄|銷魂麵鋪", "邦拿 咖喱專門店":"邦拿|咖喱專門店", "邦拿 咖哩專門店":"邦拿|咖哩專門店" };
   var titleText = "";
   function setTitle(name){ titleText = name; fitTitle(); }
   function fitTitle(){
