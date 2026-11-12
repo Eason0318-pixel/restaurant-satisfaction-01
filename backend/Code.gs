@@ -527,7 +527,7 @@ function gemini_(prompt) {
 }
 
 // 帶搜尋工具的 Gemini 呼叫（不能同時要求 JSON 格式，所以從回覆文字裡取出 JSON）。依序試：Google 地圖 → Google 搜尋；失敗回傳 { why }
-function geminiGround_(prompt) {
+function geminiGround_(prompt, searchOnly) {
   var key = PropertiesService.getScriptProperties().getProperty("GEMINI_API_KEY");
   if (!key) return { why: "沒設定 Gemini 金鑰" };
   var combos = [
@@ -535,6 +535,7 @@ function geminiGround_(prompt) {
     ["gemini-2.5-flash", { google_search: {} }],
     ["gemini-2.5-flash-lite", { google_search: {} }]
   ];
+  if (searchOnly) combos = combos.slice(1);
   var why = [];
   for (var i = 0; i < combos.length; i++) {
     try {
@@ -570,7 +571,22 @@ function lookupGoogle_(name, county, district, addr) {
   var rt = Number(d.rating);
   var hours = String(d.hours || "").trim().slice(0, 500), closed = String(d.closed || "").trim().slice(0, 500);
   if (!closed && hours && /每天|每日|週一至週日|週日至週六|全週/.test(hours)) closed = "無公休";
-  return { ok: true, rating: rt >= 1 && rt <= 5 ? String(Math.round(rt * 10) / 10) : "", hours: hours, closed: closed, address: String(d.address || "").trim().slice(0, 500) };
+  var rating = rt >= 1 && rt <= 5 ? String(Math.round(rt * 10) / 10) : "";
+  // 地圖工具通常不回傳星數：改用 Google 搜尋再查一次（只在店家已確認、星數仍空白時）
+  if (!rating) {
+    var r2 = geminiGround_("請用 Google 搜尋找出下面這間餐廳在 Google 地圖上顯示的評分（1～5 的星數）。\n店名：" + name +
+      "\n地址：" + (addr || d.address || "") + "\n縣市區：" + [county, district].filter(Boolean).join("") +
+      "\n必須是這個地址的這間店，分店不同就不要採用；查不到不要猜。只輸出一個 JSON：" + '{"rating": 星數數字（例 4.3，查不到填 0）}', true);
+    var n2 = r2.data ? Number(r2.data.rating) : 0;
+    if (n2 >= 1 && n2 <= 5) rating = String(Math.round(n2 * 10) / 10);
+  }
+  return { ok: true, rating: rating, hours: hours, closed: closed, address: String(d.address || "").trim().slice(0, 500) };
+}
+
+// 測試用：在 Apps Script 編輯器選 testLookup 按「執行」，到「執行記錄」看結果（不會寫入試算表）
+function testLookup() {
+  var r = lookupGoogle_("鼎泰豐 信義店", "台北", "大安區", "台北市大安區信義路二段194號");
+  Logger.log(JSON.stringify(r));
 }
 
 function logLocked_(col, tab, msg, ref) {
@@ -735,6 +751,7 @@ function share_(rawUrl, pageHtml) {
     if (g.hours) hours = g.hours;           // 以 Google 地圖為準
     if (g.closed) closed = g.closed;
     if (!addr && g.address) addr = g.address;
+    if (!rating) gnote = "地圖上找到店但沒有星數";
   } else gnote = g.why;
   var q =[county, String(info.district || "").trim(), name, addr].filter(Boolean).join(" ");
   var map = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
@@ -794,7 +811,7 @@ function share_(rawUrl, pageHtml) {
   var where = [county, String(info.district || "").trim()].filter(Boolean).join("");
   return "已新增「" + name + "」" + (where ? "（" + where + "）" : "（縣市沒讀到，請到詳情頁確認）") +
     (cuisine ? "，種類：" + tagList.join("、") : "，⚠ 判斷不出是哪一國料理，請之後自己標") +
-    (rating ? "。Google 星數 " + rating : "。沒查到 Google 星數，之後再補") + (hours ? "" : "，查不到營業時間") +
+    (rating ? "。Google 星數 " + rating : "。沒查到 Google 星數" + (gnote ? "（" + gnote + "）" : "") + "，之後再補") + (hours ? "" : "，查不到營業時間") +
     (similar.length ? "\n⚠ 資料庫已有相似的店：" + similar.slice(0, 3).join("、") + "，請確認是否重複" : "");
 }
 
