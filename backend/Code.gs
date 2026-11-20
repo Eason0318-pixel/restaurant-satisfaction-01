@@ -526,6 +526,33 @@ function gemini_(prompt) {
   throw new Error("Gemini 暫時無法使用（" + last + "），請稍後再試");
 }
 
+// 讀截圖：把貼文截圖（base64 的 JPEG／PNG）交給 Gemini，原樣抄出畫面上的貼文文字；失敗回傳空字串
+function textFromImage_(b64) {
+  var key = PropertiesService.getScriptProperties().getProperty("GEMINI_API_KEY");
+  if (!key) { FETCH_LOG_.push("截圖：沒設定 Gemini 金鑰"); return ""; }
+  b64 = String(b64 || "").replace(/^data:[^,]*,/, "").replace(/\s+/g, "");
+  if (b64.length < 1000) { FETCH_LOG_.push("截圖：圖片太小或沒收到"); return ""; }
+  if (b64.length > 12000000) { FETCH_LOG_.push("截圖：圖片太大"); return ""; }
+  var mime = b64.indexOf("iVBOR") === 0 ? "image/png" : "image/jpeg";
+  var prompt = "這是一張 Instagram 或 Threads 貼文的手機截圖。請把畫面上屬於「這篇貼文」的文字原樣抄出來：發文帳號、貼文說明文字（店名、地址、營業時間、推薦餐點、地點標籤、#標籤等）。" +
+    "不要翻譯、不要補充、不要猜測；看不清楚的字省略。留言、廣告、其他貼文不要抄。畫面上沒有貼文文字就只回覆「無」。直接輸出文字，不要加說明。";
+  for (var i = 0; i < GEMINI_MODELS.length; i++) {
+    try {
+      var r = UrlFetchApp.fetch("https://generativelanguage.googleapis.com/v1beta/models/" + GEMINI_MODELS[i] + ":generateContent", {
+        method: "post", contentType: "application/json", muteHttpExceptions: true, headers: { "x-goog-api-key": key },
+        payload: JSON.stringify({ contents: [{ parts: [{ text: prompt }, { inline_data: { mime_type: mime, data: b64 } }] }] })
+      });
+      if (r.getResponseCode() !== 200) { FETCH_LOG_.push("截圖：" + GEMINI_MODELS[i] + " " + r.getResponseCode()); continue; }
+      var parts = JSON.parse(r.getContentText()).candidates[0].content.parts || [];
+      var t = parts.map(function (p) { return p.text || ""; }).join("").trim();
+      if (t.length > 15 && t !== "無") return ("Title: 貼文截圖\nDescription: " + t).slice(0, 4000);
+      FETCH_LOG_.push("截圖：畫面上沒讀到貼文文字");
+      return "";
+    } catch (e) { FETCH_LOG_.push("截圖：" + String(e && e.message || e).slice(0, 40)); }
+  }
+  return "";
+}
+
 // 帶搜尋工具的 Gemini 呼叫（不能同時要求 JSON 格式，所以從回覆文字裡取出 JSON）。依序試：Google 地圖 → Google 搜尋；失敗回傳 { why }
 function geminiGround_(prompt, searchOnly) {
   var key = PropertiesService.getScriptProperties().getProperty("GEMINI_API_KEY");
@@ -681,7 +708,7 @@ function mergeDuplicates_(apply) {
 }
 
 // 回傳給「捷徑」顯示的訊息；成功或失敗都用 ok:true 帶 message，真的出錯才丟例外
-function share_(rawUrl, pageHtml) {
+function share_(rawUrl, pageHtml, imageB64) {
   var url = cleanShareUrl_(rawUrl);
   if (!url) throw new Error("這不是 Instagram 或 Threads 的貼文網址");
   var props = PropertiesService.getScriptProperties();
@@ -701,7 +728,8 @@ function share_(rawUrl, pageHtml) {
   } else {
     FETCH_LOG_.push("沒收到手機傳的網頁（" + (pageHtml === undefined ? "沒有 html 欄位" : typeof pageHtml + "，長度" + String(pageHtml == null ? 0 : (pageHtml.length || JSON.stringify(pageHtml).length))) + "）");
   }
-  if (!text) text = fetchPostText_(url);
+  if (!text && imageB64) text = textFromImage_(imageB64);   // 手機傳了截圖：直接看圖，不再去抓網頁
+  if (!text && !imageB64) text = fetchPostText_(url);
   if (!text) throw new Error("讀不到這篇貼文的內容（可能是影片、私人帳號或暫時被擋）。診斷：" + (FETCH_LOG_.join("、") || "沒有連線紀錄"));
 
   var info = gemini_("你是餐廳資訊整理專家。下面是一篇 IG/Threads 貼文內容，請只根據貼文內容整理，貼文沒寫的欄位一律留空字串，不要猜測、不要編造。\n" +
@@ -903,7 +931,7 @@ function doPost(e) {
     }
     if (op && op.op === "shareUrl") { // 抓貼文與問 Gemini 要等一陣子，不佔著鎖；只有寫入試算表時才上鎖
       try {
-        return json_({ ok: true, message: share_(op.url, op.html) });
+        return json_({ ok: true, message: share_(op.url, op.html, op.image) });
       } catch (err) { // 失敗也帶 message，捷徑只要取同一個欄位顯示
         var why = String(err && err.message || err);
         logLocked_(2, "find", "手機分享失敗：" + why.split("。診斷")[0].slice(0, 120), "");
