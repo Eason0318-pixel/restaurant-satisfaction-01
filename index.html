@@ -758,7 +758,10 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
       b.style.display = !q || b.textContent.toLowerCase().indexOf(q) >= 0 ? "" : "none";
     });
   }
-  function closeDrawer(){ setDrawer(false); }
+  function closeDrawer(){
+    if(REDIT){ toast("請先按「完成」儲存名稱"); return; }
+    setDrawer(false);
+  }
 
   function newId(p){ return (p || "i") + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 
@@ -851,7 +854,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     view = v;
     try{ localStorage.setItem(VIEW_KEY, v); }catch(e){}
     try{ history.replaceState(null, "", "#" + (v === "find" ? "find" : cur)); }catch(e){}
-    closeDrawer(); closeRestForm();
+    setDrawer(false); closeRestForm();
     render();
     window.scrollTo(0, 0);
   }
@@ -1993,6 +1996,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   document.addEventListener("keydown", function(e){ if(e.key === "Escape" && !$("#sheet").hidden) closeSheet(); });
   function toggleRestMenu(){
     if(!window.matchMedia("(max-width:820px)").matches) return;
+    if(REDIT){ toast("請先按「完成」儲存名稱"); return; }
     setDrawer(!$("#side").classList.contains("open"));
   }
   $("#titleBox").addEventListener("click", toggleRestMenu);
