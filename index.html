@@ -43,6 +43,8 @@ header{position:relative;background:var(--band);color:var(--on-band);text-align:
   padding:calc(10px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px))}
 .hd-row{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px}
 header h1{flex:0 1 auto;min-width:0;margin:0;line-height:44px;font-family:var(--font-display);font-size:28px;letter-spacing:.24em;font-weight:600;text-wrap:balance;overflow-wrap:anywhere}
+.titlebox{display:contents}
+.tcaret,.rsearch{display:none}
 .tagline{margin:0;font-size:13px;color:var(--band-sub);letter-spacing:.1em}
 .summary{display:flex;justify-content:center;gap:18px;margin-top:4px;font-size:13px;color:var(--on-band)}
 .hd-actions{position:absolute;right:max(12px,env(safe-area-inset-right,0px),calc(50% - 504px));top:calc(10px + env(safe-area-inset-top,0px));height:44px;display:flex;align-items:center;gap:6px}
@@ -398,9 +400,8 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
 
 /* 手機：餐廳選單改成左上角的下拉選單；第一階層頁籤變成底部的浮動膠囊列 */
 @media (max-width:820px){
-  .menu-btn{display:block}
   .layout{display:block}
-  .side{position:fixed;top:calc(62px + env(safe-area-inset-top,0px));left:max(12px,env(safe-area-inset-left,0px));z-index:50;width:min(78vw,280px);max-height:calc(100vh - 170px);margin:0;overflow:auto;padding:12px;
+  .side{position:fixed;top:calc(90px + env(safe-area-inset-top,0px));left:max(12px,env(safe-area-inset-left,0px));z-index:50;width:min(78vw,280px);max-height:calc(100vh - 190px);margin:0;overflow:hidden;padding:12px;display:flex;flex-direction:column;
     border-radius:18px;box-shadow:0 10px 28px rgba(0,0,0,.28);opacity:0;transform:translateY(-6px);visibility:hidden;transition:opacity .15s ease,transform .15s ease,visibility 0s linear .15s}
   .side.open{opacity:1;transform:none;visibility:visible;transition:opacity .15s ease,transform .15s ease}
   .backdrop{position:fixed;inset:0;z-index:45;background:var(--scrim)}
@@ -408,13 +409,29 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   main{padding:0 max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px))}
   .layout{padding-left:0;padding-right:0}
   header{padding-bottom:8px}
-  .hd-row{display:grid;grid-template-columns:1fr auto 1fr;gap:8px}
-  .menu-btn,.hd-actions{position:relative;top:auto;left:auto;right:auto}
-  .menu-btn{grid-column:1;justify-self:start;min-height:40px;padding:0 12px;font-size:14px;white-space:nowrap}
-  .hd-actions{grid-column:3;justify-self:end}
+  .hd-row{display:grid;grid-template-columns:40px minmax(0,1fr) 40px;gap:8px}
+  .hd-actions{position:relative;top:auto;left:auto;right:auto;grid-column:3;justify-self:end}
   .shbtn{min-height:40px;padding:0 10px}
   .kebab{width:40px;padding:0}
-  header h1{grid-column:2;max-width:100%;font-size:20px;letter-spacing:.1em;line-height:1.25;margin:0 auto}
+  /* 店名＝可以點的按鈕：半透明邊框，高度固定抓兩行，小箭頭固定貼在框的右側 */
+  .titlebox{display:flex;align-items:center;grid-column:2;box-sizing:border-box;width:100%;height:64px;padding:0 10px 0 28px;cursor:pointer;
+    border:1.5px solid rgba(255,255,255,.45);border:1.5px solid color-mix(in srgb,var(--on-band) 45%,transparent);
+    background:rgba(255,255,255,.10);background:color-mix(in srgb,var(--on-band) 10%,transparent);border-radius:12px;-webkit-tap-highlight-color:transparent}
+  .titlebox:active,.titlebox[aria-expanded="true"]{background:rgba(255,255,255,.22);background:color-mix(in srgb,var(--on-band) 22%,transparent)}
+  .titlebox[aria-expanded="true"]{position:relative;z-index:60}
+  .tcaret{font-size:18px}
+  .titlebox:focus-visible{outline:2px solid var(--on-band);outline-offset:2px}
+  header .titlebox h1{flex:1;min-width:0;width:auto;max-width:none;margin:0;padding:0;background:none;color:inherit;text-align:center;
+    font-size:20px;letter-spacing:.1em;text-indent:.1em;line-height:1.25;white-space:nowrap;overflow:hidden;text-wrap:nowrap}
+  .tcaret{display:block;width:18px;flex:none;text-align:center;font-size:18px;line-height:1;transition:transform .15s ease}
+  .titlebox[aria-expanded="true"] .tcaret{transform:rotate(180deg)}
+  /* 下拉列表：搜尋固定在頂、新增餐廳固定在底，中間可上下滑動 */
+  .side-label{display:none}
+  .rsearch{display:block;flex:none;width:100%;box-sizing:border-box;margin:0 0 8px;min-height:40px;font-family:inherit;font-size:16px;padding:8px 16px;border:1px solid var(--line);border-radius:999px;background:var(--field);color:var(--ink)}
+  .rests{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+  .rests .rtab[aria-selected="true"]::after{content:"✓";float:right;margin-left:8px}
+  .rests .radd{position:sticky;bottom:0;z-index:1;flex:none;background:var(--side-bg);box-shadow:0 -6px 6px -2px var(--side-bg)}
+  .restform{flex:none}
   .summary{margin-top:2px}
   body{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   .dock{position:fixed;top:auto;left:50%;bottom:max(18px,calc(env(safe-area-inset-bottom,0px) - 8px));transform:translateX(-50%);z-index:40;width:min(calc(100% - 32px),400px)}
@@ -437,9 +454,6 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   .section-head{border-radius:var(--radius);margin-bottom:10px}
   .card-list{background:transparent;border:none;border-radius:0}
 }
-@media (max-width:820px) and (display-mode: standalone){
-  .side{top:calc(86px + env(safe-area-inset-top,0px))}
-}
 @media (prefers-reduced-motion: reduce){ .rbtn,.side,.side.open,.topnav::before{transition:none} }
 </style>
 <style id="themeCss"></style>
@@ -447,8 +461,9 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
 <body>
 <header>
   <div class="hd-row">
-    <button type="button" class="menu-btn" id="menuBtn" aria-controls="side" aria-expanded="false">餐廳 ▾</button>
-    <h1 id="restTitle"></h1>
+    <div class="titlebox" id="titleBox" role="button" tabindex="0" aria-haspopup="true" aria-controls="side" aria-expanded="false" aria-label="切換餐廳">
+      <h1 id="restTitle"></h1><span class="tcaret" aria-hidden="true">▾</span>
+    </div>
     <div class="hd-actions">
       <button type="button" class="shbtn kebab" id="moreBtn" aria-haspopup="menu" aria-expanded="false" aria-label="餐廳選項">⋮</button>
       <div class="more" id="moreMenu" role="menu" hidden><button type="button" role="menuitem" id="restRename">編輯名稱</button><button type="button" role="menuitem" id="restDelete">刪除餐廳</button></div>
@@ -479,6 +494,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
 <div class="layout">
   <aside class="side" id="side" aria-label="餐廳選單">
     <p class="side-label">寫評價・餐廳</p>
+    <input type="search" class="rsearch" id="rsearch" placeholder="搜尋餐廳" aria-label="搜尋餐廳" autocomplete="off" enterkeyhint="search">
     <nav class="rests" id="rests" role="tablist" aria-orientation="vertical" aria-label="餐廳"></nav>
     <form class="restform" id="restForm" autocomplete="off" hidden>
       <input id="restName" maxlength="20" aria-label="餐廳名稱" placeholder="餐廳名稱">
@@ -704,9 +720,27 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
 
   // 手機版：左側選單抽屜
   function setDrawer(open){
-    $("#side").classList.toggle("open", open);
+    var side = $("#side"), box = $("#titleBox");
+    if(open && window.matchMedia("(max-width:820px)").matches){
+      // 列表接在店名框正下方，寬度與店名框一致
+      var r = box.getBoundingClientRect();
+      side.style.top = Math.round(r.bottom + 6) + "px";
+      side.style.left = Math.round(r.left) + "px";
+      side.style.width = Math.round(r.width) + "px";
+      side.style.maxHeight = Math.max(160, window.innerHeight - r.bottom - 6 - 100) + "px";
+    } else if(!open){
+      side.style.top = side.style.left = side.style.width = side.style.maxHeight = "";
+      $("#rsearch").value = ""; filterRests();
+    }
+    side.classList.toggle("open", open);
     $("#backdrop").classList.toggle("open", open);
-    $("#menuBtn").setAttribute("aria-expanded", open ? "true" : "false");
+    box.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+  function filterRests(){
+    var q = $("#rsearch").value.trim().toLowerCase();
+    Array.prototype.forEach.call(document.querySelectorAll("#rests .rtab:not(.radd)"), function(b){
+      b.style.display = !q || b.textContent.toLowerCase().indexOf(q) >= 0 ? "" : "none";
+    });
   }
   function closeDrawer(){ setDrawer(false); }
 
@@ -1062,25 +1096,52 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   /* ---------- 頁首店名：盡量維持一行（必要時自動縮小字級），真的放不下才換行 ----------
      TITLE_BREAKS：店名太長必須換行時，用「|」標出換行位置（沒列的就由瀏覽器平均分行）。 */
   var TITLE_BREAKS = { "大師兄銷魂麵鋪":"大師兄|銷魂麵鋪", "邦拿 咖喱專門店":"邦拿|咖喱專門店", "邦拿 咖哩專門店":"邦拿|咖哩專門店" };
+  var TITLE_KW = ["銷魂麵鋪","麵鋪","專門店","烤鴨店","餐酒館","酒館","燒肉","咖哩","咖喱","牛排","火鍋","拉麵","料理","食堂","茶屋","餐廳","Barbecue"];
   var titleText = "";
   function setTitle(name){ titleText = name; fitTitle(); }
+  // 智慧斷成兩行：先看手動登記，其次空格、中英交界、店名類別字（麵鋪、燒肉…）前面，最後才平均分
+  function twLen(s){ var w = 0; for(var i = 0; i < s.length; i++) w += s.charCodeAt(i) < 256 ? .55 : 1; return w; }
+  function splitTitle(t){
+    if(TITLE_BREAKS[t]) return TITLE_BREAKS[t].split("|");
+    var best = null, bestScore = 1e9;
+    for(var i = 1; i < t.length; i++){
+      var p = t.charAt(i - 1), c = t.charAt(i), bonus = 0, cut = i;
+      var pA = p.charCodeAt(0) < 256, cA = c.charCodeAt(0) < 256;
+      if(/\s/.test(c)){ continue; }
+      if(/\s/.test(p)) bonus = 3;
+      else if(pA && cA) continue;
+      else if(pA !== cA) bonus = 2;
+      if(/[）)」』，,、。·]/.test(c) || /[（(「『]/.test(p)) continue;
+      if(TITLE_KW.some(function(k){ return t.substr(i, k.length) === k; })) bonus = Math.max(bonus, 2);
+      var L = t.slice(0, cut).trim(), R = t.slice(cut).trim();
+      var score = Math.abs(twLen(L) - twLen(R)) - bonus * 1.5;
+      if(score < bestScore){ bestScore = score; best = [L, R]; }
+    }
+    return best || [t];
+  }
   function fitTitle(){
     var h = $("#restTitle");
     h.style.fontSize = ""; h.textContent = titleText;
     if(!window.matchMedia("(max-width:820px)").matches) return;
+    var over = function(){ return h.scrollWidth > h.clientWidth + 1; };
     var size = parseFloat(getComputedStyle(h).fontSize), min = 15;
-    var oneLine = function(){ return h.scrollHeight <= parseFloat(getComputedStyle(h).lineHeight) * 1.5; };
-    while(!oneLine() && size > min){ size -= 1; h.style.fontSize = size + "px"; }
-    if(!oneLine() && TITLE_BREAKS[titleText]){
-      h.style.fontSize = "";
-      h.textContent = "";
-      TITLE_BREAKS[titleText].split("|").forEach(function(p, i){
-        if(i) h.appendChild(document.createElement("br"));
-        h.appendChild(document.createTextNode(p));
-      });
-    }
+    // 先試一行（字級最多縮到 17）；放不下就斷成兩行，必要時再縮到 15
+    var one = size;
+    while(over() && one > 17){ one -= 1; h.style.fontSize = one + "px"; }
+    if(!over()) return;
+    var parts = splitTitle(titleText);
+    if(parts.length < 2) return;
+    h.style.fontSize = ""; h.textContent = "";
+    parts.forEach(function(p, i){
+      if(i) h.appendChild(document.createElement("br"));
+      h.appendChild(document.createTextNode(p));
+    });
+    while(over() && size > min){ size -= 1; h.style.fontSize = size + "px"; }
   }
-  window.addEventListener("resize", fitTitle);
+  window.addEventListener("resize", function(){
+    if(!window.matchMedia("(max-width:820px)").matches && $("#side").style.width) setDrawer(false);
+    fitTitle();
+  });
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitle);
 
   /* 找餐廳：資料正本是試算表的 places 工作表（SRV）；雲端還沒有資料（或還沒連上）時先用 places.json（SEED）。
@@ -1519,6 +1580,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     $("#rests").innerHTML = S.restaurants.map(function(r){
       return '<button type="button" class="rtab" role="tab" aria-selected="' + (r.id === cur ? "true" : "false") + '" data-act="pickrest" data-id="' + esc(r.id) + '">' + esc(r.name) + '</button>';
     }).join("") + '<button type="button" class="rtab radd" data-act="addrest">＋ 新增餐廳</button>';
+    filterRests();
     var rest = findRest(cur);
     var isFind = view === "find";
     if(!isFind){ DEDIT = ""; DEDIT_I = -1; }
@@ -1848,7 +1910,13 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   $("#sheetBack").addEventListener("click", closeSheet);
   $("#sheet").addEventListener("click", function(e){ if(e.target === $("#sheet")) closeSheet(); });
   document.addEventListener("keydown", function(e){ if(e.key === "Escape" && !$("#sheet").hidden) closeSheet(); });
-  $("#menuBtn").addEventListener("click", function(){ setDrawer(!$("#side").classList.contains("open")); });
+  function toggleRestMenu(){
+    if(!window.matchMedia("(max-width:820px)").matches) return;
+    setDrawer(!$("#side").classList.contains("open"));
+  }
+  $("#titleBox").addEventListener("click", toggleRestMenu);
+  $("#titleBox").addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); toggleRestMenu(); } });
+  $("#rsearch").addEventListener("input", filterRests);
   $("#backdrop").addEventListener("click", closeDrawer);
   document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeDrawer(); });
   window.addEventListener("hashchange", function(){
