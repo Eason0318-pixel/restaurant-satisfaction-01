@@ -44,9 +44,7 @@ header{position:relative;background:var(--band);color:var(--on-band);text-align:
 .hd-row{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px}
 header h1{flex:0 1 auto;min-width:0;margin:0;line-height:44px;font-family:var(--font-display);font-size:28px;letter-spacing:.24em;font-weight:600;text-wrap:balance;overflow-wrap:anywhere}
 .titlebox{display:contents}
-.tcaret,.rsearch,.redit,.restdel{display:none}
-.rrow{display:flex;align-items:center;gap:6px}
-.rrow .rtab{flex:1;min-width:0}
+.tcaret,.srow{display:none}
 .tagline{margin:0;font-size:13px;color:var(--band-sub);letter-spacing:.1em}
 .summary{display:flex;justify-content:center;gap:18px;margin-top:4px;font-size:13px;color:var(--on-band)}
 .hd-actions{position:absolute;right:max(12px,env(safe-area-inset-right,0px),calc(50% - 504px));top:calc(10px + env(safe-area-inset-top,0px));height:44px;display:flex;align-items:center;gap:6px}
@@ -429,16 +427,25 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   .titlebox[aria-expanded="true"] .tcaret{transform:rotate(180deg)}
   /* 下拉列表：搜尋固定在頂、新增餐廳固定在底，中間可上下滑動 */
   .side-label{display:none}
-  .rsearch{display:block;flex:none;width:100%;box-sizing:border-box;margin:0 0 8px;min-height:40px;font-family:inherit;font-size:16px;padding:8px 16px;border:1px solid var(--line);border-radius:999px;background:var(--field);color:var(--ink)}
+  .srow{display:flex;flex:none;align-items:center;gap:8px;margin:0 0 8px}
+  .rsearch{flex:1;min-width:0;box-sizing:border-box;margin:0;min-height:40px;font-family:inherit;font-size:16px;padding:8px 16px;border:1px solid var(--line);border-radius:999px;background:var(--field);color:var(--ink)}
   .rests{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
   .rests .rtab[aria-selected="true"]::after{content:"✓";float:right;margin-left:8px}
   .rests .radd{position:sticky;bottom:0;z-index:1;flex:none;background:var(--side-bg);box-shadow:0 -6px 6px -2px var(--side-bg)}
   .restform{flex:none}
-  .redit{display:flex;align-items:center;justify-content:center;flex:none;width:40px;height:40px;padding:0;border-radius:50%;border:1px solid var(--accent-mid);background:transparent;color:var(--accent);cursor:pointer}
+  .redit{display:flex;align-items:center;justify-content:center;gap:4px;flex:none;height:40px;min-width:40px;padding:0;border-radius:999px;border:1px solid var(--accent-mid);background:transparent;color:var(--accent);font-family:inherit;font-size:14px;cursor:pointer}
   .redit svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-  .restdel{display:block;width:100%;margin-top:4px;padding:10px;border:none;background:none;font-family:inherit;font-size:14px;color:var(--danger);cursor:pointer}
-  .restdel[hidden]{display:none}
-  .side.editing .rsearch,.side.editing .rests{display:none}
+  .redit .rdone{display:none}
+  .side.editing .redit{padding:0 14px;margin-left:auto;background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+  .side.editing .redit .rpen{display:none}
+  .side.editing .redit .rdone{display:inline}
+  .side.editing .rsearch,.side.editing .radd{display:none}
+  .erow{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+  .rinp{flex:1;min-width:0;box-sizing:border-box;font-family:inherit;font-size:16px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink)}
+  .rinp:focus{border-color:var(--accent);outline:none}
+  .rdel{flex:none;min-width:40px;height:40px;padding:0 6px;border:none;background:none;border-radius:10px;color:var(--danger);font-family:inherit;font-size:13px;cursor:pointer}
+  .rdel svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
+  .rdel.armed{background:var(--danger);color:#fff}
   .summary{margin-top:2px}
   body{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   .dock{position:fixed;top:auto;left:50%;bottom:max(18px,calc(env(safe-area-inset-bottom,0px) - 8px));transform:translateX(-50%);z-index:40;width:min(calc(100% - 32px),400px)}
@@ -501,7 +508,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
 <div class="layout">
   <aside class="side" id="side" aria-label="餐廳選單">
     <p class="side-label">寫評價・餐廳</p>
-    <input type="search" class="rsearch" id="rsearch" placeholder="搜尋餐廳" aria-label="搜尋餐廳" autocomplete="off" enterkeyhint="search">
+    <div class="srow"><input type="search" class="rsearch" id="rsearch" placeholder="搜尋餐廳" aria-label="搜尋餐廳" autocomplete="off" enterkeyhint="search"><button type="button" class="redit" id="rEditBtn" aria-label="編輯餐廳"><svg class="rpen" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16.5L15.5 5a2.1 2.1 0 0 1 3 3L7 19.5 3.5 20.5z"/></svg><span class="rdone">✓ 完成</span></button></div>
     <nav class="rests" id="rests" role="tablist" aria-orientation="vertical" aria-label="餐廳"></nav>
     <form class="restform" id="restForm" autocomplete="off" hidden>
       <input id="restName" maxlength="20" aria-label="餐廳名稱" placeholder="餐廳名稱">
@@ -509,7 +516,6 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
         <button type="submit" class="primary" id="restSubmit">新增</button>
         <button type="button" class="ghost" id="restCancel">取消</button>
       </div>
-      <button type="button" class="restdel" id="restDel2" hidden>刪除這間餐廳</button>
     </form>
   </aside>
 
@@ -727,6 +733,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   }
 
   // 手機版：左側選單抽屜
+  var REDIT = false;
   function setDrawer(open){
     var side = $("#side"), box = $("#titleBox");
     if(open && window.matchMedia("(max-width:820px)").matches){
@@ -739,7 +746,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     } else if(!open){
       side.style.top = side.style.left = side.style.width = side.style.maxHeight = "";
       $("#rsearch").value = ""; filterRests();
-      side.classList.remove("editing"); $("#restForm").hidden = true;
+      var was = REDIT; REDIT = false; side.classList.remove("editing"); $("#restForm").hidden = true; if(was) render();
     }
     side.classList.toggle("open", open);
     $("#backdrop").classList.toggle("open", open);
@@ -748,8 +755,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   function filterRests(){
     var q = $("#rsearch").value.trim().toLowerCase();
     Array.prototype.forEach.call(document.querySelectorAll("#rests .rtab:not(.radd)"), function(b){
-      var on = !q || b.textContent.toLowerCase().indexOf(q) >= 0;
-      (b.parentNode.classList.contains("rrow") ? b.parentNode : b).style.display = on ? "" : "none";
+      b.style.display = !q || b.textContent.toLowerCase().indexOf(q) >= 0 ? "" : "none";
     });
   }
   function closeDrawer(){ setDrawer(false); }
@@ -1587,12 +1593,10 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     if(typeof hideNP === "function") hideNP();
     if(DRAFT && (cur !== DRAFT.id || view !== "review")) dropDraft();
     if(!findRest(cur)) pickCurrent();
-    $("#rests").innerHTML = S.restaurants.map(function(r){
-      var b = '<button type="button" class="rtab" role="tab" aria-selected="' + (r.id === cur ? "true" : "false") + '" data-act="pickrest" data-id="' + esc(r.id) + '">' + esc(r.name) + '</button>';
-      if(r.id !== cur || r.draft) return b;
-      return '<div class="rrow">' + b + '<button type="button" class="redit" data-act="editrest" aria-label="編輯餐廳"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16.5L15.5 5a2.1 2.1 0 0 1 3 3L7 19.5 3.5 20.5z"/></svg></button></div>';
+    if(!REDIT) $("#rests").innerHTML = S.restaurants.map(function(r){
+      return '<button type="button" class="rtab" role="tab" aria-selected="' + (r.id === cur ? "true" : "false") + '" data-act="pickrest" data-id="' + esc(r.id) + '">' + esc(r.name) + '</button>';
     }).join("") + '<button type="button" class="rtab radd" data-act="addrest">＋ 新增餐廳</button>';
-    filterRests();
+    if(!REDIT) filterRests();
     var rest = findRest(cur);
     var isFind = view === "find";
     if(!isFind){ DEDIT = ""; DEDIT_I = -1; }
@@ -1675,15 +1679,12 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     var f = $("#restForm"), inp = $("#restName");
     f.hidden = false;
     if(window.matchMedia("(max-width:820px)").matches) setDrawer(true);
-    var mob = window.matchMedia("(max-width:820px)").matches;
-    $("#side").classList.toggle("editing", mob && mode === "rename");
-    $("#restDel2").hidden = !(mob && mode === "rename" && S.restaurants.length > 1);
     inp.value = mode === "rename" ? (findRest(cur) || {}).name || "" : "";
     inp.placeholder = mode === "rename" ? "新的餐廳名稱" : "餐廳名稱，例：屋馬燒肉";
     $("#restSubmit").textContent = mode === "rename" ? "儲存" : "新增";
     inp.focus(); inp.select();
   }
-  function closeRestForm(){ $("#restForm").hidden = true; $("#side").classList.remove("editing"); }
+  function closeRestForm(){ $("#restForm").hidden = true; }
   function nameTaken(name, exceptId){
     return S.restaurants.some(function(r){ return r.id !== exceptId && r.name.trim().toLowerCase() === name.toLowerCase(); });
   }
@@ -1716,6 +1717,70 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   document.addEventListener("click", function(e){ if(!e.target.closest("#moreMenu")) setMore(false); });
   document.addEventListener("keydown", function(e){ if(e.key === "Escape") setMore(false); });
   $("#restRename").addEventListener("click", function(){ setMore(false); openRestForm("rename"); });
+  /* 手機版：搜尋欄右邊的鉛筆 → 所有餐廳變成可編輯的輸入框（右邊垃圾桶），按「完成」才儲存名稱；暫存餐廳（還沒有品項）不列入 */
+  var TRASH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg>';
+  function realRests(){ return S.restaurants.filter(function(r){ return !r.draft; }); }
+  function buildEditList(keep){
+    var rs = realRests(), many = rs.length > 1;
+    $("#rests").innerHTML = rs.map(function(r){
+      var v = keep && keep[r.id] != null ? keep[r.id] : r.name;
+      return '<div class="erow"><input class="rinp" maxlength="20" data-id="' + esc(r.id) + '" value="' + esc(v) + '" aria-label="餐廳名稱">' +
+        (many ? '<button type="button" class="rdel" data-act="delrest" data-id="' + esc(r.id) + '" aria-label="刪除餐廳">' + TRASH + '</button>' : '') + '</div>';
+    }).join("");
+  }
+  function readEdits(){
+    var o = {};
+    Array.prototype.forEach.call(document.querySelectorAll("#rests .rinp"), function(i){ o[i.dataset.id] = i.value; });
+    return o;
+  }
+  function startREdit(){
+    if(REDIT) return;
+    REDIT = true; closeRestForm();
+    $("#side").classList.add("editing"); $("#rEditBtn").setAttribute("aria-label", "完成");
+    buildEditList();
+  }
+  function stopREdit(){
+    REDIT = false; $("#side").classList.remove("editing"); $("#rEditBtn").setAttribute("aria-label", "編輯餐廳");
+    render();
+  }
+  function finishREdit(){
+    var vals = readEdits(), rs = realRests(), seen = {}, ok = true;
+    rs.forEach(function(r){
+      if(!ok) return;
+      var n = (vals[r.id] != null ? vals[r.id] : r.name).trim(), key = n.toLowerCase();
+      if(!n){ toast("餐廳名稱不能空白"); ok = false; }
+      else if(BAD[n]){ toast("「" + n + "」這個名字不能用，請換一個"); ok = false; }
+      else if(seen[key]){ toast("已經有「" + n + "」了"); ok = false; }
+      else seen[key] = 1;
+      if(!ok){ var el = document.querySelector('#rests .rinp[data-id="' + r.id + '"]'); if(el) el.focus(); }
+    });
+    if(!ok) return;
+    var changed = 0;
+    rs.forEach(function(r){
+      var n = (vals[r.id] != null ? vals[r.id] : r.name).trim();
+      if(n !== r.name){ r.name = n; send({ op:"renameRestaurant", id:r.id, name:n }); changed++; }
+    });
+    if(changed){ save(); toast("已更新名稱"); }
+    stopREdit();
+  }
+  $("#rEditBtn").addEventListener("click", function(){ REDIT ? finishREdit() : startREdit(); });
+  $("#rests").addEventListener("keydown", function(e){ if(e.target.classList.contains("rinp") && e.key === "Enter"){ e.preventDefault(); e.target.blur(); } });
+  function deleteListRest(b){
+    if(!b.dataset.armed){
+      b.dataset.armed = "1"; b.classList.add("armed"); b.textContent = "確定刪除？";
+      toast("再按一次，會刪除這間餐廳的所有品項與評分");
+      b._t = setTimeout(function(){ delete b.dataset.armed; b.classList.remove("armed"); b.innerHTML = TRASH; }, 3000);
+      return;
+    }
+    clearTimeout(b._t);
+    var id = b.dataset.id, keep = readEdits();
+    delete keep[id];
+    S.restaurants = S.restaurants.filter(function(r){ return r.id !== id; });
+    S.items = S.items.filter(function(i){ return i.rid !== id; });
+    send({ op:"delRestaurant", id:id });
+    if(cur === id) setCurrent(S.restaurants[0].id);
+    save(); render(); buildEditList(keep); toast("已刪除餐廳");
+  }
   function deleteRest(b){
     if(!b.dataset.armed) toast("再按一次，會刪除這間餐廳的所有品項與評分");
     arm(b, "確定刪除？", function(){
@@ -1728,7 +1793,6 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     });
   }
   $("#restDelete").addEventListener("click", function(e){ deleteRest(e.currentTarget); });
-  $("#restDel2").addEventListener("click", function(e){ deleteRest(e.currentTarget); });
 
   /* ---------- 留言身分 ---------- */
   var sheet = { id:null, v:null, edit:null };
@@ -1893,7 +1957,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     else if(act === "fclose"){ FOpen = ""; renderFind(); }
     else if(act === "pickrest"){ setCurrent(b.dataset.id); closeRestForm(); closeDrawer(); render(); }
     else if(act === "addrest") openRestForm("add");
-    else if(act === "editrest") openRestForm("rename");
+    else if(act === "delrest") deleteListRest(b);
     else if(act === "gotoitem") gotoItem(b.dataset.id);
     else if(act === "rate") openSheet(b.dataset.id, b.dataset.v);
     else if(act === "note"){ hideNP(); openSheet(b.dataset.id, null); }
