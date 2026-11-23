@@ -44,7 +44,7 @@ header{position:relative;background:var(--band);color:var(--on-band);text-align:
 .hd-row{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px}
 header h1{flex:0 1 auto;min-width:0;margin:0;line-height:44px;font-family:var(--font-display);font-size:28px;letter-spacing:.24em;font-weight:600;text-wrap:balance;overflow-wrap:anywhere}
 .titlebox{display:contents}
-.tcaret,.srow{display:none}
+.tcaret,.rsrow{display:none}
 .tagline{margin:0;font-size:13px;color:var(--band-sub);letter-spacing:.1em}
 .summary{display:flex;justify-content:center;gap:18px;margin-top:4px;font-size:13px;color:var(--on-band)}
 .hd-actions{position:absolute;right:max(12px,env(safe-area-inset-right,0px),calc(50% - 504px));top:calc(10px + env(safe-area-inset-top,0px));height:44px;display:flex;align-items:center;gap:6px}
@@ -427,7 +427,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   .titlebox[aria-expanded="true"] .tcaret{transform:rotate(180deg)}
   /* 下拉列表：搜尋固定在頂、新增餐廳固定在底，中間可上下滑動 */
   .side-label{display:none}
-  .srow{display:flex;flex:none;align-items:center;height:42px;gap:8px;margin:0 0 8px}
+  .rsrow{display:flex;flex:none;align-items:center;height:42px;gap:8px;margin:0 0 8px}
   .rsearch{flex:1;min-width:0;box-sizing:border-box;margin:0;min-height:40px;font-family:inherit;font-size:16px;padding:8px 16px;border:1px solid var(--line);border-radius:999px;background:var(--field);color:var(--ink)}
   .rests{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
   .rests .rtab[aria-selected="true"]::after{content:"✓";float:right;margin-left:8px}
@@ -508,7 +508,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
 <div class="layout">
   <aside class="side" id="side" aria-label="餐廳選單">
     <p class="side-label">寫評價・餐廳</p>
-    <div class="srow"><input type="search" class="rsearch" id="rsearch" placeholder="搜尋餐廳" aria-label="搜尋餐廳" autocomplete="off" enterkeyhint="search"><button type="button" class="redit" id="rEditBtn" aria-label="編輯餐廳"><svg class="rpen" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16.5L15.5 5a2.1 2.1 0 0 1 3 3L7 19.5 3.5 20.5z"/></svg><svg class="rdone" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button></div>
+    <div class="rsrow"><input type="search" class="rsearch" id="rsearch" placeholder="搜尋餐廳" aria-label="搜尋餐廳" autocomplete="off" enterkeyhint="search"><button type="button" class="redit" id="rEditBtn" aria-label="編輯餐廳"><svg class="rpen" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16.5L15.5 5a2.1 2.1 0 0 1 3 3L7 19.5 3.5 20.5z"/></svg><svg class="rdone" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button></div>
     <nav class="rests" id="rests" role="tablist" aria-orientation="vertical" aria-label="餐廳"></nav>
     <form class="restform" id="restForm" autocomplete="off" hidden>
       <input id="restName" maxlength="20" aria-label="餐廳名稱" placeholder="餐廳名稱">
