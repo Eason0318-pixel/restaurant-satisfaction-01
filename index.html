@@ -684,6 +684,30 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
         ".cnt[data-r=\"ok\"]{color:#8a8079}"
       ].join("\n")
     },
+    // 高盧法式餐館：菜單的米黃紙色、深咖啡墨色、細線與置中排版（取自該店菜單）
+    "高盧": {
+      fontUrl: "",
+      vars: {
+        "--bg":"#ebdfcc", "--paper":"#f8f1e4", "--field":"#fffaf1", "--add-bg":"#f2e7d5",
+        "--line":"#d4bfa3", "--ink":"#3a2a20", "--muted":"#7f6a58", "--gold":"#9c7434", "--danger":"#9b3b2e",
+        "--accent":"#5b4032", "--accent-deep":"#3a2a20", "--accent-mid":"#7a5a46", "--neutral":"#8f8273", "--hover":"#f1e5d1",
+        "--on-accent":"#fbf5ea",
+        "--band":"#3a2a20", "--on-band":"#fbf5ea", "--band-sub":"#dcc9ad", "--band-warn":"#e8c9a0",
+        "--sec-head":"#5b4032", "--on-sec":"#fbf5ea",
+        "--side-bg":"#f8f1e4", "--side-active":"#5b4032", "--on-side-active":"#fbf5ea",
+        "--scrim":"rgba(40,28,20,.55)", "--toast-bg":"#3a2a20", "--toast-fg":"#f8f1e4"
+      },
+      css: [
+        ".rtab.radd{border-color:#5b4032;color:#5b4032}",
+        ".item{border-bottom:1px solid #d9c6ab}",
+        ".notes,.restform{border-top:1px solid #d9c6ab}",
+        ".rbtn{border-color:#7a5a46;color:#5b4032}",
+        ".rbtn[data-r=\"ok\"]{border-color:#8f8273;color:#6b5d50}",
+        ".cnt{color:#5b4032}",
+        ".cnt[data-r=\"ok\"]{color:#8f8273}",
+        ".menu-btn{border-color:#fbf5ea;color:#fbf5ea}"
+      ].join("\n")
+    },
     // 享鴨：朱紅底、白色紙面、蜜桃色與橘紅色塊、黑色粗明體（取自該店菜單的配色與版面）
     "享鴨": {
       fontUrl: "",
