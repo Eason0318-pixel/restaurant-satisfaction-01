@@ -423,9 +423,10 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   .titlebox:focus-visible{outline:2px solid var(--on-band);outline-offset:2px}
   header .titlebox h1{flex:1;min-width:0;width:auto;max-width:none;margin:0 34px;padding:0;background:none;color:inherit;text-align:center;
     font-size:20px;letter-spacing:.1em;text-indent:.1em;line-height:1.25;white-space:nowrap;overflow:hidden;text-wrap:nowrap}
-  .tcaret{position:absolute;right:0;top:50%;margin-top:-12px;display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;
-    background:rgba(255,255,255,.2);background:color-mix(in srgb,var(--on-band) 20%,transparent);font-size:14px;line-height:1;transition:transform .15s ease,background .15s}
-  .titlebox:active .tcaret,.titlebox[aria-expanded="true"] .tcaret{background:rgba(255,255,255,.38);background:color-mix(in srgb,var(--on-band) 38%,transparent)}
+  .tcaret{position:absolute;right:0;top:50%;margin-top:-12px;display:flex;align-items:center;justify-content:center;width:24px;height:24px;
+    color:var(--on-band);transition:transform .18s ease,opacity .15s}
+  .tcaret svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .titlebox:active .tcaret{opacity:.65}
   .titlebox[aria-expanded="true"] .tcaret{transform:rotate(180deg)}
   /* 下拉列表：搜尋固定在頂、新增餐廳固定在底，中間可上下滑動 */
   .side-label{display:none}
@@ -470,6 +471,28 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   .section-head{border-radius:var(--radius);margin-bottom:10px}
   .card-list{background:transparent;border:none;border-radius:0}
 }
+/* 保留浮動導覽膠囊（找餐廳 / 寫評價）與通知球的半透明玻璃質感（單層對齊邊框，無偏移重疊） */
+.topnav,.nbell{
+  background:rgba(255,255,255,.64);
+  -webkit-backdrop-filter:blur(18px) saturate(185%);backdrop-filter:blur(18px) saturate(185%);
+  border:1px solid rgba(255,255,255,.78);
+  box-shadow:0 8px 26px rgba(0,0,0,.14);
+}
+.topnav::before{
+  background:rgba(255,255,255,.84);
+  background:color-mix(in srgb,var(--paper) 82%,rgba(255,255,255,.45));
+  box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+.nbell:hover{background:rgba(255,255,255,.84);box-shadow:0 8px 26px rgba(0,0,0,.16)}
+@media (max-width:820px){
+  .topnav,.nbell{box-shadow:0 10px 30px rgba(0,0,0,.18)}
+}
+/* 其餘原本非膠囊狀的按鈕（餐廳選單、留下備註、刪除、返回、取消）統一改為膠囊狀（不使用 Liquid Glass） */
+.rtab,.rdel,.del{border-radius:999px}
+.addnote{border-radius:999px;padding:5px 14px;border:1px solid var(--line);background:var(--field);text-decoration:none}
+.addnote:hover{background:var(--hover)}
+.scancel{border-radius:999px;padding:0 14px;border:1px solid var(--line);background:var(--field)}
+.scancel:hover{background:var(--hover)}
 @media (prefers-reduced-motion: reduce){ .rbtn,.side,.side.open,.topnav::before{transition:none} }
 </style>
 <style id="themeCss"></style>
@@ -478,7 +501,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
 <header>
   <div class="hd-row">
     <div class="titlebox" id="titleBox" role="button" tabindex="0" aria-haspopup="true" aria-controls="side" aria-expanded="false" aria-label="切換餐廳">
-      <h1 id="restTitle"></h1><span class="tcaret" aria-hidden="true">▾</span>
+      <h1 id="restTitle"></h1><span class="tcaret" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></span>
     </div>
     <div class="hd-actions">
       <button type="button" class="shbtn kebab" id="moreBtn" aria-haspopup="menu" aria-expanded="false" aria-label="餐廳選項">⋮</button>
