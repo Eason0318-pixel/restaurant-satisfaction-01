@@ -263,22 +263,22 @@ main{min-width:0;padding:0 0 16px}
 .sbtn svg,.spill svg{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 /* 搜尋：圓鈕展開成長條膠囊，白底蓋住整個頁面 */
 .sov{position:fixed;inset:0;z-index:90;background:transparent;color:var(--ink);overflow-y:auto;overscroll-behavior:contain}
-.sov::before{content:"";position:fixed;inset:0;z-index:0;background:var(--bg);opacity:0;pointer-events:none;transition:opacity .3s cubic-bezier(.22,1,.36,1)}
+.sov::before{content:"";position:fixed;inset:0;z-index:0;background:var(--bg);opacity:0;pointer-events:none;transition:opacity .2s cubic-bezier(.22,1,.36,1)}
 .sov.open::before{opacity:1}
-.sov.closing::before{transition:opacity .24s cubic-bezier(.4,0,.2,1)}
+.sov.closing::before{transition:opacity .18s cubic-bezier(.4,0,.2,1)}
 .sov[hidden]{display:none}
 .sbox{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:12px 16px 40px}
 .srow{position:relative;height:54px;margin-top:var(--st,0px)}
-.spill{position:absolute;top:0;left:var(--sl,0px);width:var(--sw,54px);height:54px;display:flex;align-items:center;gap:10px;padding:0 15px;border-radius:999px;background:var(--paper);border:1px solid var(--line);color:var(--accent);overflow:hidden;overflow:clip;box-shadow:0 0 0 rgba(0,0,0,0);transition:left .38s cubic-bezier(.22,1,.36,1),width .38s cubic-bezier(.22,1,.36,1),border-color .28s ease,box-shadow .34s cubic-bezier(.22,1,.36,1)}
+.spill{position:absolute;top:0;left:var(--sl,0px);width:var(--sw,54px);height:54px;display:flex;align-items:center;gap:10px;padding:0 15px;border-radius:999px;background:var(--paper);border:1px solid var(--line);color:var(--accent);overflow:hidden;overflow:clip;box-shadow:0 0 0 rgba(0,0,0,0);transition:left .24s cubic-bezier(.22,1,.36,1),width .24s cubic-bezier(.22,1,.36,1),border-color .18s ease,box-shadow .22s cubic-bezier(.22,1,.36,1)}
 .sov.prep .spill{transition:none}
 .sov.open .spill{border-color:var(--accent-mid);box-shadow:0 6px 20px rgba(0,0,0,.08)}
-.sov.closing .spill{transition:left .28s cubic-bezier(.4,0,.2,1),width .28s cubic-bezier(.4,0,.2,1),border-color .2s ease,box-shadow .22s ease}
+.sov.closing .spill{transition:left .22s cubic-bezier(.4,0,.2,1),width .22s cubic-bezier(.4,0,.2,1),border-color .16s ease,box-shadow .18s ease}
 .spill input{flex:1;min-width:0;height:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:17px;color:var(--ink);opacity:0;transform:translateX(6px);transition:opacity .1s ease,transform .1s ease}
-.sov.open .spill input{opacity:1;transform:none;transition:opacity .22s ease .14s,transform .28s cubic-bezier(.22,1,.36,1) .12s}
+.sov.open .spill input{opacity:1;transform:none;transition:opacity .15s ease .08s,transform .18s cubic-bezier(.22,1,.36,1) .07s}
 .scancel{position:absolute;right:0;top:50%;transform:translateY(-50%) scale(.88);color:var(--accent);font-family:inherit;font-size:16px;min-height:44px;padding:0 6px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .12s ease,transform .14s ease,background-color .15s ease}
-.sov.open .scancel{opacity:1;transform:translateY(-50%) scale(1);pointer-events:auto;transition:opacity .22s ease .16s,transform .28s cubic-bezier(.22,1,.36,1) .14s,background-color .15s ease}
+.sov.open .scancel{opacity:1;transform:translateY(-50%) scale(1);pointer-events:auto;transition:opacity .15s ease .09s,transform .18s cubic-bezier(.22,1,.36,1) .08s,background-color .15s ease}
 .sbody{opacity:0;transform:translateY(10px);transition:opacity .12s ease,transform .12s ease}
-.sov.open .sbody{opacity:1;transform:none;transition:opacity .26s ease .14s,transform .34s cubic-bezier(.22,1,.36,1) .12s}
+.sov.open .sbody{opacity:1;transform:none;transition:opacity .18s ease .08s,transform .22s cubic-bezier(.22,1,.36,1) .07s}
 .shint{margin:18px 4px;font-size:14px;line-height:1.6;color:var(--muted)}
 .shint strong{color:var(--ink);font-weight:600}
 .sbody .pgrid{margin-top:6px}
@@ -1860,7 +1860,7 @@ body.view-anim{overflow-x:hidden;overflow-x:clip}
           ov.hidden = true;
           btnEl.classList.remove("morphed");
           document.body.style.overflow = "";
-        }, 300);
+        }, 240);
         return;
       }
     }
