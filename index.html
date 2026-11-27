@@ -256,20 +256,29 @@ main{min-width:0;padding:0 0 16px}
 .fwrap{position:static;width:fit-content;margin:0}
 .fwrap .fbar{margin:0}
 .frow{position:relative;display:flex;justify-content:center;align-items:flex-start;gap:10px;margin:0 auto 10px}
-.sbtn{order:2;flex:none;width:54px;height:54px;display:flex;align-items:center;justify-content:center;padding:0;border-radius:50%;background:var(--paper);border:1px solid var(--line);color:var(--accent);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.sbtn{order:2;flex:none;width:54px;height:54px;display:flex;align-items:center;justify-content:center;padding:0;border-radius:50%;background:var(--paper);border:1px solid var(--line);color:var(--accent);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .15s ease,transform .15s cubic-bezier(.3,.8,.3,1)}
 .sbtn:hover{border-color:var(--accent-mid)}
+.sbtn:active{transform:scale(.94)}
+.sbtn.morphed{opacity:0;pointer-events:none;transition:none}
 .sbtn svg,.spill svg{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 /* 搜尋：圓鈕展開成長條膠囊，白底蓋住整個頁面 */
-.sov{position:fixed;inset:0;z-index:90;background:var(--bg);color:var(--ink);overflow-y:auto;overscroll-behavior:contain;opacity:0;transition:opacity .2s}
-.sov.on{opacity:1}
+.sov{position:fixed;inset:0;z-index:90;background:transparent;color:var(--ink);overflow-y:auto;overscroll-behavior:contain}
+.sov::before{content:"";position:fixed;inset:0;z-index:0;background:var(--bg);opacity:0;pointer-events:none;transition:opacity .3s cubic-bezier(.22,1,.36,1)}
+.sov.open::before{opacity:1}
+.sov.closing::before{transition:opacity .24s cubic-bezier(.4,0,.2,1)}
 .sov[hidden]{display:none}
-.sbox{max-width:1280px;margin:0 auto;padding:12px 16px 40px}
-.srow{display:flex;align-items:center;gap:10px;padding-top:var(--st,0px);transition:padding-top .28s ease}
-.spill{display:flex;align-items:center;gap:10px;height:54px;padding:0 16px;border-radius:999px;background:var(--paper);border:1px solid var(--line);color:var(--muted);overflow:hidden;flex:none;width:var(--sw,54px);margin-left:var(--sl,0px);transition:width .28s ease,margin-left .28s ease}
-.spill input{flex:1;min-width:0;height:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:17px;color:var(--ink);opacity:0;transition:opacity .15s .1s}
-.sov.open .spill input{opacity:1}
-.scancel{flex:none;border:none;background:transparent;color:var(--accent);font-family:inherit;font-size:16px;min-height:44px;padding:0 6px;cursor:pointer;opacity:0;transition:opacity .15s .15s}
-.sov.open .scancel{opacity:1}
+.sbox{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:12px 16px 40px}
+.srow{position:relative;height:54px;margin-top:var(--st,0px)}
+.spill{position:absolute;top:0;left:var(--sl,0px);width:var(--sw,54px);height:54px;display:flex;align-items:center;gap:10px;padding:0 15px;border-radius:999px;background:var(--paper);border:1px solid var(--line);color:var(--accent);overflow:hidden;overflow:clip;box-shadow:0 0 0 rgba(0,0,0,0);transition:left .38s cubic-bezier(.22,1,.36,1),width .38s cubic-bezier(.22,1,.36,1),border-color .28s ease,box-shadow .34s cubic-bezier(.22,1,.36,1)}
+.sov.prep .spill{transition:none}
+.sov.open .spill{border-color:var(--accent-mid);box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.sov.closing .spill{transition:left .28s cubic-bezier(.4,0,.2,1),width .28s cubic-bezier(.4,0,.2,1),border-color .2s ease,box-shadow .22s ease}
+.spill input{flex:1;min-width:0;height:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:17px;color:var(--ink);opacity:0;transform:translateX(6px);transition:opacity .1s ease,transform .1s ease}
+.sov.open .spill input{opacity:1;transform:none;transition:opacity .22s ease .14s,transform .28s cubic-bezier(.22,1,.36,1) .12s}
+.scancel{position:absolute;right:0;top:50%;transform:translateY(-50%) scale(.88);color:var(--accent);font-family:inherit;font-size:16px;min-height:44px;padding:0 6px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .12s ease,transform .14s ease,background-color .15s ease}
+.sov.open .scancel{opacity:1;transform:translateY(-50%) scale(1);pointer-events:auto;transition:opacity .22s ease .16s,transform .28s cubic-bezier(.22,1,.36,1) .14s,background-color .15s ease}
+.sbody{opacity:0;transform:translateY(10px);transition:opacity .12s ease,transform .12s ease}
+.sov.open .sbody{opacity:1;transform:none;transition:opacity .26s ease .14s,transform .34s cubic-bezier(.22,1,.36,1) .12s}
 .shint{margin:18px 4px;font-size:14px;line-height:1.6;color:var(--muted)}
 .shint strong{color:var(--ink);font-weight:600}
 .sbody .pgrid{margin-top:6px}
@@ -562,7 +571,12 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
 .addnote:hover{background:var(--hover)}
 .scancel{border-radius:999px;padding:0 14px;border:1px solid var(--line);background:var(--field)}
 .scancel:hover{background:var(--hover)}
-@media (prefers-reduced-motion: reduce){ header,.side,.rbtn,.side.open,.topnav,.topnav button,.topnav::before,.rpill,.rests.dragging .rpill,.fbar-pill,.fbar.dragging .fbar-pill,.ntabs::before,header .titlebox h1{transition:none} }
+@keyframes viewInL{from{opacity:.25;transform:translateX(max(-120px,-28vw))}to{opacity:1;transform:none}}
+@keyframes viewInR{from{opacity:.25;transform:translateX(min(120px,28vw))}to{opacity:1;transform:none}}
+.view-in-l{animation:viewInL .28s cubic-bezier(.22,.9,.32,1) both;will-change:transform,opacity}
+.view-in-r{animation:viewInR .28s cubic-bezier(.22,.9,.32,1) both;will-change:transform,opacity}
+body.view-anim{overflow-x:hidden;overflow-x:clip}
+@media (prefers-reduced-motion: reduce){ header,.side,.rbtn,.side.open,.topnav,.topnav button,.topnav::before,.rpill,.rests.dragging .rpill,.fbar-pill,.fbar.dragging .fbar-pill,.ntabs::before,header .titlebox h1,.sbtn,.sov::before,.spill,.spill input,.scancel,.sbody{transition:none} .view-in-l,.view-in-r{animation:none} }
 </style>
 <style id="themeCss"></style>
 </head>
@@ -1011,19 +1025,43 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   }
 
   /* ---------- 第一階層：找餐廳 / 寫評價 ---------- */
-  var view = "review";
+  var view = "review", viewAnimTimer = null;
   function pickView(){
     var h = (location.hash || "").replace(/^#/, "");
     if(/^find(\/\d+)?$/.test(h)) view = "find";
     else if(h && findRest(h)) view = "review";
     else { try{ view = localStorage.getItem(VIEW_KEY) === "find" ? "find" : "review"; }catch(e){ view = "review"; } }
   }
+  function clearViewAnim(){
+    clearTimeout(viewAnimTimer);
+    viewAnimTimer = null;
+    ["header", "#findView", "#reviewView", "#side"].forEach(function(s){
+      var el = $(s);
+      if(el) el.classList.remove("view-in-l", "view-in-r");
+    });
+    document.body.classList.remove("view-anim");
+  }
+  function animateView(v){
+    clearViewAnim();
+    document.body.classList.add("view-anim");
+    void document.body.offsetWidth;
+    if(v === "find"){
+      $("#findView").classList.add("view-in-l");
+    } else {
+      $("header").classList.add("view-in-r");
+      $("#reviewView").classList.add("view-in-r");
+      if(wideNow()) $("#side").classList.add("view-in-r");
+    }
+    viewAnimTimer = setTimeout(clearViewAnim, 300);
+  }
   function setView(v){
+    var changed = v !== view;
     view = v;
     try{ localStorage.setItem(VIEW_KEY, v); }catch(e){}
     try{ history.replaceState(null, "", "#" + (v === "find" ? "find" : cur)); }catch(e){}
     setDrawer(false); closeRestForm();
     render();
+    if(changed) animateView(v);
     window.scrollTo(0, 0);
   }
 
@@ -1086,7 +1124,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
       var at = -1, list = PLACES || [];
       if(n.ref) list.forEach(function(p, k){ if(at < 0 && p.name + "|" + p.county === n.ref) at = k; });
       if(at >= 0){
-        closeSearch(); FOpen = ""; PDscroll = 0; PDpushed = true;
+        closeSearch(true); FOpen = ""; PDscroll = 0; PDpushed = true;
         if(location.hash === "#find/" + at){ view = "find"; render(); } else location.hash = "#find/" + at;
       } else { if(view !== "find") setView("find"); if(n.ref) toast("找不到這間店了"); }
     } else if(n.ref && findRest(n.ref)){
@@ -1340,6 +1378,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     fitTitle();
     syncRestPill(false);
     syncFbarPill(false);
+    if(SOPEN) $("#sov").style.setProperty("--sw", searchEndW() + "px");
   });
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitle);
 
@@ -1683,7 +1722,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   }
 
   // 智慧搜尋：整句話交給 Gemini（後端 searchPlaces）拆成縣市、區、種類、關鍵字，結果在網頁上自己比對；Gemini 不能用時改用一般字串比對
-  var SOPEN = false, SBUSY = 0;
+  var SOPEN = false, SBUSY = 0, sCloseTimer = null, sOpenRaf = 0;
   function sNorm(s){ return String(s || "").replace(/臺/g, "台").replace(/[市縣區鄉鎮]$/, "").toLowerCase(); }
   function sHay(p){ return [p.name, p.county, p.district, (p.tags || []).join(" "), p.feature, (p.picks || []).join(" "), p.address].join(" ").replace(/臺/g, "台").replace(/咖哩/g, "咖喱").toLowerCase(); }
   function localIntent(q, list){
@@ -1728,31 +1767,107 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     if(it.keywords.length && !it.keywords.some(function(k){ return h.indexOf(String(k).replace(/臺/g, "台").replace(/咖哩/g, "咖喱").toLowerCase()) >= 0; })) return false;
     return true;
   }
+  function searchEndW(){
+    var row = $("#sform"), cancel = $("#sov .scancel");
+    if(!row) return 54;
+    var rw = row.getBoundingClientRect().width;
+    var cw = cancel ? cancel.offsetWidth : 62;
+    return Math.max(54, Math.round((rw - cw - 10) * 10) / 10);
+  }
+  function searchBtnMetrics(){
+    var btnEl = $("#sbtn"), row = $("#sform");
+    if(!btnEl || !row) return null;
+    var br = btnEl.getBoundingClientRect();
+    if(!br.width) return null;
+    var bw = 54;
+    var cx = (br.left + br.right) / 2, cy = (br.top + br.bottom) / 2;
+    var bLeft = cx - bw / 2, bTop = cy - bw / 2;
+    var rowR = row.getBoundingClientRect();
+    return {
+      t: Math.max(0, Math.round((bTop - 12) * 10) / 10),
+      l: Math.max(0, Math.min(Math.max(0, rowR.width - bw), Math.round((bLeft - rowR.left) * 10) / 10)),
+      w: bw
+    };
+  }
   function openSearch(){
     if(SOPEN) return;
+    clearViewAnim();
+    clearTimeout(sCloseTimer); sCloseTimer = null;
+    if(sOpenRaf){ cancelAnimationFrame(sOpenRaf); sOpenRaf = 0; }
     SOPEN = true; FOpen = "";
-    var ov = $("#sov"), btn = $("#sbtn").getBoundingClientRect();
+    var ov = $("#sov"), btnEl = $("#sbtn");
+    ov.classList.remove("open", "closing");
+    ov.classList.add("prep");
     ov.hidden = false;
-    var left = $("#sbox").getBoundingClientRect().left + 16;
-    ov.style.setProperty("--sl", Math.max(0, btn.left - left) + "px");
-    ov.style.setProperty("--st", Math.max(0, btn.top - 12) + "px");
-    ov.style.setProperty("--sw", "54px");
-    void ov.offsetWidth;
+    ov.scrollTop = 0;
+    var m = searchBtnMetrics() || { t:0, l:0, w:54 };
+    ov.style.setProperty("--st", m.t + "px");
+    ov.style.setProperty("--sl", m.l + "px");
+    ov.style.setProperty("--sw", m.w + "px");
+    var endW = searchEndW();
+    btnEl.classList.add("morphed");
     document.body.style.overflow = "hidden";
-    ov.classList.add("on");
+    void ov.offsetWidth;
     $("#sq").focus({ preventScroll:true });
-    requestAnimationFrame(function(){ requestAnimationFrame(function(){
+    $("#spill").scrollLeft = 0;
+    if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+      ov.classList.remove("prep");
       ov.classList.add("open");
-      ov.style.setProperty("--sl", "0px"); ov.style.setProperty("--sw", "calc(100% - 68px)");   // 垂直位置不動，膠囊和原本的圓鈕保持同一條水平線
-    }); });
+      ov.style.setProperty("--sl", "0px");
+      ov.style.setProperty("--sw", endW + "px");
+      return;
+    }
+    sOpenRaf = requestAnimationFrame(function(){
+      sOpenRaf = 0;
+      if(!SOPEN) return;
+      ov.classList.remove("prep");
+      void ov.offsetWidth;
+      ov.classList.add("open");
+      ov.style.setProperty("--sl", "0px");
+      ov.style.setProperty("--sw", endW + "px");
+    });
   }
-  function closeSearch(){
-    if(!SOPEN) return;
+  function closeSearch(instant){
+    var ov = $("#sov"), btnEl = $("#sbtn");
+    if(!SOPEN){
+      if(instant && !ov.hidden){
+        clearTimeout(sCloseTimer); sCloseTimer = null;
+        ov.classList.remove("open", "closing", "prep");
+        ov.hidden = true;
+        btnEl.classList.remove("morphed");
+        document.body.style.overflow = "";
+      }
+      return;
+    }
+    clearTimeout(sCloseTimer); sCloseTimer = null;
+    if(sOpenRaf){ cancelAnimationFrame(sOpenRaf); sOpenRaf = 0; }
     SOPEN = false; SBUSY++;
-    var ov = $("#sov");
-    ov.classList.remove("on", "open");
+    $("#sq").blur();
+    var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if(!instant && !reduced){
+      ov.scrollTop = 0;
+      var m = searchBtnMetrics();
+      if(m){
+        ov.style.setProperty("--st", m.t + "px");
+        ov.classList.remove("prep", "open");
+        ov.classList.add("closing");
+        ov.style.setProperty("--sl", m.l + "px");
+        ov.style.setProperty("--sw", m.w + "px");
+        sCloseTimer = setTimeout(function(){
+          sCloseTimer = null;
+          if(SOPEN) return;
+          ov.classList.remove("closing", "prep");
+          ov.hidden = true;
+          btnEl.classList.remove("morphed");
+          document.body.style.overflow = "";
+        }, 300);
+        return;
+      }
+    }
+    ov.classList.remove("open", "closing", "prep");
+    ov.hidden = true;
+    btnEl.classList.remove("morphed");
     document.body.style.overflow = "";
-    setTimeout(function(){ if(!SOPEN) ov.hidden = true; }, 220);
   }
   function showSearch(it, note){
     var list = PLACES || [], items = list.filter(function(p){ return placeMatches(effPlace(p), it); });
@@ -2096,7 +2211,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     if(!card) return;
     if(e.type === "keydown" && e.key !== "Enter" && e.key !== " ") return;
     e.preventDefault();
-    closeSearch();
+    closeSearch(true);
     FOpen = ""; PDscroll = window.scrollY; PDpushed = true;
     location.hash = "#find/" + card.dataset.i;
     window.scrollTo(0, 0);
