@@ -80,10 +80,10 @@ header h1{flex:0 1 auto;min-width:0;margin:0;line-height:44px;font-family:var(--
 .rpill{position:absolute;left:0;right:0;top:0;height:0;z-index:0;border-radius:999px;background:var(--side-active);pointer-events:none;opacity:0;transition:transform .24s cubic-bezier(.3,.8,.3,1),height .24s cubic-bezier(.3,.8,.3,1),opacity .15s ease,background-color .18s ease,box-shadow .18s ease}
 .rests.has-pill .rpill{opacity:1}
 .rests.has-pill .rtab[aria-selected="true"]{background:transparent}
-.rests.dragging .rpill{transition:height .14s ease,background-color .14s ease,box-shadow .14s ease;background:rgba(181,82,59,.18);box-shadow:inset 0 0 0 1.5px rgba(181,82,59,.55),0 2px 10px rgba(181,82,59,.14)}
+.rests.dragging .rpill{transition:height .14s ease}
 .rests.dragging{user-select:none;-webkit-user-select:none}
 .rests.dragging .rtab[aria-selected="true"]:not(.drag-on){color:var(--ink);font-weight:400}
-.rests.dragging .rtab.drag-on{color:var(--side-active);font-weight:700}
+.rests.dragging .rtab.drag-on{color:var(--on-side-active);font-weight:700}
 .rtab{position:relative;z-index:1;display:block;width:100%;min-height:42px;padding:8px 12px;border-radius:var(--radius);border:1px solid transparent;background:transparent;color:var(--ink);
   font-family:inherit;font-size:15px;text-align:left;cursor:pointer;overflow-wrap:anywhere;-webkit-tap-highlight-color:transparent;transition:color .18s ease,background .15s ease}
 @media (hover: hover) and (pointer: fine){ .rests:not(.dragging) .rtab:hover{background:var(--hover)} }
@@ -247,11 +247,11 @@ main{min-width:0;padding:0 0 16px}
 .fbar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);font-weight:700}
 .fbar.has-pill button.pill-on{background:transparent;color:var(--on-accent);font-weight:700}
 .fbar.has-pill button.pill-on .fn{background:#fff;color:var(--accent)}
-.fbar.dragging .fbar-pill{transition:width .14s ease,background-color .14s ease,box-shadow .14s ease;opacity:1;background:rgba(110,70,52,.16);background:color-mix(in srgb,var(--accent) 18%,transparent);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--accent) 55%,transparent)}
+.fbar.dragging .fbar-pill{transition:width .14s ease;opacity:1}
 .fbar.dragging button[aria-pressed="true"]:not(.drag-on){background:transparent;color:var(--muted);font-weight:400}
 .fbar.dragging button[aria-pressed="true"]:not(.drag-on) .fn{background:var(--go);color:#fff}
-.fbar.dragging button.drag-on{background:transparent;color:var(--accent);font-weight:700}
-.fbar.dragging button.drag-on .fn{background:var(--accent);color:#fff}
+.fbar.dragging button.drag-on{background:transparent;color:var(--on-accent);font-weight:700}
+.fbar.dragging button.drag-on .fn{background:#fff;color:var(--accent)}
 .fbar svg{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .fwrap{position:static;width:fit-content;margin:0}
 .fwrap .fbar{margin:0}
