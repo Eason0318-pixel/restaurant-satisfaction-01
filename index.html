@@ -349,11 +349,20 @@ body[data-view="find"] .layout{max-width:1280px}
 .nbell{position:relative;flex:none;width:44px;display:flex;align-items:center;justify-content:center;padding:0;border:1px solid rgba(0,0,0,.08);border-radius:50%;background:rgba(255,255,255,.88);-webkit-backdrop-filter:saturate(1.6) blur(14px);backdrop-filter:saturate(1.6) blur(14px);box-shadow:0 4px 14px rgba(0,0,0,.18);color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .nbell svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .nbell:hover,.nbell[aria-expanded="true"]{color:var(--accent-deep)}
+.nbell:active{transform:scale(.92)}
 .nbadge{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:var(--danger);color:#fff;font-size:12px;font-weight:700;line-height:20px;text-align:center;box-sizing:border-box;box-shadow:0 0 0 2px var(--bg)}
 .nbadge[hidden]{display:none}
-.npanel{position:absolute;z-index:45;top:calc(100% + 12px);left:0;width:min(380px,calc(100vw - 24px));background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.22);color:var(--ink)}
+.npanel{position:absolute;z-index:45;top:calc(100% + 12px);left:0;width:min(380px,calc(100vw - 24px));background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.22);color:var(--ink);
+  transform-origin:278px -10px;opacity:0;transform:translate3d(0,-6px,0) scale(.18);will-change:transform,opacity;pointer-events:none;
+  transition:transform .36s cubic-bezier(.22,1.08,.36,1),opacity .22s ease}
+.npanel.open{opacity:1;transform:translate3d(0,0,0) scale(1);pointer-events:auto}
+.npanel.prep{transition:none}
+.npanel.closing{opacity:0;transform:translate3d(0,-4px,0) scale(.2);pointer-events:none;transition:transform .22s cubic-bezier(.4,0,.2,1),opacity .18s ease}
 .npanel[hidden]{display:none}
-.nscrim{display:none;position:fixed;inset:0;z-index:39;background:rgba(0,0,0,.35)}
+.nscrim{display:none;position:fixed;inset:0;z-index:39;background:rgba(0,0,0,.35);opacity:0;will-change:opacity;transition:opacity .26s ease}
+.nscrim.open{opacity:1}
+.nscrim.prep{transition:none}
+.nscrim.closing{opacity:0;pointer-events:none;transition:opacity .2s ease}
 .npanel::before{content:"";position:absolute;top:-7px;left:272px;width:12px;height:12px;background:var(--paper);border-left:1px solid var(--line);border-top:1px solid var(--line);transform:rotate(45deg)}
 .ntabs{position:relative;display:flex;gap:4px;padding:8px 8px 0;touch-action:pan-y;user-select:none;-webkit-user-select:none}
 .ntabs::before{content:"";position:absolute;left:8px;bottom:0;width:calc(50% - 10px);height:2.5px;border-radius:999px;background:var(--accent);pointer-events:none;transform:translateX(calc(var(--ntx,0) * (100% + 4px)));transition:transform .22s cubic-bezier(.3,.8,.3,1)}
@@ -524,8 +533,10 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   .ni svg{width:23px;height:23px}
   .nbell{width:58px;box-shadow:0 8px 24px rgba(0,0,0,.2)}
   /* 手機：泡泡固定撐滿底部頁籤上方整個畫面，通知變多時每則的位置不會跟著跳動（裡面自己捲動） */
-  .npanel{top:auto;bottom:calc(100% + 12px);left:auto;right:0;width:100%;display:flex;flex-direction:column;height:calc(100vh - 80px - max(18px,calc(env(safe-area-inset-bottom,0px) - 8px)) - env(safe-area-inset-top,0px))}
+  .npanel{top:auto;bottom:calc(100% + 12px);left:auto;right:0;width:100%;display:flex;flex-direction:column;height:calc(100vh - 80px - max(18px,calc(env(safe-area-inset-bottom,0px) - 8px)) - env(safe-area-inset-top,0px));transform-origin:calc(100% - 29px) calc(100% + 12px);transform:translate3d(0,8px,0) scale(.18)}
   @supports (height:100dvh){ .npanel{height:calc(100dvh - 80px - max(18px,calc(env(safe-area-inset-bottom,0px) - 8px)) - env(safe-area-inset-top,0px))} }
+  .npanel.open{transform:translate3d(0,0,0) scale(1)}
+  .npanel.closing{transform:translate3d(0,6px,0) scale(.2)}
   .npanel[hidden]{display:none}
   .npanes{flex:1;min-height:0}
   .nscrim:not([hidden]){display:block}
@@ -586,7 +597,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
 .view-in-l{animation:viewInL .28s cubic-bezier(.22,.9,.32,1) both;will-change:transform,opacity}
 .view-in-r{animation:viewInR .28s cubic-bezier(.22,.9,.32,1) both;will-change:transform,opacity}
 body.view-anim{overflow-x:hidden;overflow-x:clip}
-@media (prefers-reduced-motion: reduce){ header,.side,.rbtn,.side.open,.topnav,.topnav button,.topnav::before,.rpill,.rests.dragging .rpill,.fbar-pill,.fbar.dragging .fbar-pill,.ntabs::before,header .titlebox h1,.sbtn,.sov::before,.spill,.spill::after,.sp-l,.sp-r,.sp-mid,.sp-ico,.spill input,.scancel,.sbody{transition:none} .view-in-l,.view-in-r{animation:none} }
+@media (prefers-reduced-motion: reduce){ header,.side,.rbtn,.side.open,.topnav,.topnav button,.topnav::before,.rpill,.rests.dragging .rpill,.fbar-pill,.fbar.dragging .fbar-pill,.ntabs::before,header .titlebox h1,.sbtn,.sov::before,.spill,.spill::after,.sp-l,.sp-r,.sp-mid,.sp-ico,.spill input,.scancel,.sbody,.nbell,.npanel,.nscrim{transition:none} .view-in-l,.view-in-r{animation:none} }
 </style>
 <style id="themeCss"></style>
 </head>
@@ -1088,7 +1099,7 @@ body.view-anim{overflow-x:hidden;overflow-x:clip}
     var el = $("#conn"); el.textContent = txt; el.dataset.s = s;
   }
   /* 通知：後端 notices 工作表（新增/編輯、異常/刪除）。「已讀」記在這支裝置：點開泡泡就全部已讀，小圓點只算還沒看過的 */
-  var NOTICES = [], NSEEN_KEY = "meat-rating-notice-seen", NOPEN = false, NFRESH = 0, NCOL = 0, NSIG = "";
+  var NOTICES = [], NSEEN_KEY = "meat-rating-notice-seen", NOPEN = false, NFRESH = 0, NCOL = 0, NSIG = "", nCloseTimer = null, nOpenRaf = 0;
   function nSeen(){ try{ var v = localStorage.getItem(NSEEN_KEY); return v === null ? -1 : Number(v) || 0; }catch(e){ return 0; } }
   function nMax(){ return NOTICES.reduce(function(m, n){ return Math.max(m, n.at); }, 0); }
   function nMarkRead(){ try{ localStorage.setItem(NSEEN_KEY, String(nMax())); }catch(e){} }
@@ -1109,14 +1120,50 @@ body.view-anim{overflow-x:hidden;overflow-x:clip}
     Array.prototype.forEach.call(document.querySelectorAll(".ntabs button"), function(b){ b.setAttribute("aria-selected", String(Number(b.dataset.c) === c)); });
     if(!keepTx){ var nt = $("#npanel .ntabs"); if(nt) nt.style.setProperty("--ntx", String(c)); }
   }
-  function setNOpen(on){
+  function setNOpen(on, instant){
+    var panel = $("#npanel"), scrim = $("#nscrim");
+    clearTimeout(nCloseTimer); nCloseTimer = null;
+    if(nOpenRaf){ cancelAnimationFrame(nOpenRaf); nOpenRaf = 0; }
     NOPEN = on;
-    $("#npanel").hidden = !on; $("#nscrim").hidden = !on;
     $("#nbell").setAttribute("aria-expanded", String(on));
+    var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if(on){
       NFRESH = nSeen(); NSIG = "";
+      panel.classList.remove("open", "closing");
+      scrim.classList.remove("open", "closing");
+      panel.classList.add("prep");
+      scrim.classList.add("prep");
+      panel.hidden = false; scrim.hidden = false;
       renderNotices(); nMarkRead(); setNCol(NCOL);
       var pn = $("#npanes"); pn.scrollLeft = NCOL * pn.clientWidth;
+      void panel.offsetWidth;
+      if(reduced){
+        panel.classList.remove("prep"); scrim.classList.remove("prep");
+        panel.classList.add("open"); scrim.classList.add("open");
+      } else {
+        nOpenRaf = requestAnimationFrame(function(){
+          nOpenRaf = 0;
+          if(!NOPEN) return;
+          panel.classList.remove("prep"); scrim.classList.remove("prep");
+          panel.classList.add("open"); scrim.classList.add("open");
+        });
+      }
+    } else if(instant || reduced || panel.hidden){
+      panel.classList.remove("open", "closing", "prep");
+      scrim.classList.remove("open", "closing", "prep");
+      panel.hidden = true; scrim.hidden = true;
+    } else {
+      panel.classList.remove("open", "prep");
+      scrim.classList.remove("open", "prep");
+      panel.classList.add("closing");
+      scrim.classList.add("closing");
+      nCloseTimer = setTimeout(function(){
+        nCloseTimer = null;
+        if(NOPEN) return;
+        panel.classList.remove("closing", "prep");
+        scrim.classList.remove("closing", "prep");
+        panel.hidden = true; scrim.hidden = true;
+      }, 230);
     }
     renderBell();
   }
@@ -1130,7 +1177,7 @@ body.view-anim{overflow-x:hidden;overflow-x:clip}
   function openNotice(i){
     var n = NOTICES[i];
     if(!n) return;
-    setNOpen(false);
+    setNOpen(false, true);
     if(n.tab === "find"){
       var at = -1, list = PLACES || [];
       if(n.ref) list.forEach(function(p, k){ if(at < 0 && p.name + "|" + p.county === n.ref) at = k; });
