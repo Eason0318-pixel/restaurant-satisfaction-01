@@ -67,16 +67,23 @@ header h1{flex:0 1 auto;min-width:0;margin:0;line-height:44px;font-family:var(--
 /* 左側邊選單 + 內容 */
 .layout{max-width:1040px;margin:0 auto;display:grid;grid-template-columns:230px minmax(0,1fr);align-items:start;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.side{position:sticky;top:16px;margin:16px 16px 0 0;background:var(--side-bg);border:1px solid var(--line);border-radius:var(--radius);padding:14px 12px;transition:background-color .2s ease}
+#side{
+  --paper:#ffffff; --field:#ffffff; --line:#e4e1ec; --ink:#2a2940; --muted:#6b6980; --danger:#b3392f;
+  --accent:#6e4634; --accent-deep:#4f3125; --accent-mid:#8a5e48; --hover:#f4ebe5; --on-accent:#ffffff;
+  --side-bg:#ffffff; --side-active:#b5523b; --on-side-active:#ffffff;
+}
+#side .rtab.radd{border-color:var(--accent-mid);color:var(--accent)}
+#side .restform{border-top:1px dashed var(--line)}
+.side{position:sticky;top:16px;margin:16px 16px 0 0;background:var(--side-bg);border:1px solid var(--line);border-radius:var(--radius);padding:14px 12px}
 .side-label{display:none}
 .rests{position:relative;display:flex;flex-direction:column;gap:6px}
-.rpill{position:absolute;left:0;right:0;top:0;height:0;z-index:0;border-radius:999px;background:var(--side-active);pointer-events:none;opacity:0;transition:transform .24s cubic-bezier(.3,.8,.3,1),height .24s cubic-bezier(.3,.8,.3,1),opacity .15s ease,background-color .18s ease}
+.rpill{position:absolute;left:0;right:0;top:0;height:0;z-index:0;border-radius:999px;background:var(--side-active);pointer-events:none;opacity:0;transition:transform .24s cubic-bezier(.3,.8,.3,1),height .24s cubic-bezier(.3,.8,.3,1),opacity .15s ease,background-color .18s ease,box-shadow .18s ease}
 .rests.has-pill .rpill{opacity:1}
 .rests.has-pill .rtab[aria-selected="true"]{background:transparent}
-.rests.dragging .rpill{transition:transform .15s cubic-bezier(.25,.9,.3,1),height .15s cubic-bezier(.25,.9,.3,1),background-color .18s ease}
+.rests.dragging .rpill{transition:height .14s ease,background-color .14s ease,box-shadow .14s ease;background:rgba(181,82,59,.18);box-shadow:inset 0 0 0 1.5px rgba(181,82,59,.55),0 2px 10px rgba(181,82,59,.14)}
 .rests.dragging{user-select:none;-webkit-user-select:none}
 .rests.dragging .rtab[aria-selected="true"]:not(.drag-on){color:var(--ink);font-weight:400}
-.rests.dragging .rtab.drag-on{color:var(--on-side-active);font-weight:700}
+.rests.dragging .rtab.drag-on{color:var(--side-active);font-weight:700}
 .rtab{position:relative;z-index:1;display:block;width:100%;min-height:42px;padding:8px 12px;border-radius:var(--radius);border:1px solid transparent;background:transparent;color:var(--ink);
   font-family:inherit;font-size:15px;text-align:left;cursor:pointer;overflow-wrap:anywhere;-webkit-tap-highlight-color:transparent;transition:color .18s ease,background .15s ease}
 @media (hover: hover) and (pointer: fine){ .rests:not(.dragging) .rtab:hover{background:var(--hover)} }
@@ -232,7 +239,7 @@ main{min-width:0;padding:0 0 16px}
 #findView .card-list{border-top:1px solid var(--line);border-radius:var(--radius)}
 /* 找餐廳：篩選列（總覽／縣市／市區／種類，後三個可下拉複選） */
 .fbar{position:relative;display:flex;width:fit-content;margin:0 auto 10px;padding:4px;gap:4px;background:var(--paper);border:1px solid var(--line);border-radius:999px;touch-action:pan-y;user-select:none;-webkit-user-select:none}
-.fbar-pill{position:absolute;top:4px;bottom:4px;left:0;width:0;z-index:0;border-radius:999px;background:var(--accent);pointer-events:none;opacity:0;transition:transform .24s cubic-bezier(.3,.8,.3,1),width .24s cubic-bezier(.3,.8,.3,1),opacity .15s ease}
+.fbar-pill{position:absolute;top:4px;bottom:4px;left:0;width:0;z-index:0;border-radius:999px;background:var(--accent);pointer-events:none;opacity:0;transition:transform .24s cubic-bezier(.3,.8,.3,1),width .24s cubic-bezier(.3,.8,.3,1),opacity .15s ease,background-color .18s ease,box-shadow .18s ease}
 .fbar.has-pill .fbar-pill{opacity:1}
 .fbar button{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:6px;min-width:44px;min-height:44px;padding:0 18px;border:none;border-radius:999px;background:transparent;
   font-family:inherit;font-size:15px;color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .18s ease,background .15s ease}
@@ -240,11 +247,11 @@ main{min-width:0;padding:0 0 16px}
 .fbar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);font-weight:700}
 .fbar.has-pill button.pill-on{background:transparent;color:var(--on-accent);font-weight:700}
 .fbar.has-pill button.pill-on .fn{background:#fff;color:var(--accent)}
-.fbar.dragging .fbar-pill{transition:transform .15s cubic-bezier(.25,.9,.3,1),width .15s cubic-bezier(.25,.9,.3,1);opacity:1}
+.fbar.dragging .fbar-pill{transition:width .14s ease,background-color .14s ease,box-shadow .14s ease;opacity:1;background:rgba(110,70,52,.16);background:color-mix(in srgb,var(--accent) 18%,transparent);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--accent) 55%,transparent)}
 .fbar.dragging button[aria-pressed="true"]:not(.drag-on){background:transparent;color:var(--muted);font-weight:400}
 .fbar.dragging button[aria-pressed="true"]:not(.drag-on) .fn{background:var(--go);color:#fff}
-.fbar.dragging button.drag-on{background:transparent;color:var(--on-accent);font-weight:700}
-.fbar.dragging button.drag-on .fn{background:#fff;color:var(--accent)}
+.fbar.dragging button.drag-on{background:transparent;color:var(--accent);font-weight:700}
+.fbar.dragging button.drag-on .fn{background:var(--accent);color:#fff}
 .fbar svg{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .fwrap{position:static;width:fit-content;margin:0}
 .fwrap .fbar{margin:0}
@@ -438,8 +445,8 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
 @media (max-width:820px){
   .layout{display:block}
   .side{position:fixed;top:calc(90px + env(safe-area-inset-top,0px));left:max(12px,env(safe-area-inset-left,0px));z-index:50;width:min(78vw,280px);max-height:calc(100vh - 190px);margin:0;overflow:hidden;overscroll-behavior:contain;padding:12px;display:flex;flex-direction:column;
-    border-radius:18px;box-shadow:0 10px 28px rgba(0,0,0,.28);opacity:0;transform:translateY(-6px);visibility:hidden;transition:opacity .15s ease,transform .15s ease,visibility 0s linear .15s,background-color .2s ease}
-  .side.open{opacity:1;transform:none;visibility:visible;transition:opacity .15s ease,transform .15s ease,background-color .2s ease}
+    border-radius:18px;box-shadow:0 10px 28px rgba(0,0,0,.28);opacity:0;transform:translateY(-6px);visibility:hidden;transition:opacity .15s ease,transform .15s ease,visibility 0s linear .15s}
+  .side.open{opacity:1;transform:none;visibility:visible;transition:opacity .15s ease,transform .15s ease}
   .backdrop{position:fixed;inset:0;z-index:45;background:var(--scrim);touch-action:none}
   .backdrop.open{display:block}
   body.drawer-lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
@@ -2294,14 +2301,11 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
       if(e.pointerType === "touch" && !isSel && !rests.classList.contains("no-scroll") && rests.scrollHeight > rests.clientHeight + 2) return;
       var tabs = Array.prototype.filter.call(rests.querySelectorAll(".rtab:not(.radd)"), function(b){ return b.style.display !== "none" && b.offsetHeight > 0; });
       if(tabs.length < 2) return;
-      st = { id:e.pointerId, y0:e.clientY, tabs:tabs, drag:false, hit:btn, pillTop:btn.offsetTop, previewId:cur };
+      st = { id:e.pointerId, y0:e.clientY, tabs:tabs, drag:false, hit:btn, startOnActive:isSel, baseTop:btn.offsetTop, pillTop:btn.offsetTop };
     });
     window.addEventListener("pointermove", function(e){
       if(!st || e.pointerId !== st.id) return;
-      if(!st.tabs[0].isConnected){
-        if(st.previewId !== cur) applyTheme(findRest(cur));
-        st = null; clear(); return;
-      }
+      if(!st.tabs[0].isConnected){ st = null; clear(); return; }
       var dy = e.clientY - st.y0;
       if(!st.drag){
         if(Math.abs(dy) <= 5) return;
@@ -2315,14 +2319,13 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
         if(d < best){ best = d; hit = b; }
       });
       st.hit = hit;
-      st.pillTop = hit.offsetTop;
-      if(hit.dataset.id !== st.previewId){
-        st.previewId = hit.dataset.id;
-        applyTheme(findRest(st.previewId));
-      }
+      var firstTop = st.tabs[0].offsetTop, lastTop = st.tabs[st.tabs.length - 1].offsetTop;
+      var raw = st.startOnActive ? st.baseTop + dy : (y - hit.offsetHeight / 2);
+      var top = Math.max(firstTop, Math.min(lastTop, raw));
+      st.pillTop = top;
       var pill = rests.querySelector(".rpill");
       if(pill){
-        pill.style.transform = "translateY(" + hit.offsetTop + "px)";
+        pill.style.transform = "translateY(" + top + "px)";
         pill.style.height = hit.offsetHeight + "px";
         rests.classList.add("has-pill");
       }
@@ -2333,12 +2336,13 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
       var s = st; st = null;
       if(!s.drag){ clear(); return; }
       eatNextClick(rests);
-      restDragFrom = { top:s.pillTop, height:s.hit ? s.hit.offsetHeight : 0 };
+      var relPos = { top:s.pillTop, height:s.hit ? s.hit.offsetHeight : 0 };
       clear();
       if(s.hit && s.hit.dataset.id !== cur){
+        restDragFrom = relPos;
         setCurrent(s.hit.dataset.id); closeRestForm(); closeDrawer(); render();
       } else {
-        if(s.previewId !== cur) applyTheme(findRest(cur));
+        lastRestPill = relPos;
         restDragFrom = null;
         syncRestPill(true);
       }
@@ -2346,7 +2350,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
     window.addEventListener("pointercancel", function(e){
       if(st && e.pointerId === st.id){
         var s = st; st = null;
-        if(s.previewId !== cur) applyTheme(findRest(cur));
+        lastRestPill = { top:s.pillTop, height:s.hit ? s.hit.offsetHeight : 0 };
         clear(); syncRestPill(true);
       }
     });
@@ -2361,7 +2365,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
       if(view !== "review" || REDIT || !window.matchMedia("(max-width:820px)").matches || S.restaurants.length < 2 || $("#side").classList.contains("open")) return;
       var idx = 0;
       S.restaurants.forEach(function(r, i){ if(r.id === cur) idx = i; });
-      st = { id:e.pointerId, x0:e.clientX, y0:e.clientY, drag:false, dx:0, idx:idx, previewId:cur };
+      st = { id:e.pointerId, x0:e.clientX, y0:e.clientY, drag:false, dx:0, idx:idx };
     });
     window.addEventListener("pointermove", function(e){
       if(!st || e.pointerId !== st.id) return;
@@ -2375,15 +2379,6 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
       var h1 = $("#restTitle");
       h1.style.transform = "translateX(" + Math.max(-70, Math.min(70, dx * 0.55)) + "px)";
       h1.style.opacity = String(Math.max(0.35, 1 - Math.abs(dx) / 140));
-      var targetId = cur;
-      if(Math.abs(dx) >= 36 && S.restaurants.length > 1){
-        var step = dx < 0 ? 1 : -1;
-        targetId = S.restaurants[(st.idx + step + S.restaurants.length) % S.restaurants.length].id;
-      }
-      if(targetId !== st.previewId){
-        st.previewId = targetId;
-        applyTheme(findRest(targetId));
-      }
     });
     window.addEventListener("pointerup", function(e){
       if(!st || e.pointerId !== st.id) return;
@@ -2402,16 +2397,11 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
         void h1.offsetWidth;
         h1.style.transition = ""; h1.style.transform = ""; h1.style.opacity = "";
       } else {
-        if(s.previewId !== cur) applyTheme(findRest(cur));
         resetTitle();
       }
     });
     window.addEventListener("pointercancel", function(e){
-      if(st && e.pointerId === st.id){
-        var s = st; st = null;
-        if(s.previewId !== cur) applyTheme(findRest(cur));
-        resetTitle();
-      }
+      if(st && e.pointerId === st.id){ st = null; resetTitle(); }
     });
   })();
 
@@ -2428,7 +2418,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
       if(!btn) return;
       var btns = Array.prototype.slice.call(bar.querySelectorAll("button"));
       if(btns.length < 2) return;
-      st = { id:e.pointerId, x0:e.clientX, btns:btns, drag:false, hit:btn };
+      st = { id:e.pointerId, x0:e.clientX, btns:btns, drag:false, hit:btn, startOnActive:btn.classList.contains("pill-on"), baseLeft:btn.offsetLeft };
     });
     window.addEventListener("pointermove", function(e){
       if(!st || e.pointerId !== st.id) return;
@@ -2447,8 +2437,12 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
       st.hit = hit;
       var pill = bar.querySelector(".fbar-pill");
       if(pill){
-        pill.style.transform = "translateX(" + hit.offsetLeft + "px)";
+        var minL = st.btns[0].offsetLeft, maxL = st.btns[st.btns.length - 1].offsetLeft;
+        var raw = st.startOnActive ? st.baseLeft + dx : (x - hit.offsetWidth / 2);
+        var left = Math.max(minL, Math.min(maxL, raw));
+        pill.style.transform = "translateX(" + left + "px)";
         pill.style.width = hit.offsetWidth + "px";
+        bar.classList.add("has-pill");
       }
       st.btns.forEach(function(b){ b.classList.toggle("drag-on", b === hit); });
     });
