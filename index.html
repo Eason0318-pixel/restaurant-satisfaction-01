@@ -178,6 +178,18 @@ main{min-width:0;padding:0 0 16px}
 .dback .dreview{border-color:var(--accent);background:var(--accent);color:var(--on-accent);font-weight:600}
 .draftnote{margin:0 0 12px}
 .dback button{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--accent-mid);background:var(--field);color:var(--accent);font-family:inherit;font-size:15px;cursor:pointer}
+.pstage-scrim{position:fixed;inset:0;z-index:94;background:rgba(0,0,0,.22);opacity:0;pointer-events:none;will-change:opacity;transition:opacity .26s ease}
+.pstage-scrim.on{opacity:1}
+.pstage-scrim.fade{opacity:0;transition:opacity .15s ease}
+.pstage{position:fixed;z-index:95;top:var(--pt,0px);left:var(--pl,0px);width:var(--pw,0px);height:var(--ph,0px);
+  background:var(--paper);border:2px solid var(--accent);border-radius:16px;box-shadow:0 8px 28px rgba(0,0,0,.16);
+  pointer-events:auto;contain:layout style;
+  transition:top .28s cubic-bezier(.28,.12,.22,1),left .28s cubic-bezier(.28,.12,.22,1),width .28s cubic-bezier(.28,.12,.22,1),height .28s cubic-bezier(.28,.12,.22,1),border-radius .12s ease-out .22s,background-color .28s ease,opacity .16s ease}
+.pstage.prep{transition:none}
+.pstage.expand{top:0px;left:0px;width:var(--pvw,100vw);height:var(--pvh,100vh);border-radius:0px;background:var(--bg)}
+.pstage.fade{opacity:0;pointer-events:none}
+#dview{opacity:1;transform:translate3d(0,0,0) scale(1);transform-origin:50% 24%;will-change:transform,opacity;transition:opacity .2s ease,transform .26s cubic-bezier(.22,1.06,.36,1)}
+#dview.denter{opacity:0;transform:translate3d(0,16px,0) scale(.96);transition:none}
 .dhead{display:flex;align-items:flex-start;gap:12px;padding:18px 16px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius)}
 .dhead .pgo{flex:none;margin:-4px -4px 0 0}
 @media (min-width:821px){ .dhead .pgo{width:44px;height:44px} .dhead .pgo svg{width:26px;height:26px;padding:5px} }
@@ -377,7 +389,8 @@ body[data-view="find"] .layout{max-width:1280px}
 .nitem{display:block;width:100%;text-align:left;font-family:inherit;color:inherit;background:none;border:none;border-bottom:1px dashed var(--line);padding:11px 14px;cursor:pointer}
 .nitem:last-child{border-bottom:none}
 .nitem:hover{background:var(--hover)}
-.nitem[data-new]{background:var(--field)}
+.nitem[data-new]{background:#fbd5d2}
+.nitem[data-new]:hover{background:#f8c4c0}
 .nmsg{display:block;font-size:15px;line-height:1.5;overflow-wrap:anywhere}
 .nchip{display:inline-block;margin-right:6px;padding:0 7px;border-radius:999px;background:var(--accent);color:var(--on-accent);font-size:12px;line-height:20px;vertical-align:1px}
 .nchip[data-t="review"]{background:var(--gold)}
@@ -597,7 +610,7 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
 .view-in-l{animation:viewInL .28s cubic-bezier(.22,.9,.32,1) both;will-change:transform,opacity}
 .view-in-r{animation:viewInR .28s cubic-bezier(.22,.9,.32,1) both;will-change:transform,opacity}
 body.view-anim{overflow-x:hidden;overflow-x:clip}
-@media (prefers-reduced-motion: reduce){ header,.side,.rbtn,.side.open,.topnav,.topnav button,.topnav::before,.rpill,.rests.dragging .rpill,.fbar-pill,.fbar.dragging .fbar-pill,.ntabs::before,header .titlebox h1,.sbtn,.sov::before,.spill,.spill::after,.sp-l,.sp-r,.sp-mid,.sp-ico,.spill input,.scancel,.sbody,.nbell,.npanel,.nscrim{transition:none} .view-in-l,.view-in-r{animation:none} }
+@media (prefers-reduced-motion: reduce){ header,.side,.rbtn,.side.open,.topnav,.topnav button,.topnav::before,.rpill,.rests.dragging .rpill,.fbar-pill,.fbar.dragging .fbar-pill,.ntabs::before,header .titlebox h1,.sbtn,.sov::before,.spill,.spill::after,.sp-l,.sp-r,.sp-mid,.sp-ico,.spill input,.scancel,.sbody,.nbell,.npanel,.nscrim,.pstage,.pstage-scrim,#dview{transition:none} .view-in-l,.view-in-r{animation:none} }
 </style>
 <style id="themeCss"></style>
 </head>
@@ -723,6 +736,8 @@ body.view-anim{overflow-x:hidden;overflow-x:clip}
     <div class="row"><button class="primary" type="button" id="noteSave" hidden>儲存修改</button><button class="ghost" type="button" id="sheetClose">取消</button></div>
   </div>
 </div>
+<div class="pstage-scrim" id="pstageScrim" hidden></div>
+<div class="pstage" id="pstage" hidden></div>
 <div id="toast" role="status" hidden></div>
 
 <script>
@@ -1078,6 +1093,7 @@ body.view-anim{overflow-x:hidden;overflow-x:clip}
   }
   function setView(v){
     var changed = v !== view;
+    if(typeof cancelPlaceAnim === "function") cancelPlaceAnim();
     view = v;
     try{ localStorage.setItem(VIEW_KEY, v); }catch(e){}
     try{ history.replaceState(null, "", "#" + (v === "find" ? "find" : cur)); }catch(e){}
@@ -1600,6 +1616,21 @@ body.view-anim{overflow-x:hidden;overflow-x:clip}
   }
   // 詳情頁：網址 #find/編號（編號＝在 places.json 裡的順序），瀏覽器返回鍵可回到清單
   var DETAIL_ON = false, PDscroll = 0, PDpushed = false, DEDIT = "", DEDIT_I = -1;
+  var PDreveal = false, pAnimRaf = 0, pAnimMid = null, pAnimEnd = null, pRevealRaf = 0;
+  function cancelPlaceAnim(){
+    if(pAnimRaf){ cancelAnimationFrame(pAnimRaf); pAnimRaf = 0; }
+    if(pRevealRaf){ cancelAnimationFrame(pRevealRaf); pRevealRaf = 0; }
+    clearTimeout(pAnimMid); pAnimMid = null;
+    clearTimeout(pAnimEnd); pAnimEnd = null;
+    PDreveal = false;
+    var st = $("#pstage"), sc = $("#pstageScrim"), dv = $("#dview");
+    if(st){
+      st.classList.remove("prep", "expand", "fade"); st.hidden = true;
+      ["--pt","--pl","--pw","--ph","--pvw","--pvh"].forEach(function(k){ st.style.removeProperty(k); });
+    }
+    if(sc){ sc.classList.remove("on", "fade"); sc.hidden = true; }
+    if(dv) dv.classList.remove("denter");
+  }
   var DI = {
     edit:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14.5 7.5l3 3"/></svg>',
     star:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8l-5.2 2.8 1-5.8L3.5 9.7l5.9-.9z"/></svg>',
@@ -1752,7 +1783,15 @@ body.view-anim{overflow-x:hidden;overflow-x:clip}
     if(di >= 0){
       if(DEDIT_I !== di){ DEDIT = ""; DEDIT_I = di; }
       DETAIL_ON = true;
-      $("#dview").innerHTML = detailHTML(effPlace(list[di]));
+      var dv = $("#dview");
+      dv.innerHTML = detailHTML(effPlace(list[di]));
+      if(PDreveal){
+        PDreveal = false;
+        dv.classList.add("denter");
+        void dv.offsetWidth;
+        if(pRevealRaf) cancelAnimationFrame(pRevealRaf);
+        pRevealRaf = requestAnimationFrame(function(){ pRevealRaf = 0; dv.classList.remove("denter"); });
+      }
       return;
     }
     DEDIT = ""; DEDIT_I = -1;
@@ -2281,10 +2320,50 @@ body.view-anim{overflow-x:hidden;overflow-x:clip}
     if(!card) return;
     if(e.type === "keydown" && e.key !== "Enter" && e.key !== " ") return;
     e.preventDefault();
-    closeSearch(true);
-    FOpen = ""; PDscroll = window.scrollY; PDpushed = true;
-    location.hash = "#find/" + card.dataset.i;
-    window.scrollTo(0, 0);
+    var idx = card.dataset.i, r = card.getBoundingClientRect();
+    if(window.matchMedia("(prefers-reduced-motion: reduce)").matches || !r.width){
+      cancelPlaceAnim();
+      closeSearch(true);
+      FOpen = ""; PDscroll = window.scrollY; PDpushed = true;
+      location.hash = "#find/" + idx;
+      window.scrollTo(0, 0);
+      return;
+    }
+    cancelPlaceAnim();
+    var vw = document.documentElement.clientWidth || window.innerWidth, vh = window.innerHeight;
+    var st = $("#pstage"), sc = $("#pstageScrim");
+    st.classList.remove("expand", "fade");
+    st.classList.add("prep");
+    st.style.setProperty("--pt", Math.round(r.top) + "px");
+    st.style.setProperty("--pl", Math.round(r.left) + "px");
+    st.style.setProperty("--pw", Math.round(r.width) + "px");
+    st.style.setProperty("--ph", Math.round(r.height) + "px");
+    st.style.setProperty("--pvw", vw + "px");
+    st.style.setProperty("--pvh", vh + "px");
+    st.hidden = false;
+    sc.classList.remove("on", "fade");
+    sc.hidden = false;
+    void st.offsetWidth;
+    pAnimRaf = requestAnimationFrame(function(){
+      pAnimRaf = 0;
+      st.classList.remove("prep");
+      st.classList.add("expand");
+      sc.classList.add("on");
+    });
+    pAnimMid = setTimeout(function(){
+      pAnimMid = null;
+      PDreveal = true;
+      closeSearch(true);
+      FOpen = ""; PDscroll = window.scrollY; PDpushed = true;
+      location.hash = "#find/" + idx;
+      window.scrollTo(0, 0);
+      st.classList.add("fade");
+      sc.classList.add("fade");
+      pAnimEnd = setTimeout(function(){
+        pAnimEnd = null;
+        cancelPlaceAnim();
+      }, 170);
+    }, 330);
   }
   document.addEventListener("click", function(e){ if(NOPEN && !e.target.closest("#npanel") && !e.target.closest("#nbell")) setNOpen(false); });
   document.addEventListener("keydown", function(e){ if(e.key === "Escape" && NOPEN) setNOpen(false); });
