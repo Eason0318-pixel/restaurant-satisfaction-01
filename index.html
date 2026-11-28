@@ -365,19 +365,19 @@ body[data-view="find"] .layout{max-width:1280px}
 .topnav::before{content:"";position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;background:rgba(0,0,0,.09);transition:transform .25s cubic-bezier(.3,.8,.3,1),box-shadow .18s ease,background-color .18s ease}
 .topnav[data-v="review"]::before{transform:translateX(100%)}
 .topnav.dragging::before{transition:none;transform:translateX(var(--tx,0px))}
-.topnav button{position:relative;flex:1 1 0;display:flex;align-items:center;justify-content:center;gap:4px;padding:0;background:none;border:none;border-radius:999px;font-family:inherit;font-size:16px;letter-spacing:.08em;color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s cubic-bezier(.3,.8,.3,1),color .15s ease}
-@media (hover: hover) and (pointer: fine){ .topnav:not(.dragging) button:hover{color:var(--ink)} }
-.topnav button[aria-current="page"]{color:var(--accent-deep);font-weight:700}
-.topnav.dragging button[aria-current="page"]:not(.drag-on){color:var(--muted);font-weight:400}
+.topnav button{position:relative;flex:1 1 0;display:flex;align-items:center;justify-content:center;gap:4px;padding:0;background:none;border:none;border-radius:999px;font-family:inherit;font-size:16px;letter-spacing:.08em;color:#2a2c52;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s cubic-bezier(.3,.8,.3,1),color .15s ease}
+@media (hover: hover) and (pointer: fine){ .topnav:not(.dragging) button:not([aria-current="page"]):hover{color:#1c2341} }
+.topnav button[aria-current="page"]{color:#ffffff;font-weight:700}
+.topnav.dragging button[aria-current="page"]:not(.drag-on){color:#2a2c52;font-weight:500}
 .topnav.dragging button[aria-current="page"]:not(.drag-on) .nacc{stroke:currentColor}
 .topnav.dragging button[aria-current="page"]:not(.drag-on) .ndot{fill:none;stroke:currentColor}
-.topnav.dragging button.drag-on{color:var(--accent-deep);font-weight:700}
-.topnav.dragging button.drag-on .nacc{stroke:var(--go)}
-.topnav.dragging button.drag-on .ndot{fill:var(--go);stroke:var(--go)}
+.topnav.dragging button.drag-on{color:#ffffff;font-weight:700}
+.topnav.dragging button.drag-on .nacc{stroke:#f59342}
+.topnav.dragging button.drag-on .ndot{fill:#f59342;stroke:#f59342}
 /* 通知：頁籤右邊的圓形訊息鈕＋蓋在頁面上的對話泡泡 */
-.nbell{position:relative;flex:none;width:44px;display:flex;align-items:center;justify-content:center;padding:0;border:1px solid rgba(0,0,0,.08);border-radius:50%;background:rgba(255,255,255,.88);-webkit-backdrop-filter:saturate(1.6) blur(14px);backdrop-filter:saturate(1.6) blur(14px);box-shadow:0 4px 14px rgba(0,0,0,.18);color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.nbell{position:relative;flex:none;width:44px;display:flex;align-items:center;justify-content:center;padding:0;border:1px solid rgba(0,0,0,.08);border-radius:50%;background:rgba(255,255,255,.88);-webkit-backdrop-filter:saturate(1.6) blur(14px);backdrop-filter:saturate(1.6) blur(14px);box-shadow:0 4px 14px rgba(0,0,0,.18);color:#2a2c52;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .nbell svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.nbell:hover,.nbell[aria-expanded="true"]{color:var(--accent-deep)}
+.nbell:hover,.nbell[aria-expanded="true"]{color:#1c2341}
 .nbell:active{transform:scale(.92)}
 .nbadge{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:var(--danger);color:#fff;font-size:12px;font-weight:700;line-height:20px;text-align:center;box-sizing:border-box;box-shadow:0 0 0 2px var(--bg)}
 .nbadge[hidden]{display:none}
@@ -416,8 +416,8 @@ body[data-view="find"] .layout{max-width:1280px}
 .ni{display:inline-flex;line-height:1}
 .ni svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .ni .ndot{fill:none}
-.topnav button[aria-current="page"] .nacc{stroke:var(--go)}
-.topnav button[aria-current="page"] .ndot{fill:var(--go);stroke:var(--go)}
+.topnav button[aria-current="page"] .nacc{stroke:#f59342}
+.topnav button[aria-current="page"] .ndot{fill:#f59342;stroke:#f59342}
 /* 電腦版：改名/刪除餐廳直接並排顯示，不收成下拉選單 */
 @media (min-width:821px){
   .kebab{display:none}
@@ -578,27 +578,27 @@ body.detail-on .dock{display:none}
   .section-head{border-radius:var(--radius);margin-bottom:10px}
   .card-list{background:transparent;border:none;border-radius:0}
 }
-/* 保留浮動導覽膠囊（找餐廳 / 寫評價）與通知球的半透明玻璃質感（單層對齊邊框，無偏移重疊） */
+/* 保留浮動導覽膠囊（找餐廳 / 寫評價）與通知球的半透明玻璃質感（方案 3.1：7% 淺靛藍玻璃＋深藍滑塊＋白字亮橘點綴） */
 .topnav,.nbell{
-  background:rgba(255,255,255,.18);
-  -webkit-backdrop-filter:blur(14px) saturate(175%);backdrop-filter:blur(14px) saturate(175%);
-  border:1px solid rgba(255,255,255,.5);
-  box-shadow:0 8px 26px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.55);
+  background:rgba(52,50,92,.07);
+  -webkit-backdrop-filter:blur(14px) saturate(190%);backdrop-filter:blur(14px) saturate(190%);
+  border:1.25px solid rgba(52,50,92,.28);
+  box-shadow:0 8px 24px rgba(34,34,66,.16),inset 0 1px 0 rgba(255,255,255,.8);
   transition:transform .18s cubic-bezier(.3,.8,.3,1),box-shadow .18s ease,background-color .18s ease;
 }
 .topnav::before{
-  background:rgba(255,255,255,.96);
-  box-shadow:0 4px 14px rgba(0,0,0,.22),0 1px 3px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.95);
+  background:rgba(30,36,70,.9);
+  box-shadow:0 4px 12px rgba(24,28,56,.32),inset 0 1px 0 rgba(255,255,255,.22);
 }
 .topnav.pressing,.topnav.dragging{
   transform:scale(1.03);
-  background:rgba(255,255,255,.28);
-  box-shadow:0 12px 32px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.72);
+  background:rgba(52,50,92,.12);
+  box-shadow:0 12px 30px rgba(34,34,66,.24),inset 0 1px 0 rgba(255,255,255,.86);
 }
 .topnav.pressing:not(.dragging)::before{
   transform:translateX(0%) scale(1.05,1.09);
-  background:#ffffff;
-  box-shadow:0 8px 22px rgba(0,0,0,.28),0 2px 6px rgba(0,0,0,.16),inset 0 1px 0 #ffffff;
+  background:rgba(26,32,64,.95);
+  box-shadow:0 8px 20px rgba(20,24,48,.38),0 2px 6px rgba(20,24,48,.22),inset 0 1px 0 rgba(255,255,255,.28);
 }
 .topnav.pressing:not(.dragging)[data-v="review"]::before{
   transform:translateX(100%) scale(1.05,1.09);
@@ -606,16 +606,19 @@ body.detail-on .dock{display:none}
 .topnav.dragging::before{
   transition:box-shadow .15s ease,background-color .15s ease;
   transform:translateX(var(--tx,0px)) scale(1.05,1.09);
-  background:#ffffff;
-  box-shadow:0 8px 22px rgba(0,0,0,.28),0 2px 6px rgba(0,0,0,.16),inset 0 1px 0 #ffffff;
+  background:rgba(26,32,64,.95);
+  box-shadow:0 8px 20px rgba(20,24,48,.38),0 2px 6px rgba(20,24,48,.22),inset 0 1px 0 rgba(255,255,255,.28);
 }
 .topnav.pressing:not(.dragging) button[aria-current="page"],.topnav.dragging button.drag-on{
   transform:scale(1.05);
 }
-.nbell:hover{background:rgba(255,255,255,.36);box-shadow:0 8px 26px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.65)}
+.nbell:hover{background:rgba(52,50,92,.14);box-shadow:0 8px 26px rgba(34,34,66,.2),inset 0 1px 0 rgba(255,255,255,.85)}
+@media (min-width:821px){
+  body[data-view="review"] .topnav,body[data-view="review"] .nbell{background:rgba(246,247,252,.72)}
+}
 @media (max-width:820px){
-  .topnav,.nbell{box-shadow:0 10px 30px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.55)}
-  .topnav.pressing,.topnav.dragging{box-shadow:0 14px 34px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.72)}
+  .topnav,.nbell{box-shadow:0 10px 26px rgba(34,34,66,.18),inset 0 1px 0 rgba(255,255,255,.8)}
+  .topnav.pressing,.topnav.dragging{box-shadow:0 14px 32px rgba(34,34,66,.26),inset 0 1px 0 rgba(255,255,255,.86)}
 }
 /* 其餘原本非膠囊狀的按鈕（餐廳選單、留下備註、刪除、返回、取消）統一改為膠囊狀（不使用 Liquid Glass） */
 .rtab,.rdel,.del{border-radius:999px}
