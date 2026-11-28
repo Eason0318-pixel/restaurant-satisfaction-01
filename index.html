@@ -267,20 +267,22 @@ main{min-width:0;padding:0 0 16px}
 #findView .card-list{border-top:1px solid var(--line);border-radius:var(--radius)}
 /* 找餐廳：篩選列（總覽／縣市／市區／種類，後三個可下拉複選） */
 .fbar{position:relative;display:flex;width:fit-content;margin:0 auto 10px;padding:4px;gap:4px;background:var(--paper);border:1px solid var(--line);border-radius:999px;touch-action:pan-y;user-select:none;-webkit-user-select:none}
-.fbar-pill{position:absolute;top:4px;bottom:4px;left:0;width:0;z-index:0;border-radius:999px;background:var(--accent);pointer-events:none;opacity:0;transition:transform .24s cubic-bezier(.3,.8,.3,1),width .24s cubic-bezier(.3,.8,.3,1),opacity .15s ease,background-color .18s ease,box-shadow .18s ease}
+.fbar-pill{position:absolute;top:4px;bottom:4px;left:0;width:0;z-index:0;border-radius:999px;background:#34325c;pointer-events:none;opacity:0;transition:transform .24s cubic-bezier(.3,.8,.3,1),width .24s cubic-bezier(.3,.8,.3,1),opacity .15s ease,background-color .18s ease,box-shadow .18s ease}
 .fbar.has-pill .fbar-pill{opacity:1}
 .fbar button{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:6px;min-width:44px;min-height:44px;padding:0 18px;border:none;border-radius:999px;background:transparent;
   font-family:inherit;font-size:15px;color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .18s ease,background .15s ease}
 @media (hover: hover) and (pointer: fine){ .fbar:not(.dragging) button:hover{color:var(--ink)} }
-.fbar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);font-weight:700}
+.fbar button[aria-pressed="true"]{background:#34325c;color:var(--on-accent);font-weight:700}
 .fbar.has-pill button.pill-on{background:transparent;color:var(--on-accent);font-weight:700}
-.fbar.has-pill button.pill-on .fn{background:#fff;color:var(--accent)}
+.fbar.has-pill button.pill-on .fn{background:#fff;color:#34325c}
 .fbar.dragging .fbar-pill{transition:width .14s ease;opacity:1}
 .fbar.dragging button[aria-pressed="true"]:not(.drag-on),.fbar.dragging button.pill-on:not(.drag-on){background:transparent;color:var(--muted);font-weight:400}
 .fbar.dragging button[aria-pressed="true"]:not(.drag-on) .fn,.fbar.dragging button.pill-on:not(.drag-on) .fn{background:var(--go);color:#fff}
 .fbar.dragging button.drag-on{background:transparent;color:var(--on-accent);font-weight:700}
-.fbar.dragging button.drag-on .fn{background:#fff;color:var(--accent)}
-.fbar svg{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.fbar.dragging button.drag-on .fn{background:#fff;color:#34325c}
+.fbar svg{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke .18s ease}
+.fbar button[aria-pressed="true"] svg,.fbar.has-pill button.pill-on svg,.fbar.dragging button.drag-on svg{stroke:#f59342}
+.fbar.dragging button[aria-pressed="true"]:not(.drag-on) svg,.fbar.dragging button.pill-on:not(.drag-on) svg{stroke:currentColor}
 .fwrap{position:static;width:fit-content;margin:0}
 .fwrap .fbar{margin:0}
 .frow{position:relative;display:flex;justify-content:center;align-items:flex-start;gap:10px;margin:0 auto 10px}
@@ -323,8 +325,8 @@ main{min-width:0;padding:0 0 16px}
 .fbar button{position:relative}
 .fn{position:absolute;top:3px;right:6px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--go);color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center}
 .fn[hidden]{display:none}
-.fbar button[aria-pressed="true"] .fn{background:#fff;color:var(--accent)}
-.fbar button.open{box-shadow:inset 0 0 0 2px var(--accent-mid)}
+.fbar button[aria-pressed="true"] .fn{background:#fff;color:#34325c}
+.fbar button.open{box-shadow:inset 0 0 0 2px #56538a}
 .fbar.dragging button.open{box-shadow:none}
 .fpanel{position:absolute;z-index:30;top:calc(100% + 8px);left:50%;transform:translateX(-50%);width:min(360px,calc(100vw - 24px));padding:10px;background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
 .fpanel[hidden]{display:none}
