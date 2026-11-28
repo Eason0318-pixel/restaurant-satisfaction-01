@@ -179,6 +179,7 @@ main{min-width:0;padding:0 0 16px}
 .draftnote{margin:0 0 12px}
 .dback button{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--accent-mid);background:var(--field);color:var(--accent);font-family:inherit;font-size:15px;cursor:pointer}
 .pstage-scrim{position:fixed;inset:0;z-index:94;background:rgba(0,0,0,.22);opacity:0;pointer-events:none;will-change:opacity;transition:opacity .26s ease}
+.pstage-scrim.prep{transition:none}
 .pstage-scrim.on{opacity:1}
 .pstage-scrim.fade{opacity:0;transition:opacity .15s ease}
 .pstage{position:fixed;z-index:95;top:var(--pt,0px);left:var(--pl,0px);width:var(--pw,0px);height:var(--ph,0px);
@@ -187,7 +188,10 @@ main{min-width:0;padding:0 0 16px}
   transition:top .28s cubic-bezier(.28,.12,.22,1),left .28s cubic-bezier(.28,.12,.22,1),width .28s cubic-bezier(.28,.12,.22,1),height .28s cubic-bezier(.28,.12,.22,1),border-radius .12s ease-out .22s,background-color .28s ease,opacity .16s ease}
 .pstage.prep{transition:none}
 .pstage.expand{top:0px;left:0px;width:var(--pvw,100vw);height:var(--pvh,100vh);border-radius:0px;background:var(--bg)}
+.pstage.shrink{pointer-events:none;transition:top .28s cubic-bezier(.28,.12,.22,1),left .28s cubic-bezier(.28,.12,.22,1),width .28s cubic-bezier(.28,.12,.22,1),height .28s cubic-bezier(.28,.12,.22,1),border-radius .1s ease-out,background-color .28s ease,opacity .12s ease}
 .pstage.fade{opacity:0;pointer-events:none}
+.pghost{position:fixed;z-index:96;pointer-events:none;margin:0}
+.pghost .pcard{position:relative;display:block;width:100%;height:100%;margin:0;padding:0;background:transparent;border:none;box-shadow:none;transform:none;transition:none}
 #dview{opacity:1;transform:translate3d(0,0,0) scale(1);transform-origin:50% 24%;will-change:transform,opacity;transition:opacity .2s ease,transform .26s cubic-bezier(.22,1.06,.36,1)}
 #dview.denter{opacity:0;transform:translate3d(0,16px,0) scale(.96);transition:none}
 .dhead{display:flex;align-items:flex-start;gap:12px;padding:18px 16px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius)}
@@ -738,6 +742,7 @@ body.view-anim{overflow-x:hidden;overflow-x:clip}
 </div>
 <div class="pstage-scrim" id="pstageScrim" hidden></div>
 <div class="pstage" id="pstage" hidden></div>
+<div class="pghost" id="pghost" hidden></div>
 <div id="toast" role="status" hidden></div>
 
 <script>
@@ -1615,7 +1620,7 @@ body.view-anim{overflow-x:hidden;overflow-x:clip}
     if(fk !== null) Array.prototype.some.call(panel.querySelectorAll("input"), function(i){ if(i.dataset.k === fk){ i.focus({ preventScroll:true }); return true; } });
   }
   // 詳情頁：網址 #find/編號（編號＝在 places.json 裡的順序），瀏覽器返回鍵可回到清單
-  var DETAIL_ON = false, PDscroll = 0, PDpushed = false, DEDIT = "", DEDIT_I = -1;
+  var DETAIL_ON = false, PDscroll = 0, PDpushed = false, DEDIT = "", DEDIT_I = -1, PDlast = -1;
   var PDreveal = false, pAnimRaf = 0, pAnimMid = null, pAnimEnd = null, pRevealRaf = 0;
   function cancelPlaceAnim(){
     if(pAnimRaf){ cancelAnimationFrame(pAnimRaf); pAnimRaf = 0; }
@@ -1623,13 +1628,62 @@ body.view-anim{overflow-x:hidden;overflow-x:clip}
     clearTimeout(pAnimMid); pAnimMid = null;
     clearTimeout(pAnimEnd); pAnimEnd = null;
     PDreveal = false;
-    var st = $("#pstage"), sc = $("#pstageScrim"), dv = $("#dview");
+    var st = $("#pstage"), sc = $("#pstageScrim"), pg = $("#pghost"), dv = $("#dview");
     if(st){
-      st.classList.remove("prep", "expand", "fade"); st.hidden = true;
+      st.classList.remove("prep", "expand", "shrink", "fade"); st.hidden = true;
       ["--pt","--pl","--pw","--ph","--pvw","--pvh"].forEach(function(k){ st.style.removeProperty(k); });
     }
-    if(sc){ sc.classList.remove("on", "fade"); sc.hidden = true; }
+    if(sc){ sc.classList.remove("prep", "on", "fade"); sc.hidden = true; }
+    if(pg){ pg.hidden = true; pg.innerHTML = ""; pg.style.cssText = ""; }
     if(dv) dv.classList.remove("denter");
+  }
+  function shrinkPlace(idx){
+    if(idx < 0 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var card = document.querySelector('#pgrid .pcard[data-i="' + idx + '"]');
+    if(!card) return;
+    var r = card.getBoundingClientRect(), vw = document.documentElement.clientWidth || window.innerWidth, vh = window.innerHeight;
+    if(!r.width || r.bottom <= 0 || r.top >= vh) return;
+    var rects = Array.prototype.map.call(card.children, function(ch){ return ch.getBoundingClientRect(); });
+    cancelPlaceAnim();
+    var st = $("#pstage"), sc = $("#pstageScrim"), pg = $("#pghost");
+    var t = Math.round(r.top), l = Math.round(r.left), w = Math.round(r.width), h = Math.round(r.height);
+    var clone = card.cloneNode(true);
+    clone.removeAttribute("tabindex"); clone.removeAttribute("role");
+    Array.prototype.forEach.call(clone.children, function(ch, i){
+      var cr = rects[i];
+      if(cr) ch.style.cssText = "position:absolute;margin:0;left:" + (cr.left - r.left) + "px;top:" + (cr.top - r.top) + "px;width:" + cr.width + "px;height:" + cr.height + "px";
+    });
+    pg.innerHTML = ""; pg.appendChild(clone);
+    pg.style.cssText = "top:" + r.top + "px;left:" + r.left + "px;width:" + r.width + "px;height:" + r.height + "px";
+    pg.hidden = false;
+    st.classList.remove("shrink", "fade");
+    st.classList.add("prep", "expand");
+    st.style.setProperty("--pt", t + "px");
+    st.style.setProperty("--pl", l + "px");
+    st.style.setProperty("--pw", w + "px");
+    st.style.setProperty("--ph", h + "px");
+    st.style.setProperty("--pvw", vw + "px");
+    st.style.setProperty("--pvh", vh + "px");
+    st.hidden = false;
+    sc.classList.remove("fade");
+    sc.classList.add("prep", "on");
+    sc.hidden = false;
+    void st.offsetWidth;
+    pAnimRaf = requestAnimationFrame(function(){
+      pAnimRaf = 0;
+      st.classList.remove("prep", "expand");
+      st.classList.add("shrink");
+      sc.classList.remove("prep");
+      sc.classList.add("fade");
+    });
+    pAnimMid = setTimeout(function(){
+      pAnimMid = null;
+      st.classList.add("fade");
+      pAnimEnd = setTimeout(function(){
+        pAnimEnd = null;
+        cancelPlaceAnim();
+      }, 130);
+    }, 280);
   }
   var DI = {
     edit:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14.5 7.5l3 3"/></svg>',
@@ -1782,7 +1836,7 @@ body.view-anim{overflow-x:hidden;overflow-x:clip}
     $("#dview").hidden = di < 0;
     if(di >= 0){
       if(DEDIT_I !== di){ DEDIT = ""; DEDIT_I = di; }
-      DETAIL_ON = true;
+      DETAIL_ON = true; PDlast = di;
       var dv = $("#dview");
       dv.innerHTML = detailHTML(effPlace(list[di]));
       if(PDreveal){
@@ -1819,7 +1873,12 @@ body.view-anim{overflow-x:hidden;overflow-x:clip}
     $("#pcount").textContent = "共 " + items.length + " 間" + (sel ? "　" + sel : "");
     $("#pempty").hidden = list.length > 0;
     $("#pempty").textContent = list.length ? "" : PLACES === null ? "載入中…" : "還沒有餐廳資料。";
-    if(DETAIL_ON){ DETAIL_ON = false; window.scrollTo(0, PDscroll); }
+    if(DETAIL_ON){
+      DETAIL_ON = false;
+      var backIdx = PDlast; PDlast = -1;
+      window.scrollTo(0, PDscroll);
+      shrinkPlace(backIdx);
+    }
   }
 
   // 智慧搜尋：整句話交給 Gemini（後端 searchPlaces）拆成縣市、區、種類、關鍵字，結果在網頁上自己比對；Gemini 不能用時改用一般字串比對
