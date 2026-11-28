@@ -197,6 +197,12 @@ main{min-width:0;padding:0 0 16px}
 #dview.dswipe{transition:none}
 #dview.dswipe-out{transition:transform .22s cubic-bezier(.3,0,.2,1),opacity .18s ease}
 #dview.dswipe-cancel{transition:transform .22s cubic-bezier(.22,1,.36,1),opacity .2s ease}
+@media (min-width:821px){
+  .pstage-scrim{transition:opacity .15s ease}
+  .pstage-scrim.fade{transition:opacity .1s ease}
+  .pstage{transition:top .17s cubic-bezier(.28,.12,.22,1),left .17s cubic-bezier(.28,.12,.22,1),width .17s cubic-bezier(.28,.12,.22,1),height .17s cubic-bezier(.28,.12,.22,1),border-radius .08s ease-out .11s,background-color .17s ease,opacity .1s ease}
+  #dview{transition:opacity .14s ease,transform .18s cubic-bezier(.22,1.06,.36,1)}
+}
 #frow,#plist{transform-origin:50% 30%}
 .plist-pop{opacity:0;transform:scale(.94);transition:none}
 .plist-pop-on{opacity:1;transform:scale(1);will-change:transform,opacity;transition:opacity .26s ease,transform .3s cubic-bezier(.22,1,.36,1)}
@@ -2490,8 +2496,8 @@ body.view-anim{overflow-x:hidden;overflow-x:clip}
       pAnimEnd = setTimeout(function(){
         pAnimEnd = null;
         cancelPlaceAnim();
-      }, 170);
-    }, 330);
+      }, mobile ? 170 : 110);
+    }, mobile ? 330 : 180);
   }
   document.addEventListener("click", function(e){ if(NOPEN && !e.target.closest("#npanel") && !e.target.closest("#nbell")) setNOpen(false); });
   document.addEventListener("keydown", function(e){ if(e.key === "Escape" && NOPEN) setNOpen(false); });
