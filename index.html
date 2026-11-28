@@ -425,10 +425,9 @@ body[data-view="find"] main{width:100%;max-width:none}
 /* 找餐廳不需要頁首（「找餐廳」三個字就是下方切換鈕），篩選列直接貼到頂端 */
 body[data-view="find"] header{display:none}
 body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0px))}
+body.detail-on .dock{display:none}
 @media (min-width:821px){ .dock{left:max(12px,env(safe-area-inset-left,0px),calc(50% - 640px))} }
-@media (min-width:821px) and (max-width:1180px){ body[data-view="find"] .layout{padding-top:70px} }
-/* 寬螢幕：頁籤膠囊浮在內容區左上角，詳情頁的「返回」要往下讓開（821～1180px 已由上面的 70px 內距讓開） */
-@media (min-width:1181px){ #dview .dback{margin-top:56px} }
+@media (min-width:821px) and (max-width:1180px){ body[data-view="find"]:not(.detail-on) .layout{padding-top:70px} }
 
 /* 留言身分頁面 */
 .overlay{position:fixed;inset:0;background:var(--scrim);display:flex;align-items:stretch;justify-content:center;z-index:60}
@@ -548,6 +547,8 @@ body[data-view="find"] .layout{padding-top:calc(14px + env(safe-area-inset-top,0
   .rdel.armed{background:var(--danger);color:#fff}
   .summary{margin-top:2px}
   body{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+  body.detail-on{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+  body.detail-on #toast{bottom:calc(20px + env(safe-area-inset-bottom,0px))}
   .dock{position:fixed;top:auto;left:50%;bottom:max(18px,calc(env(safe-area-inset-bottom,0px) - 8px));transform:translateX(-50%);z-index:40;width:min(calc(100% - 32px),400px)}
   .topnav{flex:1;width:auto;height:auto;padding:5px;border:1px solid rgba(0,0,0,.08);border-radius:999px;
     background:rgba(255,255,255,.82);-webkit-backdrop-filter:saturate(1.6) blur(14px);backdrop-filter:saturate(1.6) blur(14px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
@@ -1888,6 +1889,7 @@ body.view-anim{overflow-x:hidden;overflow-x:clip}
       clearPlistPop();
       if(DEDIT_I !== di){ DEDIT = ""; DEDIT_I = di; }
       DETAIL_ON = true; PDlast = di;
+      document.body.classList.add("detail-on");
       var dv = $("#dview");
       dv.innerHTML = detailHTML(effPlace(list[di]));
       if(PDreveal){
@@ -1899,6 +1901,7 @@ body.view-anim{overflow-x:hidden;overflow-x:clip}
       }
       return;
     }
+    document.body.classList.remove("detail-on");
     DEDIT = ""; DEDIT_I = -1;
     var opts = filterOptions(list);
     FA.county = FA.county.filter(function(k){ return opts.county.some(function(o){ return o.k === k; }); });
@@ -2149,7 +2152,7 @@ body.view-anim{overflow-x:hidden;overflow-x:clip}
     }
     var rest = findRest(cur);
     var isFind = view === "find";
-    if(!isFind){ DEDIT = ""; DEDIT_I = -1; }
+    if(!isFind){ DEDIT = ""; DEDIT_I = -1; document.body.classList.remove("detail-on"); }
     document.body.setAttribute("data-view", view);
     Array.prototype.forEach.call(document.querySelectorAll("#topnav button"), function(b){
       b.setAttribute("aria-current", b.dataset.v === view ? "page" : "false");
